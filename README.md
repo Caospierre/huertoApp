@@ -1,16 +1,15 @@
-# huerto_app
+# Huerto_app
 
-A new Flutter project.
+Aplicacion para Gestion de Huerto Urbanos.
 
 ## Getting Started
+Este proyecto es un punto de partida para una aplicación Flutter.
 
-This project is a starting point for a Flutter application.
+Algunos recursos para comenzar si este es su primer proyecto Flutter:
 
-A few resources to get you started if this is your first Flutter project:
+- [Laboratorio: Escribe tu primera aplicación Flutter] (https://flutter.dev/docs/get-started/codelab)
+- [Libro de cocina: muestras útiles de Flutter] (https://flutter.dev/docs/cookbook)
 
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
-
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+Para obtener ayuda para comenzar a usar Flutter, vea nuestro
+[documentación en línea] (https://flutter.dev/docs), que ofrece tutoriales,
+ejemplos, orientación sobre desarrollo móvil y una referencia API completa.
