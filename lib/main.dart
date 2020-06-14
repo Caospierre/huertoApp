@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
+//import 'providers/client_provider.dart';
+import 'package:huerto_app/src/login/started.dart';
+import 'package:huerto_app/src/app_module.dart';
 
-import 'views/started.dart';
+void main() => runApp(Started());
 
-void main() {
-
-  runApp(new started());
-}
 

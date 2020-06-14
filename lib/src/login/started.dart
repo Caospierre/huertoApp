@@ -1,23 +1,24 @@
 import 'package:flutter/material.dart';
+import 'package:huerto_app/src/app_module.dart';
 
 
-class started extends StatelessWidget{
+class Started extends StatelessWidget{
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: start(),
+      home: Start(),
     );
   }
 
 }
 
-class start extends StatefulWidget{
+class Start extends StatefulWidget{
   @override
-  _start createState() => new _start();
+  _Start createState() => new _Start();
 }
 
-class _start extends State<start>{
+class _Start extends State<Start>{
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -35,7 +36,10 @@ class _start extends State<start>{
             Image.asset("assets/images/Tree.png"),
             Text("Mi Cosecha", style: TextStyle(color: Colors.green,fontSize: 30),),
             new IconButton(icon: new Icon(Icons.label_important), onPressed: (){
-
+               Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => AppModule()),
+                    );
             }),
           ],),
       ),
