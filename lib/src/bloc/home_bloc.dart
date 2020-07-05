@@ -4,9 +4,8 @@ import 'package:bloc_pattern/bloc_pattern.dart';
 import 'package:huerto_app/src/models/publication_model.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:rxdart/rxdart.dart';
-
-import '../app_bloc.dart';
-import '../app_repository.dart';
+import 'package:huerto_app/src/bloc/index/app_bloc.dart';
+import 'package:huerto_app/src/repository/app_repository.dart';
 
 class HomeBloc extends BlocBase {
   final AppRepository _repository;

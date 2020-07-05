@@ -1,10 +1,10 @@
-import 'package:huerto_app/src/app_module.dart';
-import 'package:huerto_app/src/login/login_bloc.dart';
+import 'package:huerto_app/src/module/index/app_module.dart';
+import 'package:huerto_app/src/bloc/login_bloc.dart';
 import 'package:bloc_pattern/bloc_pattern.dart';
 import 'package:flutter/material.dart';
-import 'package:huerto_app/src/login/login_page.dart';
+import 'package:huerto_app/src/pages/login/SignIn.dart';
 
-import '../app_repository.dart';
+import 'package:huerto_app/src/repository/app_repository.dart';
 
 class LoginModule extends ModuleWidget {
   @override
@@ -16,7 +16,7 @@ class LoginModule extends ModuleWidget {
   List<Dependency> get dependencies => [];
 
   @override
-  Widget get view => LoginPage();
+  Widget get view => SignIn();
 
   static Inject get to => Inject<LoginModule>.of();
 }

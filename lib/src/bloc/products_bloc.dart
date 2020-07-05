@@ -1,21 +1,21 @@
 import 'package:bloc_pattern/bloc_pattern.dart';
-import 'package:huerto_app/src/app_bloc.dart';
-import 'package:huerto_app/src/app_module.dart';
+import 'package:huerto_app/src/bloc/index/app_bloc.dart';
+import 'package:huerto_app/src/module/index/app_module.dart';
 import 'package:flutter/material.dart';
 
-import '../app_repository.dart';
+import 'package:huerto_app/src/repository/app_repository.dart';
 
-class LoginBloc extends BlocBase {
+class ProductsBloc extends BlocBase {
   final AppRepository repository;
   final appBloc = AppModule.to.bloc<AppBloc>();
 
   var controllerEmail = TextEditingController();
-  
+
   var controllerPassword = TextEditingController();
 
-  LoginBloc(this.repository);
+  ProductsBloc(this.repository);
 
-  Future<bool> login() async {
+  Future<bool> addproduct() async {
     try {
       print(controllerEmail.text);
       print(controllerPassword.text);
@@ -38,7 +38,6 @@ class LoginBloc extends BlocBase {
       return false;
     }
   }
-
 
   //dispose will be called automatically by closing its streams
   @override

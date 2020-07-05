@@ -1,7 +1,7 @@
-import 'package:huerto_app/src/login/login_module.dart';
 import 'package:flutter/material.dart';
-
-import 'login_bloc.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:huerto_app/src/module/login_module.dart';
+import 'package:huerto_app/src/bloc/login_bloc.dart';
 
 class LoginPage extends StatefulWidget {
   @override
@@ -14,9 +14,8 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-
       body: Container(
-        decoration:  BoxDecoration(
+        decoration: BoxDecoration(
           image: DecorationImage(
             image: AssetImage("assets/images/Started.png"),
             fit: BoxFit.cover,
@@ -45,11 +44,19 @@ class _LoginPageState extends State<LoginPage> {
                 }
               },
             ),
-            
             RaisedButton(
               child: Text("Acceder"),
-              onPressed: (){
-                bloc.login();
+              onPressed: () {
+                //
+                FirebaseAuth.instance
+                    .signInWithEmailAndPassword(
+                        email: bloc.controllerEmail.text,
+                        password: bloc.controllerPassword.text)
+                    .then((AuthResult user) {
+                  bloc.login();
+                }).catchError((e) {
+                  print(e);
+                });
               },
             ),
           ],

@@ -1,7 +1,6 @@
-import 'package:huerto_app/src/products/products_bloc.dart';
+import 'package:huerto_app/src/bloc/products_bloc.dart';
 import 'package:flutter/material.dart';
-
-import 'package:huerto_app/src/products/products_module.dart';
+import 'package:huerto_app/src/module/products_module.dart';
 
 class ProductsPage extends StatefulWidget {
   @override
@@ -14,9 +13,8 @@ class _ProductsPageState extends State<ProductsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-
       body: Container(
-        decoration:  BoxDecoration(
+        decoration: BoxDecoration(
           image: DecorationImage(
             image: AssetImage("assets/images/Started.png"),
             fit: BoxFit.cover,
@@ -45,10 +43,9 @@ class _ProductsPageState extends State<ProductsPage> {
                 }
               },
             ),
-            
             RaisedButton(
               child: Text("Acceder"),
-              onPressed: (){
+              onPressed: () {
                 bloc.addproduct();
               },
             ),
