@@ -1,24 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:huerto_app/src/app_module.dart';
 
-
-class Started extends StatelessWidget{
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      home: Start(),
-    );
-  }
-
-}
-
-class Start extends StatefulWidget{
-  @override
-  _Start createState() => new _Start();
-}
-
-class _Start extends State<Start>{
+class StartPage extends StatelessWidget{
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -29,20 +12,26 @@ class _Start extends State<Start>{
             fit: BoxFit.cover,
           ),
         ),
-        padding: EdgeInsets.all(70),
+        padding: EdgeInsets.all(100),
         child: Column(
           //mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             Image.asset("assets/images/Tree.png"),
             Text("Mi Cosecha", style: TextStyle(color: Colors.green,fontSize: 30),),
-            new IconButton(icon: new Icon(Icons.label_important), onPressed: (){
-               Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => AppModule()),
-                    );
-            }),
           ],),
+      ),
+      floatingActionButton: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          FloatingActionButton(child: Icon(Icons.arrow_forward, color: Colors.black,), backgroundColor: Colors.white, onPressed:(){
+             Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => AppModule()),
+            );
+          },),
+        ],
       ),
     );
   }
 }
+

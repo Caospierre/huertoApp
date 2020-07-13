@@ -38,7 +38,7 @@ class CultivationRepository extends Disposable {
     
 
     var data = await connection.mutation(query, variables: {});
-    var id = data["data"]["insert_cultivation"]["returning"][0]["id"];
+    var id = data["data"]["delete_cultivation"]["returning"][0]["id"];
     return CultivationModel(id: id);
   }
 
@@ -60,18 +60,16 @@ class CultivationRepository extends Disposable {
     return CultivationModel(id: id, name: name, description: description);
   }
 
-  Stream<List<CultivationModel>> getCultivo() {
+  Stream<List<CultivationModel>> getCultivation() {
     var query = """
       subscription {
-        producto(order_by: {id: desc}) {
-          nombre
-          imagen
-    			periodo_siembra
-    			plazo_cosecha
-          descripcion
-          cultivo {
-            nombre
+        cultivation(order_by: {id: asc}) {
+          name
+          description
+          date_creation
+          user {
             id
+            name
           }
         }
       }

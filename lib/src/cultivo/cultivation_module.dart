@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:huerto_app/src/cultivo/cultivation_page.dart';
 
 import '../app_bloc.dart';
-import '../service/cultivation_repository.dart';
+import '../repository/cultivation_repository.dart';
 
 class CultivoModule extends ModuleWidget {
   @override

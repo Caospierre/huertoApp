@@ -6,14 +6,14 @@ import 'package:flutter/cupertino.dart';
 import 'package:rxdart/rxdart.dart';
 
 import '../app_bloc.dart';
-import '../service/cultivation_repository.dart';
+import '../repository/cultivation_repository.dart';
 
 class CultivationBloc extends BlocBase {
   final CultivationRepository _repository;
   final AppBloc appBloc;
 
   CultivationBloc(this._repository, this.appBloc) {
-    Observable(_repository.getCultivo()).pipe(cultivoController);
+    Observable(_repository.getCultivation()).pipe(cultivoController);
   }
 
   var controller = TextEditingController();
