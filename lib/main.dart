@@ -1,12 +1,20 @@
-import 'package:huerto_app/src/pages/login/SignIn.dart';
-import 'package:huerto_app/src/pages/login//SignUp.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:huerto_app/src/pages/home_page.dart';
-import 'package:huerto_app/src/module/home_module.dart';
-import 'package:huerto_app/src/pages/started.dart';
+import 'package:huerto_app/routes/router.dart' as router;
+import 'package:huerto_app/src/services/init_services.dart';
+import 'package:get_it/get_it.dart';
+//import 'package:huerto_app/src/module/home_module.dart';
+//import 'package:huerto_app/src/pages/started.dart';
 
-void main() => runApp(MyApp());
+void main() async {
+  final services = await InitServices.initialize();
+  _setupLocator(services);
+  runApp(ServicesProvider(services: services, child: MyApp()));
+}
+
+void _setupLocator(InitServices poolServices) {
+  GetIt.instance.registerSingleton(poolServices);
+}
 
 class MyApp extends StatelessWidget {
   @override
@@ -19,12 +27,8 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Mi Cosecha',
       theme: ThemeData(),
-      home: HomePage(),
-      routes: {
-        '/home': (BuildContext context) => HomePage(),
-        '/signin': (BuildContext context) => SignIn(),
-        '/signup': (BuildContext context) => SignUp(),
-      },
+      initialRoute: router.SigninViewRoute,
+      onGenerateRoute: router.generateRoute,
     );
   }
 }

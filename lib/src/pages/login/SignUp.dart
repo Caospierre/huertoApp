@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:huerto_app/src/module/login_module.dart';
-import 'package:huerto_app/src/bloc/login_bloc.dart';
+
+import 'package:get_it/get_it.dart';
+import 'package:huerto_app/src/services/init_services.dart';
+import 'package:huerto_app/src/services/navigator_service.dart';
 
 class SignUp extends StatefulWidget {
   @override
@@ -9,48 +11,29 @@ class SignUp extends StatefulWidget {
 }
 
 class _SignUpState extends State<SignUp> {
-  final FirebaseAuth _auth = FirebaseAuth.instance;
-  final GlobalKey<FormState> _formkey = GlobalKey<FormState>();
-  // final bloc = LoginModule.to.bloc<LoginBloc>();
   String _name, _email, _password;
-
-  checkAuthincation() async {
-    _auth.onAuthStateChanged.listen((user) {
-      if (user != null) {
-        Navigator.pushReplacementNamed(context, '/home');
-      }
-    });
-  }
-
   navigateToSignInScreen() {
-    Navigator.pushReplacementNamed(context, '/signin');
+    GetIt.I<InitServices>()
+        .navigatorService
+        .navigateToUrl(context, NavigatorToPath.SignIn);
   }
 
   @override
   void initState() {
-    // TODO: implement initState
+    GlobalKey<FormState> _formkey = GlobalKey<FormState>();
+    GetIt.I<InitServices>().authService.formkey = _formkey;
+    GetIt.I<InitServices>()
+        .authService
+        .checkAuthentication(context, NavigatorToPath.Home, false);
     super.initState();
-    this.checkAuthincation();
   }
 
   signup() async {
-    if (_formkey.currentState.validate()) {
-      _formkey.currentState.save();
-
-      try {
-        AuthResult user = await _auth.createUserWithEmailAndPassword(
-          email: _email,
-          password: _password,
-        );
-        if (user != null) {
-          UserUpdateInfo userUpdateInfo = UserUpdateInfo();
-          userUpdateInfo.displayName = _name;
-          user.user.updateProfile(userUpdateInfo);
-        }
-      } catch (e) {
-        showError(e);
-      }
-    }
+    GlobalKey<FormState> _formkey = GlobalKey<FormState>();
+    GetIt.I<InitServices>().authService.formkey = _formkey;
+    GetIt.I<InitServices>()
+        .authService
+        .signup(_email, _password, _name, context);
   }
 
   showError(String errormessage) {
@@ -109,7 +92,7 @@ class _SignUpState extends State<SignUp> {
                     Container(
                       padding: EdgeInsets.all(16),
                       child: Form(
-                        key: _formkey,
+                        key: GetIt.I<InitServices>().authService.formkey,
                         child: Column(
                           children: <Widget>[
 //                        Name box

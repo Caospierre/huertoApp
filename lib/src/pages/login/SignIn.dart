@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
-
 import 'package:firebase_auth/firebase_auth.dart';
-
 import 'package:flutter_auth_buttons/flutter_auth_buttons.dart';
-import 'package:huerto_app/src/module/login_module.dart';
-import 'package:huerto_app/src/bloc/login_bloc.dart';
-import 'package:google_sign_in/google_sign_in.dart';
+import 'package:get_it/get_it.dart';
+import 'package:huerto_app/src/services/init_services.dart';
+import 'package:huerto_app/src/services/navigator_service.dart';
 
 class SignIn extends StatefulWidget {
   @override
@@ -13,92 +11,27 @@ class SignIn extends StatefulWidget {
 }
 
 class _SignInState extends State<SignIn> {
-  final FirebaseAuth _auth = FirebaseAuth.instance;
-  final GoogleSignIn _googleSignIn = GoogleSignIn();
-  //final bloc = LoginModule.to.bloc<LoginBloc>();
-  final GlobalKey<FormState> _formkey = GlobalKey<FormState>();
-
-  String _email, _passwaord;
-
-  checkAuthentication() async {
-    _auth.onAuthStateChanged.listen((user) async {
-      if (user != null) {
-        Navigator.pushReplacementNamed(context, '/home');
-      }
-    });
+  String _name, _email, _password;
+  navigateToSignUpScreen() {
+    GetIt.I<InitServices>()
+        .navigatorService
+        .navigateToUrl(context, NavigatorToPath.SignUP);
   }
 
-  navigateToSignUpScreen() {
-    Navigator.pushReplacementNamed(context, '/signup');
+  void signin() {
+    GetIt.I<InitServices>()
+        .authService
+        .signin(_email, _password, _name, context);
   }
 
   @override
   void initState() {
+    GlobalKey<FormState> _formkey = GlobalKey<FormState>();
+    GetIt.I<InitServices>().authService.formkey = _formkey;
+    GetIt.I<InitServices>()
+        .authService
+        .checkAuthentication(context, NavigatorToPath.Home, true);
     super.initState();
-    this.checkAuthentication();
-  }
-
-  void signin() async {
-    if (_formkey.currentState.validate()) {
-      _formkey.currentState.save();
-
-      try {
-        AuthResult user = await _auth.signInWithEmailAndPassword(
-          email: _email,
-          password: _passwaord,
-        );
-      } catch (e) {
-        showError(e);
-      }
-    }
-  }
-
-  Future<FirebaseUser> _signInWithGoogle() async {
-    try {
-      final GoogleSignInAccount googleSignInAccount =
-          await _googleSignIn.signIn();
-      final GoogleSignInAuthentication googleSignInAuthentication =
-          await googleSignInAccount.authentication;
-
-      final AuthCredential authCredential = GoogleAuthProvider.getCredential(
-          idToken: googleSignInAuthentication.idToken,
-          accessToken: googleSignInAuthentication.accessToken);
-
-      final AuthResult authResult =
-          await _auth.signInWithCredential(authCredential);
-      final FirebaseUser user = authResult.user;
-
-      assert(user.email != null);
-      assert(user.displayName != null);
-
-      assert(!user.isAnonymous);
-      assert(await user.getIdToken() != null);
-
-      final FirebaseUser currentuser = await _auth.currentUser();
-      assert(user.uid == currentuser.uid);
-      print(user.email);
-
-      return user;
-    } catch (e) {}
-  }
-
-  showError(String errormessage) {
-    showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: Text('Error'),
-            content: Text(errormessage),
-            actions: <Widget>[
-              FlatButton(
-                child: Text('Ok'),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-              )
-            ],
-          );
-        });
   }
 
   @override
@@ -132,7 +65,7 @@ class _SignInState extends State<SignIn> {
                     Container(
                       padding: EdgeInsets.all(16),
                       child: Form(
-                        key: _formkey,
+                        key: GetIt.I<InitServices>().authService.formkey,
                         child: Column(
                           children: <Widget>[
                             // E-mail TextField
@@ -167,7 +100,7 @@ class _SignInState extends State<SignIn> {
                                             BorderRadius.circular(30)),
                                     hintStyle: TextStyle(color: Colors.white),
                                     hintText: 'E-mail'),
-                                onSaved: (input) => _email = input,
+                                onSaved: (input) => this._email = input,
                               ),
                             ),
                             Padding(
@@ -206,7 +139,7 @@ class _SignInState extends State<SignIn> {
                                             BorderRadius.circular(30)),
                                     hintStyle: TextStyle(color: Colors.white),
                                     hintText: 'Contraseña'),
-                                onSaved: (input) => _passwaord = input,
+                                onSaved: (input) => this._password = input,
                               ),
                             ),
                             Padding(
@@ -253,7 +186,9 @@ class _SignInState extends State<SignIn> {
                             ),
                             GoogleSignInButton(
                               onPressed: () {
-                                _signInWithGoogle()
+                                GetIt.I<InitServices>()
+                                    .authService
+                                    .signInWithGoogle()
                                     .then((FirebaseUser user) => print(user))
                                     .catchError((e) => print(e));
                               },
