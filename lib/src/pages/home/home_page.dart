@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 //import 'package:hasura_connect/hasura_connect.dart';
-//import 'package:huerto_app/src/bloc/home_bloc.dart';
-//import 'package:huerto_app/src/module/home_module.dart';
+import 'package:huerto_app/src/bloc/home_bloc.dart';
+import 'package:huerto_app/src/module/home_module.dart';
 import 'package:huerto_app/utils/colors.dart';
 import 'package:huerto_app/src/pages/home/tabs/account.dart';
 import 'package:huerto_app/src/pages/home/tabs/search.dart';
 import 'package:huerto_app/src/pages/home/tabs/saved.dart';
 import 'package:get_it/get_it.dart';
 import 'package:huerto_app/src/services/init_services.dart';
-import 'package:huerto_app/src/services/navigator_service.dart';
+import 'package:huerto_app/src/routes/router.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -25,7 +25,7 @@ class _HomePageState extends State<HomePage> {
     super.initState();
     GetIt.I<InitServices>()
         .authService
-        .checkAuthentication(context, NavigatorToPath.SignIn, false);
+        .checkAuthenticationHome(context, NavigatorToPath.SignIn);
     GetIt.I<InitServices>().authService.getUser();
   }
 

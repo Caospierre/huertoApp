@@ -5,7 +5,7 @@ import 'package:huerto_app/utils/utils.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get_it/get_it.dart';
 import 'package:huerto_app/src/services/init_services.dart';
-import 'package:huerto_app/src/services/navigator_service.dart';
+import 'package:huerto_app/src/routes/router.dart';
 import 'package:huerto_app/src/models/review.dart';
 
 class AccountPage extends StatefulWidget {
@@ -35,8 +35,8 @@ class _AccountPageState extends State<AccountPage> {
     super.initState();
     GetIt.I<InitServices>()
         .authService
-        .checkAuthentication(context, NavigatorToPath.SignIn, false);
-    getUser();
+        .checkAuthenticationHome(context, NavigatorToPath.SignIn);
+    GetIt.I<InitServices>().authService.getUser();
   }
 
   @override

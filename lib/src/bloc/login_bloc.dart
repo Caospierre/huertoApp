@@ -27,6 +27,19 @@ class LoginBloc extends BlocBase {
     }
   }
 
+  Future<bool> createUser(String email) async {
+    try {
+      print(controllerEmail.text);
+      print(controllerPassword.text);
+      var user = await repository.createUser(email);
+      appBloc.userController.add(user);
+      return true;
+    } catch (ex) {
+      print(ex);
+      return false;
+    }
+  }
+
   Future<bool> startApp() async {
     try {
       var user = await repository.getUser(controllerEmail.text);

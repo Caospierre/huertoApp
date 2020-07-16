@@ -3,7 +3,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_auth_buttons/flutter_auth_buttons.dart';
 import 'package:get_it/get_it.dart';
 import 'package:huerto_app/src/services/init_services.dart';
-import 'package:huerto_app/src/services/navigator_service.dart';
+import 'package:huerto_app/src/module/login_module.dart';
+import 'package:huerto_app/src/bloc/login_bloc.dart';
+import 'package:huerto_app/src/routes/router.dart';
 
 class SignIn extends StatefulWidget {
   @override
@@ -11,6 +13,7 @@ class SignIn extends StatefulWidget {
 }
 
 class _SignInState extends State<SignIn> {
+  final bloc = LoginModule.to.bloc<LoginBloc>();
   String _name, _email, _password;
   navigateToSignUpScreen() {
     GetIt.I<InitServices>()
@@ -22,15 +25,18 @@ class _SignInState extends State<SignIn> {
     GetIt.I<InitServices>()
         .authService
         .signin(_email, _password, _name, context);
+    bloc.login();
   }
 
   @override
   void initState() {
     GlobalKey<FormState> _formkey = GlobalKey<FormState>();
+    print('Entrosss');
     GetIt.I<InitServices>().authService.formkey = _formkey;
     GetIt.I<InitServices>()
         .authService
-        .checkAuthentication(context, NavigatorToPath.Home, true);
+        .checkAuthentication(context, NavigatorToPath.Home);
+
     super.initState();
   }
 
@@ -72,6 +78,7 @@ class _SignInState extends State<SignIn> {
                             Container(
                               child: TextFormField(
                                 keyboardType: TextInputType.emailAddress,
+                                controller: bloc.controllerEmail,
                                 cursorColor: Colors.white,
                                 style: TextStyle(color: Colors.white),
                                 validator: (input) {
@@ -110,6 +117,7 @@ class _SignInState extends State<SignIn> {
                             Container(
                               child: TextFormField(
                                 keyboardType: TextInputType.emailAddress,
+                                controller: bloc.controllerPassword,
                                 cursorColor: Colors.white,
                                 style: TextStyle(color: Colors.white),
                                 obscureText: true,

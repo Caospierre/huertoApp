@@ -1,39 +1,54 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
-import 'package:get_it/get_it.dart';
-import 'package:huerto_app/src/services/init_services.dart';
-import 'package:huerto_app/src/services/navigator_service.dart';
-
 class SignUp extends StatefulWidget {
   @override
   _SignUpState createState() => _SignUpState();
 }
 
 class _SignUpState extends State<SignUp> {
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  final GlobalKey<FormState> _formkey = GlobalKey<FormState>();
+
   String _name, _email, _password;
+
+  checkAuthincation() async {
+    _auth.onAuthStateChanged.listen((user) {
+      if (user != null) {
+        Navigator.pushReplacementNamed(context, '/home');
+      }
+    });
+  }
+
   navigateToSignInScreen() {
-    GetIt.I<InitServices>()
-        .navigatorService
-        .navigateToUrl(context, NavigatorToPath.SignIn);
+    Navigator.pushReplacementNamed(context, '/signin');
   }
 
   @override
   void initState() {
-    GlobalKey<FormState> _formkey = GlobalKey<FormState>();
-    GetIt.I<InitServices>().authService.formkey = _formkey;
-    GetIt.I<InitServices>()
-        .authService
-        .checkAuthentication(context, NavigatorToPath.Home, false);
+    // TODO: implement initState
     super.initState();
+    this.checkAuthincation();
   }
 
   signup() async {
-    GlobalKey<FormState> _formkey = GlobalKey<FormState>();
-    GetIt.I<InitServices>().authService.formkey = _formkey;
-    GetIt.I<InitServices>()
-        .authService
-        .signup(_email, _password, _name, context);
+    if (_formkey.currentState.validate()) {
+      _formkey.currentState.save();
+
+      try {
+        AuthResult user = await _auth.createUserWithEmailAndPassword(
+          email: _email,
+          password: _password,
+        );
+        if (user != null) {
+          UserUpdateInfo userUpdateInfo = UserUpdateInfo();
+          userUpdateInfo.displayName = _name;
+          user.user.updateProfile(userUpdateInfo);
+        }
+      } catch (e) {
+        showError(e);
+      }
+    }
   }
 
   showError(String errormessage) {
@@ -92,7 +107,7 @@ class _SignUpState extends State<SignUp> {
                     Container(
                       padding: EdgeInsets.all(16),
                       child: Form(
-                        key: GetIt.I<InitServices>().authService.formkey,
+                        key: _formkey,
                         child: Column(
                           children: <Widget>[
 //                        Name box
@@ -106,7 +121,7 @@ class _SignUpState extends State<SignUp> {
                                 style: TextStyle(color: Colors.white),
                                 validator: (input) {
                                   if (input.isEmpty) {
-                                    return 'Nombre';
+                                    return 'Provide an name';
                                   }
                                 },
                                 decoration: InputDecoration(
@@ -129,7 +144,7 @@ class _SignUpState extends State<SignUp> {
                                         borderRadius:
                                             BorderRadius.circular(30)),
                                     hintStyle: TextStyle(color: Colors.white),
-                                    hintText: 'Nombre'),
+                                    hintText: 'Name'),
                                 onSaved: (input) => _name = input,
                               ),
                             ),
@@ -144,7 +159,7 @@ class _SignUpState extends State<SignUp> {
                                 style: TextStyle(color: Colors.white),
                                 validator: (input) {
                                   if (input.isEmpty) {
-                                    return ' email';
+                                    return 'Provide an email';
                                   }
                                 },
                                 decoration: InputDecoration(
@@ -182,7 +197,7 @@ class _SignUpState extends State<SignUp> {
                                 obscureText: true,
                                 validator: (input) {
                                   if (input.length < 6) {
-                                    return 'Password tiene que ser de 6 caracteres';
+                                    return 'Password must be atleast 6 char long';
                                   }
                                 },
                                 decoration: InputDecoration(
@@ -233,7 +248,7 @@ class _SignUpState extends State<SignUp> {
                             GestureDetector(
                               onTap: navigateToSignInScreen,
                               child: Text(
-                                'Ya tienes una cuenta? click here',
+                                'Already have an account? click here',
                                 textAlign: TextAlign.center,
                                 style: TextStyle(
                                     fontSize: 16.0, color: Colors.blue),

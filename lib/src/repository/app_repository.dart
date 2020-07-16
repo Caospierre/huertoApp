@@ -1,5 +1,3 @@
-
-
 import 'package:bloc_pattern/bloc_pattern.dart';
 import 'package:huerto_app/src/models/publication_model.dart';
 import 'package:huerto_app/src/models/user_model.dart';
@@ -32,10 +30,10 @@ class AppRepository extends Disposable {
     }
   }
 
-  Future<UserModel> createUser(String name) async {
+  Future<UserModel> createUser(String email) async {
     var query = """
-      mutation createUser(\$name:String!) {
-        insert_users(objects: {name: \$name}) {
+      mutation createUser(\$email:String!) {
+        insert_users(objects: {email: \$email}) {
           returning {
             id
           }
@@ -43,9 +41,9 @@ class AppRepository extends Disposable {
       }
     """;
 
-    var data = await connection.mutation(query, variables: {"name": name});
+    var data = await connection.mutation(query, variables: {"email": email});
     var id = data["data"]["insert_users"]["returning"][0]["id"];
-    return UserModel(id: id, name: name);
+    return UserModel(id: id, email: email);
   }
 
   Stream<List<publicationModel>> getPublications() {
@@ -64,11 +62,12 @@ class AppRepository extends Disposable {
 
     Snapshot snapshot = connection.subscription(query);
     return snapshot.stream.map(
-      (jsonList) => publicationModel.fromJsonList(jsonList["data"]["publications"]),
+      (jsonList) =>
+          publicationModel.fromJsonList(jsonList["data"]["publications"]),
     );
   }
 
-  Future<dynamic> sendPublication(String publication, int userId){
+  Future<dynamic> sendPublication(String publication, int userId) {
     var query = """
       sendPublication(\$publication:String!,\$userId:Int!) {
         insert_publications(objects: {id_usuario: \$userId, content: \$publication}) {

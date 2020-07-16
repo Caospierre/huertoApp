@@ -1,11 +1,5 @@
 import 'package:flutter/material.dart';
-
-class NavigatorToPath {
-  static const String Home = '/home';
-  static const String SignUP = '/signup';
-  static const String SignIn = '/signin';
-  static const String Other = 'audio/Pase4.mp3';
-}
+import 'package:huerto_app/src/routes/router.dart';
 
 class NavigatorService {
   NavigatorService() {}

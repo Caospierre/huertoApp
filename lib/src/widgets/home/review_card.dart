@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:huerto_app/routes/router.dart';
+import 'package:huerto_app/src/routes/router.dart';
 import 'package:huerto_app/src/widgets/home/rating_bar.dart';
 import 'package:huerto_app/src/models/review.dart';
 
@@ -20,7 +20,7 @@ class ReviewCard extends StatelessWidget {
 
     final img = GestureDetector(
       onTap: () {
-        Navigator.pushNamed(context, publicationDetailsViewRoute,
+        Navigator.pushNamed(context, NavigatorToPath.Publication,
             arguments: review.publicationId);
       },
       child: Container(
@@ -41,7 +41,7 @@ class ReviewCard extends StatelessWidget {
 
     final _name = InkWell(
       onTap: () {
-        Navigator.pushNamed(context, publicationDetailsViewRoute,
+        Navigator.pushNamed(context, NavigatorToPath.Publication,
             arguments: review.publicationId);
       },
       child: Text(

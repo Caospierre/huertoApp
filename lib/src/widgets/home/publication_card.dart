@@ -1,7 +1,7 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
-import 'package:huerto_app/routes/router.dart';
+import 'package:huerto_app/src/routes/router.dart';
 import 'package:huerto_app/src/widgets/home/price_rating_bar.dart';
 import 'package:huerto_app/src/models/publication_temporal_data.dart';
 import 'rating_bar.dart';
@@ -91,7 +91,7 @@ class PublicationCard extends StatelessWidget {
       onTap: () {
         Navigator.pushNamed(
           context,
-          publicationDetailsViewRoute,
+          NavigatorToPath.Publication,
           arguments: publication.id,
         );
       },

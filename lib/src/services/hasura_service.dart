@@ -4,7 +4,7 @@ import 'package:hasura_connect/hasura_connect.dart';
 import 'package:huerto_app/utils/api_info.dart';
 
 class HasuraService {
-  HasuraService() {}
+  HasuraService();
 
   List<Dependency> get dependencies => [
         Dependency((i) => AppRepository(i.get<HasuraConnect>())),

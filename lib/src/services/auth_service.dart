@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:get_it/get_it.dart';
-
+import 'package:huerto_app/src/module/login_module.dart';
+import 'package:huerto_app/src/bloc/login_bloc.dart';
 import 'init_services.dart';
-import 'package:huerto_app/src/services/navigator_service.dart';
 
 class AuthService {
   FirebaseAuth _auth = FirebaseAuth.instance;
@@ -79,18 +79,28 @@ class AuthService {
 
       final FirebaseUser currentuser = await _auth.currentUser();
       assert(user.uid == currentuser.uid);
+      final bloc = LoginModule.to.bloc<LoginBloc>();
       print(user.email);
-
+      bloc.createUser(user.email);
       return user;
     } catch (e) {}
     return null;
   }
 
-  checkAuthentication(
-      BuildContext context, String urlPath, bool pageStatus) async {
+  checkAuthentication(BuildContext context, String urlPath) async {
+    print('Entro');
     _auth.onAuthStateChanged.listen((user) async {
-      bool statusloged = pageStatus ? user != null : user == null;
-      if (statusloged) {
+      if (user != null) {
+        GetIt.I<InitServices>()
+            .navigatorService
+            .navigateToUrl(context, urlPath);
+      }
+    });
+  }
+
+  checkAuthenticationHome(BuildContext context, String urlPath) async {
+    _auth.onAuthStateChanged.listen((user) async {
+      if (user == null) {
         GetIt.I<InitServices>()
             .navigatorService
             .navigateToUrl(context, urlPath);

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:huerto_app/routes/router.dart' as router;
+import 'package:huerto_app/src/routes/router.dart' as router;
 import 'package:huerto_app/src/services/init_services.dart';
 import 'package:get_it/get_it.dart';
 //import 'package:huerto_app/src/module/home_module.dart';
@@ -27,7 +27,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Mi Cosecha',
       theme: ThemeData(),
-      initialRoute: router.SigninViewRoute,
+      initialRoute: router.NavigatorToPath.App,
       onGenerateRoute: router.generateRoute,
     );
   }
