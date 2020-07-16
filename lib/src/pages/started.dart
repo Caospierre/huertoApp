@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:huerto_app/src/module/index/app_module.dart';
 import 'package:huerto_app/src/pages/login/SignIn.dart';
 
 class StartPage extends StatelessWidget {

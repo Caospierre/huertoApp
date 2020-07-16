@@ -2,10 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:get_it/get_it.dart';
-import 'package:huerto_app/src/module/login_module.dart';
 import 'package:huerto_app/src/bloc/login_bloc.dart';
-import 'package:huerto_app/src/repository/app_repository.dart';
-import 'hasura_service.dart';
 import 'init_services.dart';
 
 class AuthService {

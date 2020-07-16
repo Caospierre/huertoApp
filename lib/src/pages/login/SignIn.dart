@@ -3,7 +3,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_auth_buttons/flutter_auth_buttons.dart';
 import 'package:get_it/get_it.dart';
 import 'package:huerto_app/src/services/init_services.dart';
-import 'package:huerto_app/src/module/login_module.dart';
 import 'package:huerto_app/src/bloc/login_bloc.dart';
 import 'package:huerto_app/src/routes/router.dart';
 

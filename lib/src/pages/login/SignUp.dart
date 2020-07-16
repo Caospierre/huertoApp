@@ -26,7 +26,6 @@ class _SignUpState extends State<SignUp> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     this.checkAuthincation();
   }

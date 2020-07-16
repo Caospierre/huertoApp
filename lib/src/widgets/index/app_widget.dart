@@ -1,11 +1,6 @@
 import 'package:huerto_app/src/bloc/index/app_bloc.dart';
 import 'package:huerto_app/src/module/index/app_module.dart';
-import 'package:huerto_app/src/module/home_module.dart';
 import 'package:flutter/material.dart';
-
-import 'package:huerto_app/src/module/login_module.dart';
-import 'package:huerto_app/src/module/index/app_module.dart';
-import 'package:huerto_app/src/bloc/index/app_bloc.dart';
 import 'package:huerto_app/src/pages/home/home_page.dart';
 import 'package:huerto_app/src/pages/started.dart';
 

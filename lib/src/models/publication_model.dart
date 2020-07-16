@@ -6,22 +6,22 @@ import 'dart:convert';
 
 import 'package:huerto_app/src/models/user_model.dart';
 
-publicationModel publicationModelFromJson(String str) => publicationModel.fromJson(json.decode(str));
+PublicationModel publicationModelFromJson(String str) => PublicationModel.fromJson(json.decode(str));
 
-String publicationModelToJson(publicationModel data) => json.encode(data.toJson());
+String publicationModelToJson(PublicationModel data) => json.encode(data.toJson());
 
-class publicationModel {
+class PublicationModel {
     String content;
     int id;
     UserModel user;
 
-    publicationModel({
+    PublicationModel({
         this.content,
         this.id,
         this.user,
     });
 
-    factory publicationModel.fromJson(Map<String, dynamic> json) => new publicationModel(
+    factory PublicationModel.fromJson(Map<String, dynamic> json) => new PublicationModel(
         content: json["content"],
         id: json["id"],
         user: UserModel.fromJson(json["user"]),
@@ -34,10 +34,10 @@ class publicationModel {
     };
 
 
-    static List<publicationModel> fromJsonList(List list){
+    static List<PublicationModel> fromJsonList(List list){
       if(list == null) return null;
       return list
-        .map((item) => publicationModel.fromJson(item))
+        .map((item) => PublicationModel.fromJson(item))
         .toList();
     }
 }

@@ -46,7 +46,7 @@ class AppRepository extends Disposable {
     return UserModel(id: id, email: email);
   }
 
-  Stream<List<publicationModel>> getPublications() {
+  Stream<List<PublicationModel>> getPublications() {
     var query = """
       subscription {
         publications(order_by: {id: desc}) {
@@ -63,7 +63,7 @@ class AppRepository extends Disposable {
     Snapshot snapshot = connection.subscription(query);
     return snapshot.stream.map(
       (jsonList) =>
-          publicationModel.fromJsonList(jsonList["data"]["publications"]),
+          PublicationModel.fromJsonList(jsonList["data"]["publications"]),
     );
   }
 

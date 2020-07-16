@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:huerto_app/src/module/home_module.dart';
-import 'package:huerto_app/src/module/index/app_module.dart';
-import 'package:huerto_app/src/module/login_module.dart';
+
 import 'package:huerto_app/src/pages/publication_details.dart';
 import 'package:huerto_app/src/pages/home/home_page.dart';
 import 'package:huerto_app/src/pages/login/SignIn.dart';
@@ -22,7 +20,6 @@ class NavigatorToPath {
 Route<dynamic> generateRoute(RouteSettings settings) {
   switch (settings.name) {
     case NavigatorToPath.Started:
-      print('Entro');
       return MaterialPageRoute(builder: (_) => StartPage());
     case NavigatorToPath.Home:
       return MaterialPageRoute(builder: (_) => HomePage());
