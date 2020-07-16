@@ -13,7 +13,7 @@ class SignIn extends StatefulWidget {
 }
 
 class _SignInState extends State<SignIn> {
-  final bloc = LoginModule.to.bloc<LoginBloc>();
+  final bloc = LoginBloc(GetIt.I<InitServices>().hasuraService.appRepository);
   String _name, _email, _password;
   navigateToSignUpScreen() {
     GetIt.I<InitServices>()
@@ -31,7 +31,7 @@ class _SignInState extends State<SignIn> {
   @override
   void initState() {
     GlobalKey<FormState> _formkey = GlobalKey<FormState>();
-    print('Entrosss');
+
     GetIt.I<InitServices>().authService.formkey = _formkey;
     GetIt.I<InitServices>()
         .authService

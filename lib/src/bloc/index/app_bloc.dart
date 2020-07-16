@@ -10,7 +10,14 @@ class AppBloc extends BlocBase {
   var cultivationController = BehaviorSubject<CultivationModel>();
   var productController = BehaviorSubject<ProductModel>();
   var publicationController = BehaviorSubject<publicationModel>();
-  
+
+  AppBloc() {
+    this.userController = BehaviorSubject<UserModel>();
+    this.cultivationController = BehaviorSubject<CultivationModel>();
+    this.productController = BehaviorSubject<ProductModel>();
+    this.publicationController = BehaviorSubject<publicationModel>();
+  }
+
   //dispose will be called automatically by closing its streams
   @override
   void dispose() {

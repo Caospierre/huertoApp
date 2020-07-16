@@ -6,7 +6,7 @@ import 'navigator_service.dart';
 class InitServices {
   final AuthService authService;
   final NavigatorService navigatorService;
-  final hasuraService;
+  final HasuraService hasuraService;
   InitServices({
     this.authService,
     this.navigatorService,

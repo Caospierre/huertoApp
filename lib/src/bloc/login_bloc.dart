@@ -6,7 +6,7 @@ import 'package:huerto_app/src/repository/app_repository.dart';
 
 class LoginBloc extends BlocBase {
   final AppRepository repository;
-  final appBloc = AppModule.to.bloc<AppBloc>();
+  final appBloc = AppBloc();
 
   var controllerEmail = TextEditingController();
 

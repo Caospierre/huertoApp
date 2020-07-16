@@ -4,6 +4,7 @@ import 'package:huerto_app/src/widgets/home/publication_card_big.dart';
 import 'package:huerto_app/src/models/publication_temporal_data.dart';
 
 class SwippableCards extends StatefulWidget {
+  SwippableCards() {}
   @override
   _SwippableCardsState createState() => _SwippableCardsState();
 }

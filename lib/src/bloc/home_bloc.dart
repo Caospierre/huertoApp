@@ -9,7 +9,7 @@ import 'package:huerto_app/src/repository/app_repository.dart';
 
 class HomeBloc extends BlocBase {
   final AppRepository _repository;
-  final AppBloc appBloc;
+  final appBloc;
 
   HomeBloc(this._repository, this.appBloc) {
     Observable(_repository.getPublications()).pipe(publicationsController);

@@ -6,8 +6,7 @@ import 'package:huerto_app/src/pages/home/home_page.dart';
 import 'package:huerto_app/src/bloc/index/app_bloc.dart';
 import 'package:huerto_app/src/repository/app_repository.dart';
 
-class HomeModule extends ModuleWidget {
-  @override
+class HomeModule {
   List<Bloc> get blocs => [
         Bloc(
           (i) => HomeBloc(
@@ -17,11 +16,7 @@ class HomeModule extends ModuleWidget {
         ),
       ];
 
-  @override
   List<Dependency> get dependencies => [];
-
-  @override
-  Widget get view => HomePage();
 
   static Inject get to => Inject<HomeModule>.of();
 }

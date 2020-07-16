@@ -22,16 +22,17 @@ class NavigatorToPath {
 Route<dynamic> generateRoute(RouteSettings settings) {
   switch (settings.name) {
     case NavigatorToPath.Started:
+      print('Entro');
       return MaterialPageRoute(builder: (_) => StartPage());
     case NavigatorToPath.Home:
-      return MaterialPageRoute(builder: (_) => HomeModule());
+      return MaterialPageRoute(builder: (_) => HomePage());
     case NavigatorToPath.SignUP:
       return MaterialPageRoute(builder: (_) => SignUp());
     case NavigatorToPath.SignIn:
-      return MaterialPageRoute(builder: (_) => LoginModule());
+      return MaterialPageRoute(builder: (_) => SignIn());
 
     case NavigatorToPath.App:
-      return MaterialPageRoute(builder: (_) => AppModule());
+      return MaterialPageRoute(builder: (_) => StartPage());
     case NavigatorToPath.Error:
       return MaterialPageRoute(builder: (_) => ErrorPage());
     case NavigatorToPath.Publication:

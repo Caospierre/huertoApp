@@ -6,6 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:huerto_app/src/module/login_module.dart';
 import 'package:huerto_app/src/module/index/app_module.dart';
 import 'package:huerto_app/src/bloc/index/app_bloc.dart';
+import 'package:huerto_app/src/pages/home/home_page.dart';
+import 'package:huerto_app/src/pages/started.dart';
 
 class AppWidget extends StatelessWidget {
   @override
@@ -18,7 +20,7 @@ class AppWidget extends StatelessWidget {
       home: StreamBuilder(
         stream: bloc.userController,
         builder: (context, snapshot) {
-          return snapshot.hasData ? HomeModule() : LoginModule();
+          return snapshot.hasData ? HomePage() : StartPage();
         },
       ),
     );

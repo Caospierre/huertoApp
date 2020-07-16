@@ -1,22 +1,13 @@
-import 'package:huerto_app/src/module/index/app_module.dart';
+import 'package:get_it/get_it.dart';
 import 'package:huerto_app/src/bloc/login_bloc.dart';
 import 'package:bloc_pattern/bloc_pattern.dart';
-import 'package:flutter/material.dart';
-import 'package:huerto_app/src/pages/login/SignIn.dart';
+import 'package:huerto_app/src/services/init_services.dart';
 
-import 'package:huerto_app/src/repository/app_repository.dart';
-
-class LoginModule extends ModuleWidget {
-  @override
+class LoginModule {
   List<Bloc> get blocs => [
-        Bloc((i) => LoginBloc(AppModule.to.get<AppRepository>())),
+        Bloc((i) =>
+            LoginBloc(GetIt.I<InitServices>().hasuraService.appRepository)),
       ];
-
-  @override
-  List<Dependency> get dependencies => [];
-
-  @override
-  Widget get view => SignIn();
 
   static Inject get to => Inject<LoginModule>.of();
 }

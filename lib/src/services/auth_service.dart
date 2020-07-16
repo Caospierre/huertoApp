@@ -4,6 +4,8 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:get_it/get_it.dart';
 import 'package:huerto_app/src/module/login_module.dart';
 import 'package:huerto_app/src/bloc/login_bloc.dart';
+import 'package:huerto_app/src/repository/app_repository.dart';
+import 'hasura_service.dart';
 import 'init_services.dart';
 
 class AuthService {
@@ -79,7 +81,8 @@ class AuthService {
 
       final FirebaseUser currentuser = await _auth.currentUser();
       assert(user.uid == currentuser.uid);
-      final bloc = LoginModule.to.bloc<LoginBloc>();
+      final bloc =
+          LoginBloc(GetIt.I<InitServices>().hasuraService.appRepository);
       print(user.email);
       bloc.createUser(user.email);
       return user;
@@ -88,7 +91,6 @@ class AuthService {
   }
 
   checkAuthentication(BuildContext context, String urlPath) async {
-    print('Entro');
     _auth.onAuthStateChanged.listen((user) async {
       if (user != null) {
         GetIt.I<InitServices>()
