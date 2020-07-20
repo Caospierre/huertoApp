@@ -2,10 +2,10 @@ import 'package:bloc_pattern/bloc_pattern.dart';
 import 'package:hasura_connect/hasura_connect.dart';
 import 'package:huerto_app/src/models/plague_disease_model.dart';
 
-class CultivationGuideRepository extends Disposable {
+class PlagueDiseaseRepository extends Disposable {
   final HasuraConnect connection;
 
-  CultivationGuideRepository(this.connection);
+  PlagueDiseaseRepository(this.connection);
 
   
   Future<Plague_DiseaseModel> createPlagueDisease(String name,String image ,String damge ,String description) async {

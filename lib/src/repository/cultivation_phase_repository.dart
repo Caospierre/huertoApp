@@ -2,10 +2,10 @@ import 'package:bloc_pattern/bloc_pattern.dart';
 import 'package:hasura_connect/hasura_connect.dart';
 import 'package:huerto_app/src/models/cultivation_phase_model.dart';
 
-class CultivationGuideRepository extends Disposable {
+class CultivationPhaseRepository extends Disposable {
   final HasuraConnect connection;
 
-  CultivationGuideRepository(this.connection);
+  CultivationPhaseRepository(this.connection);
 
   
   Future<Cultivation_PhaseModel> createCultivationPhase(bool state_phase,String name,String image ,String duration, String description,int productId) async {
