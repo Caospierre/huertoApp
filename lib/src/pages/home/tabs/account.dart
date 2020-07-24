@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:huerto_app/src/models/publication_model.dart';
 import 'package:huerto_app/src/widgets/home/review_card.dart';
 
 import 'package:huerto_app/utils/utils.dart';
@@ -9,8 +10,9 @@ import 'package:huerto_app/src/routes/router.dart';
 import 'package:huerto_app/src/models/review.dart';
 
 class AccountPage extends StatefulWidget {
-  AccountPage() {}
+  final Stream<List<PublicationModel>> publicationStream;
 
+  AccountPage(this.publicationStream);
   @override
   _AccountPageState createState() => _AccountPageState();
 }
@@ -39,11 +41,31 @@ class _AccountPageState extends State<AccountPage> {
     GetIt.I<InitServices>().authService.getUser();
   }
 
+  var deviceWidth, deviceHeight;
   @override
   Widget build(BuildContext context) {
-    final deviceHeight = MediaQuery.of(context).size.height;
-    final deviceWidth = MediaQuery.of(context).size.width;
+    deviceHeight = MediaQuery.of(context).size.height;
+    deviceWidth = MediaQuery.of(context).size.width;
 
+    return SingleChildScrollView(
+        child: StreamBuilder<List<PublicationModel>>(
+      stream: this.widget.publicationStream,
+      builder: (context, snapshot) {
+        if (!snapshot.hasData) {
+          print(snapshot);
+          return Center(child: CircularProgressIndicator());
+        } else {}
+        return Column(
+          children: <Widget>[
+            _buildUserImageSection(),
+            _buildReviewsSection(snapshot.data)
+          ],
+        );
+      },
+    ));
+  }
+
+  Container _buildUserImageSection() {
     final userImage = Positioned(
       top: deviceHeight * 0.09,
       left: deviceWidth * 0.28,
@@ -123,12 +145,13 @@ class _AccountPageState extends State<AccountPage> {
         ],
       ),
     );
+    return userImageSection;
+  }
 
+  Container _buildReviewsSection(List<PublicationModel> _reviews) {
     final br = Radius.circular(30.0);
-
     final reviewList =
-        reviews.map((review) => ReviewCard(review: review)).toList();
-
+        _reviews.map((review) => ReviewCard(review: review)).toList();
     final reviewsSection = Container(
       padding: EdgeInsets.only(top: 30.0, left: 30.0),
       width: double.infinity,
@@ -141,7 +164,7 @@ class _AccountPageState extends State<AccountPage> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           Text(
-            "Tus Productos",
+            "Tus Trueq",
             style: TextStyle(
               color: Colors.black54,
               fontSize: 18.0,
@@ -154,13 +177,8 @@ class _AccountPageState extends State<AccountPage> {
         ],
       ),
     );
-    return SingleChildScrollView(
-      child: Container(
-        child: Column(
-          children: <Widget>[userImageSection, reviewsSection],
-        ),
-      ),
-    );
+
+    return reviewsSection;
   }
 
   Widget _buildGradientCircle(double size) {

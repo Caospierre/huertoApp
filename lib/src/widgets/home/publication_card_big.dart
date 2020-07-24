@@ -1,14 +1,12 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:huerto_app/src/models/publication_model.dart';
 import 'package:huerto_app/src/widgets/home/price_rating_bar.dart';
-import 'package:huerto_app/src/models/publication_temporal_data.dart';
 import 'rating_bar.dart';
 
-import 'package:huerto_app/src/models/user_model.dart';
-
 class PublicationCardBig extends StatelessWidget {
-  final PublicationTemporal publication;
+  final PublicationModel publication;
   final double width;
 
   const PublicationCardBig(
@@ -29,7 +27,7 @@ class PublicationCardBig extends StatelessWidget {
     );
 
     final _name = Text(
-      publication.name,
+      publication.cultivation.product.name,
       style: TextStyle(
         color: Colors.white,
         fontSize: 24.0,
@@ -62,7 +60,7 @@ class PublicationCardBig extends StatelessWidget {
     final _rating = Row(
       children: <Widget>[
         RatingBar(
-          rating: publication.rating,
+          rating: publication.rating + .0,
           color: Colors.white,
           size: 20.0,
         ),
@@ -108,7 +106,7 @@ class PublicationCardBig extends StatelessWidget {
             width: screenWidth * width,
             decoration: BoxDecoration(
               image: DecorationImage(
-                image: AssetImage(publication.photo),
+                image: NetworkImage(publication.cultivation.product.photo),
                 fit: BoxFit.cover,
               ),
               borderRadius: BorderRadius.circular(20.0),

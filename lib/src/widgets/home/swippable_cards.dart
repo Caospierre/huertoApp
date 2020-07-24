@@ -1,52 +1,64 @@
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
+import 'package:huerto_app/src/models/publication_model.dart';
+import 'package:huerto_app/src/services/init_services.dart';
 import 'package:huerto_app/utils/utils.dart';
 import 'package:huerto_app/src/widgets/home/publication_card_big.dart';
-import 'package:huerto_app/src/models/publication_temporal_data.dart';
 
+// ignore: must_be_immutable
 class SwippableCards extends StatefulWidget {
-  SwippableCards() {}
+  final Stream<List<PublicationModel>> publicationStream;
+
+  SwippableCards(this.publicationStream) {}
+
   @override
-  _SwippableCardsState createState() => _SwippableCardsState();
+  _SwippableCardsState createState() =>
+      _SwippableCardsState(this.publicationStream);
 }
 
 class _SwippableCardsState extends State<SwippableCards> {
   List<Widget> cardList;
-  List<PublicationTemporal> _publicationsCopy =
-      List.from(publications.reversed);
 
-  void _removeCard(index) {
+  List<PublicationModel> _publicationsCopy;
+
+  _SwippableCardsState(Stream<List<PublicationModel>> publicationStream) {}
+
+  void _removeCard(index, List<PublicationModel> publications) {
     setState(() {
-      PublicationTemporal r = _publicationsCopy[index];
-      cardList.removeAt(index);
+      _publicationsCopy = publications;
+      PublicationModel r = _publicationsCopy[index];
+      _getSwipeCards(_publicationsCopy).removeAt(index);
       _publicationsCopy.removeAt(index);
       _publicationsCopy.insert(0, r);
-      cardList = _getSwipeCards();
+      cardList = _getSwipeCards(_publicationsCopy);
     });
-  }
-
-  @override
-  void initState() {
-    super.initState();
-
-    cardList = _getSwipeCards();
   }
 
   @override
   Widget build(BuildContext context) {
     return Center(
-      child: Stack(
-        alignment: Alignment.center,
-        children: cardList,
-      ),
-    );
+        child: StreamBuilder<List<PublicationModel>>(
+      stream: this.widget.publicationStream,
+      builder: (context, snapshot) {
+        if (!snapshot.hasData) {
+          print(snapshot);
+          return Center(child: CircularProgressIndicator());
+        } else {}
+        print("" + snapshot.data.toString());
+        return Stack(
+          alignment: Alignment.center,
+          children: _getSwipeCards(snapshot.data),
+        );
+      },
+    ));
   }
 
-  List<Widget> _getSwipeCards() {
+  List<Widget> _getSwipeCards(List<PublicationModel> publications) {
     double initTop = 15.0;
     double initHor = 20.0;
     double initWidth = 0.9;
     List<Widget> cardList = new List();
-
+    _publicationsCopy = publications;
     for (var i = 0; i < _publicationsCopy.length; i++) {
       // var width = initWidth - double.parse("0.$i");
       var width;
@@ -71,7 +83,7 @@ class _SwippableCardsState extends State<SwippableCards> {
             ),
             childWhenDragging: Container(),
             onDragEnd: (drag) {
-              _removeCard(i);
+              _removeCard(i, publications);
             },
             child: Container(
               margin: EdgeInsets.symmetric(

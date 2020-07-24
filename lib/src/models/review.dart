@@ -1,5 +1,3 @@
-import 'publication_temporal_data.dart';
-
 class Review {
   int id = 0;
   int publicationId;
@@ -17,19 +15,19 @@ class Review {
 
 List<Review> reviews = [
   Review(
-    publications[0].id,
-    publications[0].photo,
-    publications[0].name,
-    publications[0].type,
+    1,
+    "assets/images/zanahoria.jpg",
+    "test",
+    "",
     5.0,
     "El tomate crece en la sierra.",
   ),
   Review(
-    publications[0].id,
-    publications[1].photo,
-    publications[1].name,
-    publications[1].type,
-    4.9,
-    "La zanohorias protejen el ❤️",
-  )
+    1,
+    "assets/images/zanahoria.jpg",
+    "test",
+    "",
+    5.0,
+    "El tomate crece en la sierra.",
+  ),
 ];

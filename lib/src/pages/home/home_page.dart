@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
+import 'package:huerto_app/src/bloc/home_bloc.dart';
+import 'package:huerto_app/src/models/publication_model.dart';
+import 'package:huerto_app/src/services/init_services.dart';
+import 'package:huerto_app/utils/utils.dart';
 //import 'package:hasura_connect/hasura_connect.dart';
 import 'package:huerto_app/utils/colors.dart';
 import 'package:huerto_app/src/pages/home/tabs/account.dart';
 import 'package:huerto_app/src/pages/home/tabs/search.dart';
 import 'package:huerto_app/src/pages/home/tabs/saved.dart';
-import 'package:get_it/get_it.dart';
-import 'package:huerto_app/src/services/init_services.dart';
+
 import 'package:huerto_app/src/routes/router.dart';
 
 class HomePage extends StatefulWidget {
@@ -14,6 +18,9 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  final bloc = HomeBloc(GetIt.I<InitServices>().hasuraService.appRepository);
+  Stream<List<PublicationModel>> slistp;
+
   signout() async {
     GetIt.I<InitServices>().authService.signout();
   }
@@ -30,7 +37,7 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     final appBar = AppBar(
-      title: Text("Foodie 😍",
+      title: Text("Mi cosecho",
           style:
               TextStyle(color: Theme.of(context).primaryColor, fontSize: 28.0)),
       centerTitle: true,
@@ -49,12 +56,13 @@ class _HomePageState extends State<HomePage> {
         ],
       ),
     );
-
+    this.slistp = bloc.publicationsController;
     final body = TabBarView(
       children: [
-        SearchPage(),
-        SavedPage(),
-        AccountPage(),
+        SearchPage(this.slistp),
+        SavedPage(this.slistp),
+        //AccountPage(),
+        AccountPage(this.slistp),
       ],
     );
 

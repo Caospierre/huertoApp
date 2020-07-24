@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:get_it/get_it.dart';
 import 'package:huerto_app/src/bloc/login_bloc.dart';
+import 'package:huerto_app/src/models/user_model.dart';
 import 'init_services.dart';
 
 class AuthService {
@@ -10,6 +11,7 @@ class AuthService {
 
   GoogleSignIn _googleSignIn = GoogleSignIn();
   FirebaseUser _user;
+  UserModel _userLogin;
   bool _isSignedIn = false;
   String imageUrl;
   GlobalKey<FormState> _formkey;
@@ -19,6 +21,7 @@ class AuthService {
     this._googleSignIn = GoogleSignIn();
   }
 
+  UserModel get userLogin => _userLogin;
   FirebaseAuth get auth => _auth;
   GoogleSignIn get googleSignIn => _googleSignIn;
   bool get isSignedIn => _isSignedIn;
@@ -35,6 +38,12 @@ class AuthService {
           email: _email,
           password: _password,
         );
+        final bloc =
+            LoginBloc(GetIt.I<InitServices>().hasuraService.appRepository);
+        if (await bloc.isUser(_email)) {
+          print(_email);
+          this._userLogin = bloc.user;
+        }
       } catch (e) {
         showError(e.toString(), context);
       }
@@ -80,8 +89,14 @@ class AuthService {
       assert(user.uid == currentuser.uid);
       final bloc =
           LoginBloc(GetIt.I<InitServices>().hasuraService.appRepository);
-      print(user.email);
-      bloc.createUser(user.email);
+      if (user.email != null) {
+        print(user.email);
+        if (!(await bloc.isUser(user.email))) {
+          bloc.createUser(user.email);
+        }
+        this._userLogin = bloc.user;
+      }
+
       return user;
     } catch (e) {}
     return null;
@@ -121,6 +136,10 @@ class AuthService {
           UserUpdateInfo userUpdateInfo = UserUpdateInfo();
           userUpdateInfo.displayName = _name;
           user.user.updateProfile(userUpdateInfo);
+          final bloc =
+              LoginBloc(GetIt.I<InitServices>().hasuraService.appRepository);
+          bloc.createUser(_email);
+          this._userLogin = bloc.user;
         }
       } catch (e) {
         showError(e, context);

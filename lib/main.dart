@@ -27,7 +27,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Mi Cosecha',
       theme: ThemeData(),
-      initialRoute: router.NavigatorToPath.Started,
+      initialRoute: router.NavigatorToPath.Home,
       onGenerateRoute: router.generateRoute,
     );
   }

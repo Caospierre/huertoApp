@@ -1,13 +1,13 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:huerto_app/src/models/publication_model.dart';
 import 'package:huerto_app/src/routes/router.dart';
 import 'package:huerto_app/src/widgets/home/price_rating_bar.dart';
-import 'package:huerto_app/src/models/publication_temporal_data.dart';
 import 'rating_bar.dart';
 
 class PublicationCard extends StatelessWidget {
-  final PublicationTemporal publication;
+  final PublicationModel publication;
 
   const PublicationCard({Key key, @required this.publication})
       : super(key: key);
@@ -24,9 +24,8 @@ class PublicationCard extends StatelessWidget {
         color: Colors.white60,
       ),
     );
-
     final _name = Text(
-      publication.name,
+      publication.cultivation.product.name,
       style: TextStyle(
         color: Colors.white,
         fontSize: 18.0,
@@ -58,7 +57,7 @@ class PublicationCard extends StatelessWidget {
 
     final _rating = Row(
       children: <Widget>[
-        RatingBar(rating: publication.rating, color: Colors.white),
+        RatingBar(rating: publication.rating + .0, color: Colors.white),
         SizedBox(width: 5.0),
         _filledCircle,
         SizedBox(width: 5.0),
@@ -92,7 +91,7 @@ class PublicationCard extends StatelessWidget {
         Navigator.pushNamed(
           context,
           NavigatorToPath.Publication,
-          arguments: publication.id,
+          arguments: publication,
         );
       },
       child: Stack(
@@ -105,7 +104,7 @@ class PublicationCard extends StatelessWidget {
               width: screenWidth * 0.45,
               decoration: BoxDecoration(
                 image: DecorationImage(
-                  image: AssetImage(publication.photo),
+                  image: NetworkImage(publication.cultivation.product.photo),
                   fit: BoxFit.cover,
                 ),
                 borderRadius: BorderRadius.circular(20.0),

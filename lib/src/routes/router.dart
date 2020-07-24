@@ -35,8 +35,7 @@ Route<dynamic> generateRoute(RouteSettings settings) {
     case NavigatorToPath.Publication:
       return MaterialPageRoute(
           builder: (_) =>
-              PublicationDetailsPage(publicationId: settings.arguments));
-
+              PublicationDetailsPage(publication: settings.arguments));
       break;
     default:
       return MaterialPageRoute(builder: (_) => HomePage());

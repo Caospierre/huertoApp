@@ -8,10 +8,16 @@ import 'package:huerto_app/src/repository/app_repository.dart';
 
 class HomeBloc extends BlocBase {
   final AppRepository _repository;
-  final appBloc;
 
-  HomeBloc(this._repository, this.appBloc) {
+  HomeBloc(this._repository) {
     Observable(_repository.getPublications()).pipe(publicationsController);
+  }
+  Stream<List<PublicationModel>> getPubStream() {
+    return _repository.getPublications();
+  }
+
+  Future<List<PublicationModel>> getPub() {
+    return _repository.getPubs();
   }
 
   var controller = TextEditingController();
@@ -25,7 +31,7 @@ class HomeBloc extends BlocBase {
   void sendPublication() {
     _repository.sendPublication(
       controller.text,
-      appBloc.userController.value.id,
+      1,
     );
     controller.clear();
   }
@@ -35,6 +41,7 @@ class HomeBloc extends BlocBase {
   void dispose() {
     controller.dispose();
     publicationsController.close();
+
     super.dispose();
   }
 }

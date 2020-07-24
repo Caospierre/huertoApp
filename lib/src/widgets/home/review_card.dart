@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:huerto_app/src/models/publication_model.dart';
 import 'package:huerto_app/src/routes/router.dart';
 import 'package:huerto_app/src/widgets/home/rating_bar.dart';
 import 'package:huerto_app/src/models/review.dart';
 
 class ReviewCard extends StatelessWidget {
-  final Review review;
+  final PublicationModel review;
 
   const ReviewCard({Key key, @required this.review}) : super(key: key);
   @override
@@ -21,7 +22,7 @@ class ReviewCard extends StatelessWidget {
     final img = GestureDetector(
       onTap: () {
         Navigator.pushNamed(context, NavigatorToPath.Publication,
-            arguments: review.publicationId);
+            arguments: review);
       },
       child: Container(
         margin: EdgeInsets.only(right: 10.0),
@@ -30,8 +31,8 @@ class ReviewCard extends StatelessWidget {
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(12.0),
           image: DecorationImage(
-            image: AssetImage(
-              review.publicationPhoto,
+            image: NetworkImage(
+              review.cultivation.product.photo,
             ),
             fit: BoxFit.cover,
           ),
@@ -42,10 +43,10 @@ class ReviewCard extends StatelessWidget {
     final _name = InkWell(
       onTap: () {
         Navigator.pushNamed(context, NavigatorToPath.Publication,
-            arguments: review.publicationId);
+            arguments: review);
       },
       child: Text(
-        review.publicationName,
+        review.cultivation.product.name,
         style: TextStyle(
           fontSize: 16.0,
           fontWeight: FontWeight.bold,
@@ -66,7 +67,7 @@ class ReviewCard extends StatelessWidget {
         _filledCircle,
         SizedBox(width: 5.0),
         Text(
-          review.publicationType,
+          review.type,
           style: TextStyle(
             fontSize: 14.0,
             color: Colors.grey.withOpacity(0.6),
@@ -78,7 +79,7 @@ class ReviewCard extends StatelessWidget {
     final _content = Container(
       width: MediaQuery.of(context).size.width * 0.6,
       child: Text(
-        review.content,
+        review.description,
         style: TextStyle(),
       ),
     );
@@ -94,7 +95,7 @@ class ReviewCard extends StatelessWidget {
       margin: EdgeInsets.only(top: 10.0),
       child: Row(
         children: <Widget>[
-          RatingBar(rating: review.rating),
+          RatingBar(rating: review.rating + .0),
           SizedBox(width: 5.0),
           _filledCircle,
           SizedBox(width: 5.0),

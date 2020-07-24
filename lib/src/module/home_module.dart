@@ -7,10 +7,7 @@ import 'package:huerto_app/src/repository/app_repository.dart';
 class HomeModule {
   List<Bloc> get blocs => [
         Bloc(
-          (i) => HomeBloc(
-            AppModule.to.get<AppRepository>(),
-            AppModule.to.bloc<AppBloc>(),
-          ),
+          (i) => HomeBloc(AppModule.to.get<AppRepository>()),
         ),
       ];
 

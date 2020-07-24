@@ -1,22 +1,18 @@
 import 'dart:ui';
-
 import 'package:flutter/material.dart';
+import 'package:huerto_app/src/models/publication_model.dart';
 import 'package:line_icons/line_icons.dart';
 import 'package:huerto_app/utils/utils.dart';
 import 'package:huerto_app/src/widgets/home/price_rating_bar.dart';
 import 'package:huerto_app/src/widgets/home/rating_bar.dart';
-import '../models/publication_temporal_data.dart';
 
 class PublicationDetailsPage extends StatelessWidget {
-  final int publicationId;
+  final PublicationModel publication;
 
-  const PublicationDetailsPage({Key key, @required this.publicationId})
-      : super(key: key);
+  PublicationDetailsPage({@required this.publication});
+
   @override
   Widget build(BuildContext context) {
-    final PublicationTemporal publication = publications
-        .singleWhere((publication) => publication.id == publicationId);
-
     final screenHeight = MediaQuery.of(context).size.height;
 
     final cancelBtn = Positioned(
@@ -43,7 +39,7 @@ class PublicationDetailsPage extends StatelessWidget {
         height: screenHeight * 0.7,
         decoration: BoxDecoration(
           image: DecorationImage(
-            image: AssetImage(publication.photo),
+            image: NetworkImage(publication.cultivation.product.photo),
             fit: BoxFit.cover,
           ),
         ),
@@ -60,7 +56,7 @@ class PublicationDetailsPage extends StatelessWidget {
     );
 
     final _name = Text(
-      publication.name,
+      publication.cultivation.product.name,
       style: TextStyle(
         color: Colors.white,
         fontSize: 24.0,
@@ -93,7 +89,7 @@ class PublicationDetailsPage extends StatelessWidget {
     final _rating = Row(
       children: <Widget>[
         RatingBar(
-          rating: publication.rating,
+          rating: publication.rating + .0,
           color: Colors.white,
           size: 20.0,
         ),

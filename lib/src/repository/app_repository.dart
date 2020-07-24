@@ -2,11 +2,10 @@ import 'package:bloc_pattern/bloc_pattern.dart';
 import 'package:huerto_app/src/models/publication_model.dart';
 import 'package:huerto_app/src/models/user_model.dart';
 import 'package:hasura_connect/hasura_connect.dart';
+import 'package:huerto_app/utils/api_info.dart';
 
 class AppRepository extends Disposable {
-  final HasuraConnect connection;
-
-  AppRepository(this.connection);
+  AppRepository() {}
 
   Future<UserModel> getUser(String user) async {
     var query = """
@@ -22,7 +21,9 @@ class AppRepository extends Disposable {
       }
     """;
 
-    var data = await connection.query(query, variables: {"data": user});
+    var data = await HasuraConecction.conection
+        .query(query, variables: {"data": user});
+
     if (data["data"]["users"].isEmpty) {
       return null;
     } else {
@@ -41,7 +42,8 @@ class AppRepository extends Disposable {
       }
     """;
 
-    var data = await connection.mutation(query, variables: {"email": email});
+    var data = await HasuraConecction.conection
+        .mutation(query, variables: {"email": email});
     var id = data["data"]["insert_users"]["returning"][0]["id"];
     return UserModel(id: id, email: email);
   }
@@ -49,22 +51,80 @@ class AppRepository extends Disposable {
   Stream<List<PublicationModel>> getPublications() {
     var query = """
       subscription {
-        publications(order_by: {id: desc}) {
-          content
-          id
-          user {
-            name
+        publications {
             id
+            location
+            date
+            distance
+            priceScale
+            rating
+            type
+            description
+            users {
+              id
+              name
+              email              
+            }
+            cultivation {
+              name
+              description
+              id
+              product {
+                id
+                name
+                photo
+              }
+            }
           }
-        }
       }
     """;
 
-    Snapshot snapshot = connection.subscription(query);
+    Snapshot snapshot = HasuraConecction.conection.subscription(query);
+    print("data " + HasuraConecction.conection.isConnected.toString());
     return snapshot.stream.map(
       (jsonList) =>
           PublicationModel.fromJsonList(jsonList["data"]["publications"]),
     );
+  }
+
+  Future<List<PublicationModel>> getPubs() {
+    var query = """
+      subscription {
+        publications {
+            id
+            location
+            date
+            distance
+            priceScale
+            rating
+            type
+            description
+            users {
+              id
+              name
+              email              
+            }
+            cultivation {
+              name
+              description
+              id
+              product {
+                id
+                name
+                photo
+              }
+            }
+          }
+      }
+    """;
+    Snapshot snapshot = HasuraConecction.conection.subscription(query);
+
+    return snapshot.stream
+        .map(
+          (jsonList) =>
+              PublicationModel.fromJsonList(jsonList["data"]["publications"]),
+        )
+        .first;
   }
 
   Future<dynamic> sendPublication(String publication, int userId) {
@@ -76,7 +136,7 @@ class AppRepository extends Disposable {
       }
     """;
 
-    return connection.mutation(query, variables: {
+    return HasuraConecction.conection.mutation(query, variables: {
       "publication": publication,
       "userId": userId,
     });
@@ -104,6 +164,6 @@ class AppRepository extends Disposable {
 
   @override
   void dispose() {
-    connection.dispose();
+    HasuraConecction.conection.dispose();
   }
 }

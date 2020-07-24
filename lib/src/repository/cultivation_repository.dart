@@ -1,26 +1,29 @@
 import 'package:bloc_pattern/bloc_pattern.dart';
+import 'package:get_it/get_it.dart';
 import 'package:huerto_app/src/models/cultivation_model.dart';
 import 'package:hasura_connect/hasura_connect.dart';
+import 'package:huerto_app/src/services/init_services.dart';
 
 class CultivationRepository extends Disposable {
-  final HasuraConnect connection;
+  HasuraConnect connection;
 
-  CultivationRepository(this.connection);
-
-  
-  Future<CultivationModel> createCultivation(String name, String description, int userId) async {
+  CultivationRepository() {
+    this.connection = GetIt.I<InitServices>().hasuraService.hasuraConect;
+  }
+  Future<CultivationModel> createCultivation(
+      String name, String description, int userId) async {
     var query = """
-      mutation createCultivation(\$name:String!, \$description:String!, \$userId:int!) {
-        insert_cultivation(objects: {name: \$name, description: \$description, id_usuario: \$userId}) {
+      mutation createCultivation(\$name:String!, \$description:String!, \$userId:int!, \$productId:int!) {
+        insert_cultivation(objects: {name: \$name, description: \$description, id_usuario: \$userId,id_product : \$productId}) {
           returning {
             id
           }
         }
       }
     """;
-    
 
-    var data = await connection.mutation(query, variables: {"name": name, "description" : description});
+    var data = await connection
+        .mutation(query, variables: {"name": name, "description": description});
     var id = data["data"]["insert_cultivation"]["returning"][0]["id"];
     return CultivationModel(id: id, name: name, description: description);
   }
@@ -35,15 +38,14 @@ class CultivationRepository extends Disposable {
         }
       }
     """;
-    
 
     var data = await connection.mutation(query, variables: {});
     var id = data["data"]["delete_cultivation"]["returning"][0]["id"];
     return CultivationModel(id: id);
   }
 
-
-  Future<CultivationModel> updateCultivation(String name, String description, int id) async {
+  Future<CultivationModel> updateCultivation(
+      String name, String description, int id) async {
     var query = """
       mutation updateCultivation(\$name:String!, \$description:String!, \$id:int!) {
         update_cultivation(where: {id: {_eq: \$id}}, _set: {name: \$name, description: \$description}) {
@@ -53,9 +55,9 @@ class CultivationRepository extends Disposable {
         }
       }
     """;
-    
 
-    var data = await connection.mutation(query, variables: {"name": name, "description" : description});
+    var data = await connection
+        .mutation(query, variables: {"name": name, "description": description});
     var id = data["data"]["update_cultivation"]["returning"][0]["id"];
     return CultivationModel(id: id, name: name, description: description);
   }
@@ -71,17 +73,21 @@ class CultivationRepository extends Disposable {
             id
             name
           }
+          product{
+            id
+            name
+          }
         }
       }
     """;
 
     Snapshot snapshot = connection.subscription(query);
     return snapshot.stream.map(
-      (jsonList) => CultivationModel.fromJsonList(jsonList["data"]["cultivation"]),
+      (jsonList) =>
+          CultivationModel.fromJsonList(jsonList["data"]["cultivation"]),
     );
   }
 
-  
   @override
   void dispose() {
     connection.dispose();
