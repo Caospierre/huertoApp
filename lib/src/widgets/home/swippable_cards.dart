@@ -134,7 +134,9 @@ class _SwippableCardsState extends State<SwippableCards> {
     return MaterialButton(
       color: Colors.white,
       elevation: 4.0,
-      onPressed: () {},
+      onPressed: () {
+        onLongPressButtons(img);
+      },
       height: height,
       shape: CircleBorder(),
       child: Container(
@@ -146,5 +148,25 @@ class _SwippableCardsState extends State<SwippableCards> {
         ),
       ),
     );
+  }
+
+  void onLongPressButtons(String image) {
+    switch (image) {
+      case AvailableImages.back:
+        print("Regresar");
+        break;
+      case AvailableImages.hate:
+        print("Compra");
+        break;
+      case AvailableImages.like:
+        print("Trueque");
+        break;
+
+      case AvailableImages.list:
+        print("Actividades");
+        break;
+
+      default:
+    }
   }
 }
