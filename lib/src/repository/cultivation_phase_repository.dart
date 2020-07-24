@@ -5,11 +5,10 @@ import 'package:huerto_app/src/models/cultivation_phase_model.dart';
 import 'package:huerto_app/src/services/init_services.dart';
 
 class CultivationPhaseRepository extends Disposable {
-  HasuraConnect connection;
+  final HasuraConnect connection;
 
-  CultivationPhaseRepository() {
-    this.connection = GetIt.I<InitServices>().hasuraService.hasuraConect;
-  }
+  CultivationPhaseRepository(this.connection);
+
   Future<Cultivation_PhaseModel> createCultivationPhase(
       bool state_phase,
       String name,

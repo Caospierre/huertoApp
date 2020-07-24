@@ -5,11 +5,9 @@ import 'package:huerto_app/src/models/plague_disease_model.dart';
 import 'package:huerto_app/src/services/init_services.dart';
 
 class PlagueDiseaseRepository extends Disposable {
-  HasuraConnect connection;
+  final HasuraConnect connection;
 
-  PlagueDiseaseRepository() {
-    this.connection = GetIt.I<InitServices>().hasuraService.hasuraConect;
-  }
+  PlagueDiseaseRepository(this.connection);
 
   Future<Plague_DiseaseModel> createPlagueDisease(
       String name, String image, String damge, String description) async {
