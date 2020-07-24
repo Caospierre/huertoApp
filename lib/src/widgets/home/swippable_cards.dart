@@ -60,7 +60,6 @@ class _SwippableCardsState extends State<SwippableCards> {
     List<Widget> cardList = new List();
     _publicationsCopy = publications;
     for (var i = 0; i < _publicationsCopy.length; i++) {
-      // var width = initWidth - double.parse("0.$i");
       var width;
       if (i == _publicationsCopy.length) {
         width = 0.9;

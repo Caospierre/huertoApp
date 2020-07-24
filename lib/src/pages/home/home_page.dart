@@ -68,10 +68,17 @@ class _HomePageState extends State<HomePage> {
 
     return DefaultTabController(
       length: 3,
-      child: Scaffold(
-        appBar: appBar,
-        body: body,
-      ),
+      child: Container(
+          decoration: BoxDecoration(
+            image: DecorationImage(
+              image: AssetImage("assets/images/Started.png"),
+              fit: BoxFit.cover,
+            ),
+          ),
+          child: Scaffold(
+            appBar: appBar,
+            body: body,
+          )),
     );
   }
 

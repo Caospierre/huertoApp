@@ -41,13 +41,13 @@ class SavedPage extends StatelessWidget {
     return Row(
       children: <Widget>[
         Column(
-          children:
-              leftSide.map((res) => PublicationCard(publication: res)).toList(),
-        ),
-        Column(
           children: rightSide
               .map((res) => PublicationCard(publication: res))
               .toList(),
+        ),
+        Column(
+          children:
+              leftSide.map((res) => PublicationCard(publication: res)).toList(),
         ),
       ],
     );
