@@ -14,7 +14,7 @@ class StartPage extends StatelessWidget {
         ),
         padding: EdgeInsets.all(100),
         child: Column(
-          //mainAxisAlignment: MainAxisAlignment.center,
+          //mainAxisAlignment:  MainAxisAlignment.center,
           children: <Widget>[
             Image.asset("assets/images/Tree.png"),
             Text(
