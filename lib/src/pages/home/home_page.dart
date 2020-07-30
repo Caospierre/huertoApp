@@ -20,7 +20,8 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   final bloc = HomeBloc(GetIt.I<InitServices>().hasuraService.appRepository);
   Stream<List<PublicationModel>> slistp;
-
+  Stream<List<PublicationModel>> cultlist;
+  Stream<List<PublicationModel>> transslist;
   signout() async {
     GetIt.I<InitServices>().authService.signout();
   }
@@ -37,13 +38,12 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     final appBar = AppBar(
-      title: Text("Mi cosecho",
-          style:
-              TextStyle(color: Theme.of(context).primaryColor, fontSize: 28.0)),
+      title: Text("Mi cosecha",
+          style: TextStyle(color: statusBarColor, fontSize: 28.0)),
       centerTitle: true,
       bottom: TabBar(
         unselectedLabelColor: unselectedTabLabelColor,
-        labelColor: Theme.of(context).primaryColor,
+        labelColor: Theme.of(context).accentColor,
         labelPadding: EdgeInsets.only(left: 0.0, right: 0.0),
         indicatorWeight: 5.0,
         indicator: BoxDecoration(
@@ -51,18 +51,20 @@ class _HomePageState extends State<HomePage> {
         ),
         tabs: <Widget>[
           _buildTab(Icons.search),
-          _buildTab(Icons.star),
+          _buildTab(Icons.shopping_basket),
           _buildTab(Icons.account_circle),
         ],
       ),
     );
     this.slistp = bloc.publicationsController;
+    this.cultlist = bloc.cultivationController;
+    this.transslist = bloc.transaccionController;
     final body = TabBarView(
       children: [
         SearchPage(this.slistp),
-        SavedPage(this.slistp),
+        SavedPage(this.cultlist),
         //AccountPage(),
-        AccountPage(this.slistp),
+        AccountPage(this.transslist),
       ],
     );
 

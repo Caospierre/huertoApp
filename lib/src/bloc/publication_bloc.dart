@@ -13,8 +13,14 @@ class PublicationBloc extends BlocBase {
     return _repository.getPublications(id);
   }
 
-  var controller = TextEditingController();
+  var txtPubcontroller = TextEditingController();
+
+  var txtUsercontroller = TextEditingController();
   var publicationsController = BehaviorSubject<List<PublicationModel>>();
+  void checkPublication() {
+    this._repository.checkedPublication(int.parse(this.txtPubcontroller.text),
+        int.parse(this.txtUsercontroller.text));
+  }
 
   void sendPublication() {
     /* _repository.sendPublication(
@@ -27,7 +33,8 @@ class PublicationBloc extends BlocBase {
   //dispose will be called automatically by closing its streams
   @override
   void dispose() {
-    controller.dispose();
+    txtPubcontroller.dispose();
+    txtUsercontroller.dispose();
     publicationsController.close();
     super.dispose();
   }

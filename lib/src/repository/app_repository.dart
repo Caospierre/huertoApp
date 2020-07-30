@@ -50,8 +50,86 @@ class AppRepository extends Disposable {
 
   Stream<List<PublicationModel>> getPublications() {
     var query = """
-      subscription {
-        publications {
+      subscription  {
+        publications(where: {isActive: {_eq: true}, id_usuario: {_neq: 5}, isChecked: {_eq: false}}) {
+            id
+            location
+            date
+            distance
+            priceScale
+            rating
+            type
+            description
+            users {
+              id
+              name
+              email              
+            }
+            cultivation {
+              name
+              description
+              id
+              product {
+                id
+                name
+                photo
+              }
+            }
+          }
+      }
+    """;
+
+    Snapshot snapshot = HasuraConecction.conection.subscription(query);
+    print("data " + HasuraConecction.conection.isConnected.toString());
+    return snapshot.stream.map(
+      (jsonList) =>
+          PublicationModel.fromJsonList(jsonList["data"]["publications"]),
+    );
+  }
+
+  Stream<List<PublicationModel>> getUserPublications() {
+    var query = """
+      subscription  {
+        publications(where: {isActive: {_eq: true}, id_usuario: {_eq: 5}, isChecked: {_eq: false}}) {
+            id
+            location
+            date
+            distance
+            priceScale
+            rating
+            type
+            description
+            users {
+              id
+              name
+              email              
+            }
+            cultivation {
+              name
+              description
+              id
+              product {
+                id
+                name
+                photo
+              }
+            }
+          }
+      }
+    """;
+
+    Snapshot snapshot = HasuraConecction.conection.subscription(query);
+    print("data " + HasuraConecction.conection.isConnected.toString());
+    return snapshot.stream.map(
+      (jsonList) =>
+          PublicationModel.fromJsonList(jsonList["data"]["publications"]),
+    );
+  }
+
+  Stream<List<PublicationModel>> getTransaccion() {
+    var query = """
+      subscription  {
+        publications(where: { user_transaccio_id: {_eq: 5}, isChecked: {_eq: true}})  {
             id
             location
             date

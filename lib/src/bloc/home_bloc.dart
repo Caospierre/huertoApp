@@ -11,6 +11,8 @@ class HomeBloc extends BlocBase {
 
   HomeBloc(this._repository) {
     Observable(_repository.getPublications()).pipe(publicationsController);
+    Observable(_repository.getUserPublications()).pipe(cultivationController);
+    Observable(_repository.getTransaccion()).pipe(transaccionController);
   }
   Stream<List<PublicationModel>> getPubStream() {
     return _repository.getPublications();
@@ -22,6 +24,8 @@ class HomeBloc extends BlocBase {
 
   var controller = TextEditingController();
   var publicationsController = BehaviorSubject<List<PublicationModel>>();
+  var cultivationController = BehaviorSubject<List<PublicationModel>>();
+  var transaccionController = BehaviorSubject<List<PublicationModel>>();
 
   PublicationModel random() {
     var randomIndex = Random().nextInt(publicationsController.value.length);
@@ -41,7 +45,8 @@ class HomeBloc extends BlocBase {
   void dispose() {
     controller.dispose();
     publicationsController.close();
-
+    cultivationController.close();
+    transaccionController.close();
     super.dispose();
   }
 }

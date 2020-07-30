@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
+import 'package:huerto_app/src/bloc/publication_bloc.dart';
 import 'package:huerto_app/src/models/publication_model.dart';
 import 'package:huerto_app/src/services/init_services.dart';
 import 'package:huerto_app/utils/utils.dart';
@@ -18,7 +19,8 @@ class SwippableCards extends StatefulWidget {
 
 class _SwippableCardsState extends State<SwippableCards> {
   List<Widget> cardList;
-
+  final bloc = PublicationBloc(
+      GetIt.I<InitServices>().hasuraService.publicationRepository);
   List<PublicationModel> _publicationsCopy;
 
   _SwippableCardsState(Stream<List<PublicationModel>> publicationStream) {}
@@ -160,6 +162,11 @@ class _SwippableCardsState extends State<SwippableCards> {
         break;
       case AvailableImages.like:
         print("Trueque");
+        bloc.txtPubcontroller.text = _publicationsCopy[0].id.toString();
+        bloc.txtUsercontroller.text = _publicationsCopy[0].users.id.toString();
+        bloc.checkPublication();
+        print(_publicationsCopy[0].cultivation.product.name);
+
         break;
 
       case AvailableImages.list:

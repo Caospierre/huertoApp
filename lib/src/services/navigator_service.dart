@@ -9,7 +9,7 @@ class NavigatorService {
     print("Navigacion Url:" + path);
   }
 
-  void navigateToHome(BuildContext context) {
+  void navigateToHome(BuildContext context, String urlPath) {
     navigateToUrl(context, NavigatorToPath.Home);
   }
 }

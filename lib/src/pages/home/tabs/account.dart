@@ -164,7 +164,7 @@ class _AccountPageState extends State<AccountPage> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           Text(
-            "Tus Trueq",
+            "Tus Trueques",
             style: TextStyle(
               color: Colors.black54,
               fontSize: 18.0,

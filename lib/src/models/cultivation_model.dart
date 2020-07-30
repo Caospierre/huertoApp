@@ -37,6 +37,7 @@ class CultivationModel {
       date_creation: json["date_creation"],
       id: json["id"],
       product: ProductModel.fromJson(json["product"]),
+      // users: UserModel.fromJson(json["users"]),
     );
     return temp;
   }
