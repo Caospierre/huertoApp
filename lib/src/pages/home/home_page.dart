@@ -50,8 +50,8 @@ class _HomePageState extends State<HomePage> {
           gradient: primaryGradient,
         ),
         tabs: <Widget>[
-          _buildTab(Icons.search),
           _buildTab(Icons.shopping_basket),
+          _buildTab(Icons.search),
           _buildTab(Icons.account_circle),
         ],
       ),
@@ -61,8 +61,8 @@ class _HomePageState extends State<HomePage> {
     this.transslist = bloc.transaccionController;
     final body = TabBarView(
       children: [
-        SearchPage(this.slistp),
         SavedPage(this.cultlist),
+        SearchPage(this.slistp),
         //AccountPage(),
         AccountPage(this.transslist),
       ],
