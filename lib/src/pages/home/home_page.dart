@@ -28,10 +28,10 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-    GetIt.I<InitServices>()
+    /* GetIt.I<InitServices>()
         .authService
         .checkAuthenticationHome(context, NavigatorToPath.SignIn);
-    GetIt.I<InitServices>().authService.getUser();
+    GetIt.I<InitServices>().authService.getUser();*/
   }
 
   @override
