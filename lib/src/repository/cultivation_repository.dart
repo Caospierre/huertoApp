@@ -1,20 +1,19 @@
 import 'package:bloc_pattern/bloc_pattern.dart';
-import 'package:get_it/get_it.dart';
 import 'package:huerto_app/src/models/cultivation_model.dart';
 import 'package:hasura_connect/hasura_connect.dart';
-import 'package:huerto_app/src/services/init_services.dart';
+import 'package:huerto_app/utils/api_info.dart';
 
 class CultivationRepository extends Disposable {
   HasuraConnect connection;
 
   CultivationRepository() {
-    this.connection = GetIt.I<InitServices>().hasuraService.hasuraConect;
+    this.connection = HasuraConnect(HasuraBackendAPI);
   }
   Future<CultivationModel> createCultivation(
-      String name, String description, int userId) async {
+      String name, String description,int productId,int userId) async {
     var query = """
-      mutation createCultivation(\$name:String!, \$description:String!, \$userId:int!, \$productId:int!) {
-        insert_cultivation(objects: {name: \$name, description: \$description, id_usuario: \$userId,id_product : \$productId}) {
+      mutation createCultivation(\$name:String!, \$description:String!, \$productId:int!, \$userId:int!) {
+        insert_cultivation(objects: {name: \$name, description: \$description, id_product: \$productId, id_usuario: \$userId}) {
           returning {
             id
           }
@@ -77,6 +76,23 @@ class CultivationRepository extends Disposable {
             id
             name
           }
+        }
+      }
+    """;
+
+    Snapshot snapshot = connection.subscription(query);
+    return snapshot.stream.map(
+      (jsonList) =>
+          CultivationModel.fromJsonList(jsonList["data"]["cultivation"]),
+    );
+  }
+
+  Stream<List<CultivationModel>> getProduct() {
+    var query = """
+      subscription {
+        product(order_by: {name: asc}) {
+          ids
+          name
         }
       }
     """;

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:huerto_app/src/bloc/cultivation_bloc.dart';
+import 'package:huerto_app/src/module/cultivation_module.dart';
 
 class AddCultivationPage extends StatefulWidget {
   @override
@@ -7,7 +9,7 @@ class AddCultivationPage extends StatefulWidget {
 
 class _AddCultivationPageState extends State<AddCultivationPage> {
 
-  String _selectedOption = 'Fly';
+  final bloc = CultivationModule.to.bloc<CultivationBloc>();
   List<String> _powers = ['Fly','Lightning','Super strength','super encouragement'];
 
   @override
@@ -35,8 +37,8 @@ class _AddCultivationPageState extends State<AddCultivationPage> {
   }
 
   Widget _nameCultivation() {
-    return TextField(
-      //autofocus: true,
+    return TextFormField(
+      controller: bloc.controllerName,
       textCapitalization: TextCapitalization.words,
       decoration: InputDecoration(
         border: OutlineInputBorder(
@@ -47,16 +49,18 @@ class _AddCultivationPageState extends State<AddCultivationPage> {
         suffixIcon: ImageIcon(new NetworkImage("https://image.flaticon.com/icons/png/512/25/25195.png")),
         icon: ImageIcon(new NetworkImage("https://image.flaticon.com/icons/png/512/25/25207.png")),
       ),
-      onChanged: (value){
-        setState(() {
-        });
+      validator: (String value){
+        if(value.trim().isEmpty){
+          return 'Ingresa El Nombre Del Cultivo';
+        }
       },
     );
   }
 
   Widget _descriptionCultivation() {
-    return TextField(
-      //autofocus: true,
+    return TextFormField(
+      controller: bloc.controllerDescription,
+      maxLines: 8,
       textCapitalization: TextCapitalization.words,
       decoration: InputDecoration(
         border: OutlineInputBorder(
@@ -64,15 +68,18 @@ class _AddCultivationPageState extends State<AddCultivationPage> {
         ),
         hintText: 'Descripción Del Cultivo',
         labelText: 'Descripción',
-        suffixIcon: ImageIcon(new NetworkImage("https://cdn.icon-icons.com/icons2/2249/PNG/512/tooltip_text_outline_icon_139004.png")),
+        //suffixIcon: ImageIcon(new NetworkImage("https://cdn.icon-icons.com/icons2/2249/PNG/512/tooltip_text_outline_icon_139004.png")),
         icon: ImageIcon(new NetworkImage("https://cdn.icon-icons.com/icons2/1863/PNG/512/description_119232.png")),
       ),
-      onChanged: (value){
-        setState(() {
-        });
+      validator: (String value){
+        if(value.trim().isEmpty){
+          return 'Ingresa El Nombre Del Cultivo';
+        }
       },
     );
   }
+
+
 
 
   List<DropdownMenuItem<String>> getOptionsDropdown(){
@@ -94,11 +101,10 @@ class _AddCultivationPageState extends State<AddCultivationPage> {
         SizedBox(width: 30.0),
         Expanded(
             child: DropdownButton(
-            value: _selectedOption,
+            value: null,
             items: getOptionsDropdown(),
             onChanged: (opt){
               setState(() {
-                _selectedOption = opt;
               });
             },
           ),

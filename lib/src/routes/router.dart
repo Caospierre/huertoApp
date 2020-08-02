@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:huerto_app/src/pages/cultivation/add_cultivation_page.dart';
 
 import 'package:huerto_app/src/pages/publication_details.dart';
 import 'package:huerto_app/src/pages/home/home_page.dart';
@@ -15,6 +16,7 @@ class NavigatorToPath {
   static const String App = '/app';
   static const String Publication = '/food_details';
   static const String Error = 'error';
+  static const String AddCultivation = '/addCultivation';
 }
 
 Route<dynamic> generateRoute(RouteSettings settings) {
@@ -26,12 +28,11 @@ Route<dynamic> generateRoute(RouteSettings settings) {
     case NavigatorToPath.SignUP:
       return MaterialPageRoute(builder: (_) => SignUp());
     case NavigatorToPath.SignIn:
-      return MaterialPageRoute(builder: (_) => SignIn());
-
-    case NavigatorToPath.App:
       return MaterialPageRoute(builder: (_) => StartPage());
     case NavigatorToPath.Error:
       return MaterialPageRoute(builder: (_) => ErrorPage());
+    case NavigatorToPath.AddCultivation:
+      return MaterialPageRoute(builder: (_) => AddCultivationPage());
     case NavigatorToPath.Publication:
       return MaterialPageRoute(
           builder: (_) =>

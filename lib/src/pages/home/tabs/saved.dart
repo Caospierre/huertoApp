@@ -15,7 +15,7 @@ class SavedPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final body = SingleChildScrollView(
-        child: StreamBuilder<List<PublicationModel>>(
+      child: StreamBuilder<List<PublicationModel>>(
       stream: this.publicationStream,
       builder: (context, snapshot) {
         if (!snapshot.hasData) {
@@ -39,17 +39,17 @@ class SavedPage extends StatelessWidget {
       isOddNum ? rightSide.add(publication) : leftSide.add(publication);
     });
     return Row(
-      children: <Widget>[
-        Column(
-          children: rightSide
-              .map((res) => PublicationCard(publication: res))
-              .toList(),
-        ),
-        Column(
-          children:
-              leftSide.map((res) => PublicationCard(publication: res)).toList(),
-        ),
-      ],
+          children: <Widget>[
+            Column(
+            children: rightSide
+                .map((res) => PublicationCard(publication: res))
+                .toList(),
+            ),
+            Column(
+              children:
+                  leftSide.map((res) => PublicationCard(publication: res)).toList(),
+            ),
+          ],
     );
   }
 }
