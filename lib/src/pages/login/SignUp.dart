@@ -21,13 +21,14 @@ class _SignUpState extends State<SignUp> {
   checkAuthincation() async {
     _auth.onAuthStateChanged.listen((user) {
       if (user != null) {
-        Navigator.pushNamed(context, NavigatorToPath.Test, arguments: 5);
+        Navigator.pushNamed(context, NavigatorToPath.Test,
+            arguments: this._userLogin.id);
       }
     });
   }
 
   navigateToSignInScreen() {
-    Navigator.pushReplacementNamed(context, '/signin');
+    Navigator.pushReplacementNamed(context, NavigatorToPath.Test);
   }
 
   @override

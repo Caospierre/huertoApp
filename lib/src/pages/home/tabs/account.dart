@@ -132,20 +132,6 @@ class _AccountPageState extends State<AccountPage> {
               fontSize: 20.0,
             ),
           ),
-          Container(
-            padding: EdgeInsets.all(20),
-            child: RaisedButton(
-              padding: EdgeInsets.fromLTRB(30, 15, 30, 15),
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(30)),
-              color: Colors.blue,
-              onPressed: signout,
-              child: Text(
-                'Log Out',
-                style: TextStyle(fontSize: 20, color: Colors.white),
-              ),
-            ),
-          )
         ],
       ),
     );

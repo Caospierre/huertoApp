@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:huerto_app/src/models/publication_model.dart';
+import 'package:huerto_app/src/routes/router.dart';
 import 'package:huerto_app/src/widgets/home/publication_card.dart';
 import 'package:huerto_app/utils/colors.dart';
 
@@ -7,14 +8,15 @@ import 'package:huerto_app/utils/colors.dart';
 class SavedPage extends StatelessWidget {
   final Stream<List<PublicationModel>> publicationStream;
 
-  SavedPage(this.publicationStream) {}
-
+  SavedPage(this.publicationStream);
+  BuildContext context;
   bool isOddNumber(int number) {
     return number % 2 == 0 ? false : true;
   }
 
   @override
   Widget build(BuildContext context) {
+    this.context = context;
     final body = SingleChildScrollView(
         child: StreamBuilder<List<PublicationModel>>(
       stream: this.publicationStream,
@@ -37,6 +39,8 @@ class SavedPage extends StatelessWidget {
 
   void addCrowd() {
     print('data');
+    Navigator.pushNamed(context, NavigatorToPath.AddCultivation,
+        arguments: this.publicationStream);
   }
 
   List<Widget> _buildComponents(List<PublicationModel> publications) {
@@ -82,6 +86,7 @@ class SavedPage extends StatelessWidget {
       isOddNum ? rightSide.add(publication) : leftSide.add(publication);
     });
     return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: <Widget>[
         Column(
           children: rightSide
