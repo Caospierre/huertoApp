@@ -13,23 +13,25 @@ class CultivationGuideBloc extends BlocBase {
   final AppBloc appBloc;
 
   CultivationGuideBloc(this._repository, this.appBloc) {
-    Observable(_repository.getCultivationGuide()).pipe(cultivationGuideController);
+    Observable(_repository.getCultivationGuide())
+        .pipe(cultivationGuideController);
   }
 
   var controller = TextEditingController();
-  var cultivationGuideController = BehaviorSubject<List<Cultivation_GuideModel>>();
+  var cultivationGuideController =
+      BehaviorSubject<List<CultivationGuideModel>>();
 
-  Cultivation_GuideModel random() {
+  CultivationGuideModel random() {
     var randomIndex = Random().nextInt(cultivationGuideController.value.length);
     return cultivationGuideController.value[randomIndex];
   }
 
   //void sendPublication() {
-    //_repository.sendPublication(
-      //controller.text,
-      //appBloc.userController.value.id,
-    //);
-    //controller.clear();
+  //_repository.sendPublication(
+  //controller.text,
+  //appBloc.userController.value.id,
+  //);
+  //controller.clear();
   //}
 
   //dispose will be called automatically by closing its streams

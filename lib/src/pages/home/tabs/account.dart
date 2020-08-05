@@ -7,7 +7,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get_it/get_it.dart';
 import 'package:huerto_app/src/services/init_services.dart';
 import 'package:huerto_app/src/routes/router.dart';
-import 'package:huerto_app/src/models/review.dart';
 
 class AccountPage extends StatefulWidget {
   final Stream<List<PublicationModel>> publicationStream;
@@ -18,32 +17,50 @@ class AccountPage extends StatefulWidget {
 }
 
 class _AccountPageState extends State<AccountPage> {
-  FirebaseUser user;
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  BuildContext context;
 
-  getUser() async {
-    FirebaseUser firebaseUser =
-        await GetIt.I<InitServices>().authService.getUser();
-    setState(() {
-      this.user = firebaseUser;
+  FirebaseUser user;
+  bool isSignedIn = false;
+  String imageUrl;
+
+  checkAuthentication() async {
+    _auth.onAuthStateChanged.listen((user) {
+      if (user == null) {
+        Navigator.pushReplacementNamed(this.context, '/signin');
+      }
     });
   }
 
+  getUser() async {
+    FirebaseUser firebaseUser = await _auth.currentUser();
+    await firebaseUser?.reload();
+    firebaseUser = await _auth.currentUser();
+
+    if (firebaseUser != null) {
+      setState(() {
+        this.user = firebaseUser;
+        this.isSignedIn = true;
+        this.imageUrl = user.photoUrl;
+      });
+    }
+  }
+
   signout() async {
-    GetIt.I<InitServices>().authService.signout();
+    _auth.signOut();
   }
 
   @override
   void initState() {
     super.initState();
-    GetIt.I<InitServices>()
-        .authService
-        .checkAuthenticationHome(context, NavigatorToPath.SignIn);
-    GetIt.I<InitServices>().authService.getUser();
+    //this.checkAuthentication();
+    this.getUser();
   }
 
   var deviceWidth, deviceHeight;
   @override
   Widget build(BuildContext context) {
+    setState(() => this.context = context);
     deviceHeight = MediaQuery.of(context).size.height;
     deviceWidth = MediaQuery.of(context).size.width;
 

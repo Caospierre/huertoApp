@@ -8,14 +8,17 @@ import 'package:huerto_app/src/repository/app_repository.dart';
 
 class HomeBloc extends BlocBase {
   final AppRepository _repository;
-
-  HomeBloc(this._repository) {
-    Observable(_repository.getPublications()).pipe(publicationsController);
-    Observable(_repository.getUserPublications()).pipe(cultivationController);
-    Observable(_repository.getTransaccion()).pipe(transaccionController);
+  final int _idUser;
+  HomeBloc(this._repository, this._idUser) {
+    Observable(_repository.getPublications(this._idUser))
+        .pipe(publicationsController);
+    Observable(_repository.getUserPublications(this._idUser))
+        .pipe(cultivationController);
+    Observable(_repository.getTransaccion(this._idUser))
+        .pipe(transaccionController);
   }
   Stream<List<PublicationModel>> getPubStream() {
-    return _repository.getPublications();
+    return _repository.getPublications(this._idUser);
   }
 
   Future<List<PublicationModel>> getPub() {

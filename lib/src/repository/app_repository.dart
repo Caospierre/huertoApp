@@ -48,10 +48,11 @@ class AppRepository extends Disposable {
     return UserModel(id: id, email: email);
   }
 
-  Stream<List<PublicationModel>> getPublications() {
+  Stream<List<PublicationModel>> getPublications(int idUser) {
+    print("IdUser1>" + idUser.toString());
     var query = """
-      subscription  {
-        publications(where: {isActive: {_eq: true}, id_usuario: {_neq: 5}, isChecked: {_eq: false}}) {
+      subscription getPubs(\$data:Int!)  {
+        publications  (where: {isActive: {_eq: true}, id_usuario: {_neq: \$data}, isChecked: {_eq: false}}) {
             id
             location
             date
@@ -79,18 +80,21 @@ class AppRepository extends Disposable {
       }
     """;
 
-    Snapshot snapshot = HasuraConecction.conection.subscription(query);
-    print("data " + HasuraConecction.conection.isConnected.toString());
+    Snapshot snapshot = HasuraConecction.conection
+        .subscription(query, variables: {"data": idUser});
+    ;
     return snapshot.stream.map(
       (jsonList) =>
           PublicationModel.fromJsonList(jsonList["data"]["publications"]),
     );
   }
 
-  Stream<List<PublicationModel>> getUserPublications() {
+  Stream<List<PublicationModel>> getUserPublications(int idUser) {
+    print("IdUser2>" + idUser.toString());
+
     var query = """
-      subscription  {
-        publications(where: {isActive: {_eq: true}, id_usuario: {_eq: 5}, isChecked: {_eq: false}}) {
+      subscription getMyPubs(\$data:Int!) {
+        publications(where: {isActive: {_eq: true}, id_usuario: {_eq:  \$data}, isChecked: {_eq: false}}) {
             id
             location
             date
@@ -118,18 +122,20 @@ class AppRepository extends Disposable {
       }
     """;
 
-    Snapshot snapshot = HasuraConecction.conection.subscription(query);
-    print("data " + HasuraConecction.conection.isConnected.toString());
+    Snapshot snapshot = HasuraConecction.conection
+        .subscription(query, variables: {"data": idUser});
     return snapshot.stream.map(
       (jsonList) =>
           PublicationModel.fromJsonList(jsonList["data"]["publications"]),
     );
   }
 
-  Stream<List<PublicationModel>> getTransaccion() {
+  Stream<List<PublicationModel>> getTransaccion(int idUser) {
+    print("IdUser3>" + idUser.toString());
+
     var query = """
-      subscription  {
-        publications(where: { user_transaccio_id: {_eq: 5}, isChecked: {_eq: true}})  {
+      subscription getTransaccion(\$data:Int!) {
+        publications(where: { user_transaccio_id: {_eq: \$data}, isChecked: {_eq: true}})  {
             id
             location
             date
@@ -157,8 +163,8 @@ class AppRepository extends Disposable {
       }
     """;
 
-    Snapshot snapshot = HasuraConecction.conection.subscription(query);
-    print("data " + HasuraConecction.conection.isConnected.toString());
+    Snapshot snapshot = HasuraConecction.conection
+        .subscription(query, variables: {"data": idUser});
     return snapshot.stream.map(
       (jsonList) =>
           PublicationModel.fromJsonList(jsonList["data"]["publications"]),

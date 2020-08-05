@@ -46,6 +46,7 @@ class LoginBloc extends BlocBase {
     try {
       print(controllerEmail.text);
       print(controllerPassword.text);
+      print("Email:" + email);
       this._user = await repository.getUser(email);
       appBloc.userController.add(this._user);
 

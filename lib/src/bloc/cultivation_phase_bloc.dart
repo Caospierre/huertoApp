@@ -13,23 +13,25 @@ class CultivationPhaseBloc extends BlocBase {
   final AppBloc appBloc;
 
   CultivationPhaseBloc(this._repository, this.appBloc) {
-    Observable(_repository.getCultivationPhase()).pipe(cultivationPhaseController);
+    Observable(_repository.getCultivationPhase())
+        .pipe(cultivationPhaseController);
   }
 
   var controller = TextEditingController();
-  var cultivationPhaseController = BehaviorSubject<List<Cultivation_PhaseModel>>();
+  var cultivationPhaseController =
+      BehaviorSubject<List<CultivationPhaseModel>>();
 
-  Cultivation_PhaseModel random() {
+  CultivationPhaseModel random() {
     var randomIndex = Random().nextInt(cultivationPhaseController.value.length);
     return cultivationPhaseController.value[randomIndex];
   }
 
   //void sendPublication() {
-    //_repository.sendPublication(
-      //controller.text,
-      //appBloc.userController.value.id,
-    //);
-    //controller.clear();
+  //_repository.sendPublication(
+  //controller.text,
+  //appBloc.userController.value.id,
+  //);
+  //controller.clear();
   //}
 
   //dispose will be called automatically by closing its streams

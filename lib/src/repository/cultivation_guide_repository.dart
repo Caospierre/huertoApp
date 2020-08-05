@@ -11,7 +11,7 @@ class CultivationGuideRepository extends Disposable {
     this.connection = GetIt.I<InitServices>().hasuraService.hasuraConect;
   }
 
-  Future<Cultivation_GuideModel> createCultivationGuide(
+  Future<CultivationGuideModel> createCultivationGuide(
       String name,
       String image,
       String description,
@@ -34,7 +34,7 @@ class CultivationGuideRepository extends Disposable {
       "guide_link": guide_link
     });
     var id = data["data"]["insert_cultivation_guide"]["returning"][0]["id"];
-    return Cultivation_GuideModel(
+    return CultivationGuideModel(
         id: id,
         name: name,
         image: image,
@@ -42,7 +42,7 @@ class CultivationGuideRepository extends Disposable {
         guide_link: guide_link);
   }
 
-  Future<Cultivation_GuideModel> deleteCultivationGuide(int id) async {
+  Future<CultivationGuideModel> deleteCultivationGuide(int id) async {
     var query = """
       mutation deleteCultivationGuide(\$id:int!) {
         delete_cultivation_guide(where: {id: {_eq: \$id}}) {
@@ -55,10 +55,10 @@ class CultivationGuideRepository extends Disposable {
 
     var data = await connection.mutation(query, variables: {});
     var id = data["data"]["delete_cultivation_guide"]["returning"][0]["id"];
-    return Cultivation_GuideModel(id: id);
+    return CultivationGuideModel(id: id);
   }
 
-  Future<Cultivation_GuideModel> updateCultivationGuide(
+  Future<CultivationGuideModel> updateCultivationGuide(
       String name,
       String image,
       String description,
@@ -83,7 +83,7 @@ class CultivationGuideRepository extends Disposable {
       "cultivation_phaseId": cultivation_phaseId
     });
     var id = data["data"]["update_cultivation_guide"]["returning"][0]["id"];
-    return Cultivation_GuideModel(
+    return CultivationGuideModel(
         id: id,
         name: name,
         image: image,
@@ -91,7 +91,7 @@ class CultivationGuideRepository extends Disposable {
         guide_link: guide_link);
   }
 
-  Stream<List<Cultivation_GuideModel>> getCultivationGuide() {
+  Stream<List<CultivationGuideModel>> getCultivationGuide() {
     var query = """
       subscription {
         cultivation_guide(order_by: {id: asc}) {
@@ -109,7 +109,7 @@ class CultivationGuideRepository extends Disposable {
 
     Snapshot snapshot = connection.subscription(query);
     return snapshot.stream.map(
-      (jsonList) => Cultivation_GuideModel.fromJsonList(
+      (jsonList) => CultivationGuideModel.fromJsonList(
           jsonList["data"]["cultivation_guide"]),
     );
   }

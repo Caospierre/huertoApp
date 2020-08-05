@@ -9,7 +9,7 @@ class CultivationPhaseRepository extends Disposable {
 
   CultivationPhaseRepository(this.connection);
 
-  Future<Cultivation_PhaseModel> createCultivationPhase(
+  Future<CultivationPhaseModel> createCultivationPhase(
       bool state_phase,
       String name,
       String image,
@@ -33,7 +33,7 @@ class CultivationPhaseRepository extends Disposable {
       "description": description
     });
     var id = data["data"]["insert_cultivation_guide"]["returning"][0]["id"];
-    return Cultivation_PhaseModel(
+    return CultivationPhaseModel(
         id: id,
         name: name,
         image: image,
@@ -41,7 +41,7 @@ class CultivationPhaseRepository extends Disposable {
         description: description);
   }
 
-  Future<Cultivation_PhaseModel> deleteCultivationPhase(int id) async {
+  Future<CultivationPhaseModel> deleteCultivationPhase(int id) async {
     var query = """
       mutation deleteCultivationPhase(\$id:int!) {
         delete_cultivation_phase(where: {id: {_eq: 4}}) {
@@ -54,10 +54,10 @@ class CultivationPhaseRepository extends Disposable {
 
     var data = await connection.mutation(query, variables: {});
     var id = data["data"]["delete_cultivation_phase"]["returning"][0]["id"];
-    return Cultivation_PhaseModel(id: id);
+    return CultivationPhaseModel(id: id);
   }
 
-  Future<Cultivation_PhaseModel> updateCultivationPhase(
+  Future<CultivationPhaseModel> updateCultivationPhase(
       bool state_phase,
       String name,
       String image,
@@ -84,7 +84,7 @@ class CultivationPhaseRepository extends Disposable {
       "id_producto": productId
     });
     var id = data["data"]["update_cultivation_phase"]["returning"][0]["id"];
-    return Cultivation_PhaseModel(
+    return CultivationPhaseModel(
         id: id,
         state_phase: state_phase,
         name: name,
@@ -93,7 +93,7 @@ class CultivationPhaseRepository extends Disposable {
         description: description);
   }
 
-  Stream<List<Cultivation_PhaseModel>> getCultivationPhase() {
+  Stream<List<CultivationPhaseModel>> getCultivationPhase() {
     var query = """
       subscription {
         cultivation_phase(order_by: {id: asc}) {
@@ -112,7 +112,7 @@ class CultivationPhaseRepository extends Disposable {
 
     Snapshot snapshot = connection.subscription(query);
     return snapshot.stream.map(
-      (jsonList) => Cultivation_PhaseModel.fromJsonList(
+      (jsonList) => CultivationPhaseModel.fromJsonList(
           jsonList["data"]["cultivation_phase"]),
     );
   }

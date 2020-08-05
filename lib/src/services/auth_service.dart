@@ -90,16 +90,16 @@ class AuthService {
       final bloc =
           LoginBloc(GetIt.I<InitServices>().hasuraService.appRepository);
       if (user.email != null) {
-        print(user.email);
+        print("Firabase> " + user.email);
         if (!(await bloc.isUser(user.email))) {
           bloc.createUser(user.email);
+          this._userLogin = bloc.user;
         }
-        this._userLogin = bloc.user;
       }
-
+      this._user = user;
       return user;
     } catch (e) {}
-    return null;
+    return _user;
   }
 
   checkAuthentication(BuildContext context, String urlPath) async {

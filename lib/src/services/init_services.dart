@@ -15,9 +15,8 @@ class InitServices {
 
   static Future<InitServices> initialize() async {
     final AuthService _authService = new AuthService();
-    final NavigatorService _navigatorService = new NavigatorService();
     final HasuraService _hasuraService = new HasuraService();
-
+    final NavigatorService _navigatorService = new NavigatorService();
     return InitServices(
       authService: _authService,
       navigatorService: _navigatorService,

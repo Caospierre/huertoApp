@@ -1,10 +1,16 @@
 import 'package:flutter/material.dart';
+
 import 'package:firebase_auth/firebase_auth.dart';
+
 import 'package:flutter_auth_buttons/flutter_auth_buttons.dart';
 import 'package:get_it/get_it.dart';
-import 'package:huerto_app/src/services/init_services.dart';
+
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:huerto_app/src/bloc/login_bloc.dart';
+import 'package:huerto_app/src/models/user_model.dart';
 import 'package:huerto_app/src/routes/router.dart';
+import 'package:huerto_app/src/services/init_services.dart';
+import 'package:huerto_app/utils/utils.dart';
 
 class SignIn extends StatefulWidget {
   @override
@@ -12,46 +18,131 @@ class SignIn extends StatefulWidget {
 }
 
 class _SignInState extends State<SignIn> {
-  final bloc = LoginBloc(GetIt.I<InitServices>().hasuraService.appRepository);
-  String _name, _email, _password;
-  navigateToSignUpScreen() {
-    GetIt.I<InitServices>()
-        .navigatorService
-        .navigateToUrl(context, NavigatorToPath.SignUP);
+  BuildContext context;
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  final GoogleSignIn _googleSignIn = GoogleSignIn();
+  UserModel _userLogin;
+
+  final GlobalKey<FormState> _formkey = GlobalKey<FormState>();
+
+  String _email, _passwaord;
+
+  checkAuthentication() async {
+    _auth.onAuthStateChanged.listen((user) async {
+      if (user != null) {
+        try {
+          Navigator.pushNamed(context, NavigatorToPath.Test, arguments: 5);
+        } catch (e) {
+          print(e.toString());
+        }
+      }
+    });
   }
 
-  void signin() {
-    GetIt.I<InitServices>()
-        .authService
-        .signin(_email, _password, _name, context);
-    bloc.login();
+  navigateToSignUpScreen() {
+    Navigator.pushReplacementNamed(context, '/signup');
   }
 
   @override
   void initState() {
-    GlobalKey<FormState> _formkey = GlobalKey<FormState>();
-
-    GetIt.I<InitServices>().authService.formkey = _formkey;
-    GetIt.I<InitServices>()
-        .authService
-        .checkAuthentication(context, NavigatorToPath.Home);
-
     super.initState();
+    this.checkAuthentication();
+  }
+
+  void signin() async {
+    if (_formkey.currentState.validate()) {
+      _formkey.currentState.save();
+
+      try {
+        AuthResult user = await _auth.signInWithEmailAndPassword(
+          email: _email,
+          password: _passwaord,
+        );
+        if (user.user != null) {
+          final bloc =
+              LoginBloc(GetIt.I<InitServices>().hasuraService.appRepository);
+          if (user.user.email != null) {
+            print("U:" + user.user.email);
+            if (!await bloc.isUser(user.user.email)) {
+              // bloc.createUser(user.user.email);
+              print("Login:" + _userLogin.email);
+            }
+          }
+        }
+      } catch (e) {
+        showError(e);
+      }
+    }
+  }
+
+  // ignore: missing_return
+  Future<FirebaseUser> _signInWithGoogle() async {
+    try {
+      final GoogleSignInAccount googleSignInAccount =
+          await _googleSignIn.signIn();
+      final GoogleSignInAuthentication googleSignInAuthentication =
+          await googleSignInAccount.authentication;
+
+      final AuthCredential authCredential = GoogleAuthProvider.getCredential(
+          idToken: googleSignInAuthentication.idToken,
+          accessToken: googleSignInAuthentication.accessToken);
+
+      final AuthResult authResult =
+          await _auth.signInWithCredential(authCredential);
+      final FirebaseUser user = authResult.user;
+
+      assert(user.email != null);
+      assert(user.displayName != null);
+      assert(!user.isAnonymous);
+      assert(await user.getIdToken() != null);
+
+      final FirebaseUser currentuser = await _auth.currentUser();
+
+      assert(user.uid == currentuser.uid);
+
+      final bloc =
+          LoginBloc(GetIt.I<InitServices>().hasuraService.appRepository);
+
+      if (user.email != null) {
+        print("u2" + user.email);
+        if (!(await bloc.isUser(user.email))) {
+          bloc.createUser(user.email);
+        }
+        this._userLogin = bloc.user;
+        print("EmailXD: " + _userLogin.email);
+      }
+
+      return user;
+    } catch (e) {}
+  }
+
+  showError(String errormessage) {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text('Error'),
+            content: Text(errormessage),
+            actions: <Widget>[
+              FlatButton(
+                child: Text('Ok'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              )
+            ],
+          );
+        });
   }
 
   @override
   Widget build(BuildContext context) {
+    setState(() => this.context = context);
     return Scaffold(
 //      appBar: AppBar(
 //        title: Text('Sign In'),
 //      ),
       body: Container(
-        decoration: BoxDecoration(
-          image: DecorationImage(
-            image: AssetImage("assets/images/Started.png"),
-            fit: BoxFit.cover,
-          ),
-        ),
         padding: EdgeInsets.fromLTRB(30, 50, 30, 40),
         child: Center(
           child: ListView(
@@ -62,7 +153,7 @@ class _SignInState extends State<SignIn> {
                     Container(
                       padding: EdgeInsets.fromLTRB(10.0, 50.0, 10.0, 50.0),
                       child: Image(
-                        image: AssetImage('assets/images/Tree.png'),
+                        image: AssetImage(AvailableImages.logo),
                         height: 100,
                         width: 100,
                       ),
@@ -70,19 +161,18 @@ class _SignInState extends State<SignIn> {
                     Container(
                       padding: EdgeInsets.all(16),
                       child: Form(
-                        key: GetIt.I<InitServices>().authService.formkey,
+                        key: _formkey,
                         child: Column(
                           children: <Widget>[
                             // E-mail TextField
                             Container(
                               child: TextFormField(
                                 keyboardType: TextInputType.emailAddress,
-                                controller: bloc.controllerEmail,
                                 cursorColor: Colors.white,
                                 style: TextStyle(color: Colors.white),
                                 validator: (input) {
                                   if (input.isEmpty) {
-                                    return ' Email';
+                                    return 'Provide an email';
                                   }
                                 },
                                 decoration: InputDecoration(
@@ -106,7 +196,7 @@ class _SignInState extends State<SignIn> {
                                             BorderRadius.circular(30)),
                                     hintStyle: TextStyle(color: Colors.white),
                                     hintText: 'E-mail'),
-                                onSaved: (input) => this._email = input,
+                                onSaved: (input) => _email = input,
                               ),
                             ),
                             Padding(
@@ -116,13 +206,12 @@ class _SignInState extends State<SignIn> {
                             Container(
                               child: TextFormField(
                                 keyboardType: TextInputType.emailAddress,
-                                controller: bloc.controllerPassword,
                                 cursorColor: Colors.white,
                                 style: TextStyle(color: Colors.white),
                                 obscureText: true,
                                 validator: (input) {
                                   if (input.length < 6) {
-                                    return 'Password debe ser de 6 digitos';
+                                    return 'Password must be atleast 6 char long';
                                   }
                                 },
                                 decoration: InputDecoration(
@@ -145,8 +234,8 @@ class _SignInState extends State<SignIn> {
                                         borderRadius:
                                             BorderRadius.circular(30)),
                                     hintStyle: TextStyle(color: Colors.white),
-                                    hintText: 'Contraseña'),
-                                onSaved: (input) => this._password = input,
+                                    hintText: 'Passwod'),
+                                onSaved: (input) => _passwaord = input,
                               ),
                             ),
                             Padding(
@@ -162,18 +251,18 @@ class _SignInState extends State<SignIn> {
                                 ),
                                 onPressed: signin,
                                 child: Text(
-                                  'Iniciar sesion',
+                                  'Log In',
                                   style: TextStyle(
                                       color: Colors.white, fontSize: 20),
                                 )),
                             Padding(
                               padding: EdgeInsets.only(top: 20),
                             ),
-
+                            // Text Button to Sign Up page
                             GestureDetector(
                               onTap: navigateToSignUpScreen,
                               child: Text(
-                                'Create una cuenta',
+                                'Create an account',
                                 textAlign: TextAlign.center,
                                 style: TextStyle(
                                     fontSize: 16.0, color: Colors.blue),
@@ -193,10 +282,9 @@ class _SignInState extends State<SignIn> {
                             ),
                             GoogleSignInButton(
                               onPressed: () {
-                                GetIt.I<InitServices>()
-                                    .authService
-                                    .signInWithGoogle()
-                                    .then((FirebaseUser user) => print(user))
+                                _signInWithGoogle()
+                                    .then((FirebaseUser user) =>
+                                        print("Logeado>>" + user.toString()))
                                     .catchError((e) => print(e));
                               },
                               borderRadius: 20,
@@ -217,7 +305,7 @@ class _SignInState extends State<SignIn> {
                 padding: EdgeInsets.all(10),
               ),
               Text(
-                'HI',
+                'Mi Cosecha ',
                 textAlign: TextAlign.center,
                 style: TextStyle(fontSize: 10, color: Colors.blue),
               )

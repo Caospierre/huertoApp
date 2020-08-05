@@ -1,5 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:get_it/get_it.dart';
+import 'package:huerto_app/src/bloc/login_bloc.dart';
+import 'package:huerto_app/src/models/user_model.dart';
+import 'package:huerto_app/src/routes/router.dart';
+import 'package:huerto_app/src/services/init_services.dart';
 
 class SignUp extends StatefulWidget {
   @override
@@ -9,13 +14,14 @@ class SignUp extends StatefulWidget {
 class _SignUpState extends State<SignUp> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final GlobalKey<FormState> _formkey = GlobalKey<FormState>();
+  UserModel _userLogin;
 
   String _name, _email, _password;
 
   checkAuthincation() async {
     _auth.onAuthStateChanged.listen((user) {
       if (user != null) {
-        Navigator.pushReplacementNamed(context, '/home');
+        Navigator.pushNamed(context, NavigatorToPath.Test, arguments: 5);
       }
     });
   }
@@ -26,6 +32,7 @@ class _SignUpState extends State<SignUp> {
 
   @override
   void initState() {
+    // TODO: implement initState
     super.initState();
     this.checkAuthincation();
   }
@@ -43,6 +50,10 @@ class _SignUpState extends State<SignUp> {
           UserUpdateInfo userUpdateInfo = UserUpdateInfo();
           userUpdateInfo.displayName = _name;
           user.user.updateProfile(userUpdateInfo);
+          final bloc =
+              LoginBloc(GetIt.I<InitServices>().hasuraService.appRepository);
+          bloc.createUser(_email);
+          this._userLogin = bloc.user;
         }
       } catch (e) {
         showError(e);
@@ -77,12 +88,6 @@ class _SignUpState extends State<SignUp> {
 //        title: Text('Sign Up'),
 //      ),
       body: Container(
-        decoration: BoxDecoration(
-          image: DecorationImage(
-            image: AssetImage("assets/images/Started.png"),
-            fit: BoxFit.cover,
-          ),
-        ),
         padding: EdgeInsets.fromLTRB(30, 50, 30, 40),
         child: Center(
           child: ListView(
@@ -98,7 +103,7 @@ class _SignUpState extends State<SignUp> {
                     Container(
                       padding: EdgeInsets.fromLTRB(10.0, 50.0, 10.0, 50.0),
                       child: Image(
-                        image: AssetImage('assets/images/Tree.png'),
+                        image: AssetImage('asset/index.png'),
                         height: 100,
                         width: 100,
                       ),
