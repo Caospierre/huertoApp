@@ -91,7 +91,7 @@ class AppRepository extends Disposable {
   Stream<List<PublicationModel>> getUserPublications(int idUser) {
     var query = """
       subscription getMyPubs(\$data:Int!) {
-        publications(where: {isActive: {_eq: true}, id_usuario: {_eq:  \$data}, isChecked: {_eq: false}}) {
+        publications(where: {isActive: {_eq: false}, id_usuario: {_eq:  \$data}, isChecked: {_eq: false}}) {
             id
             location
             date

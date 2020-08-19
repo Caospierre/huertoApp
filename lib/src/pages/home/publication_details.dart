@@ -285,7 +285,7 @@ class PublicationDetailsPage extends StatelessWidget {
   }
 
   bool isOddNumber(int number) {
-    return number % 2 == 0 ? false : true;
+    return number % 2 == 0 ? true : false;
   }
 
   Widget _buildIconCard(
