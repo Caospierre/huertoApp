@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:huerto_app/src/bloc/cultivation_bloc.dart';
 import 'package:huerto_app/src/bloc/home_bloc.dart';
+import 'package:huerto_app/src/bloc/product_bloc.dart';
+import 'package:huerto_app/src/models/product_model.dart';
 import 'package:huerto_app/src/models/publication_model.dart';
 import 'package:huerto_app/src/services/init_services.dart';
 
@@ -14,8 +16,12 @@ class AddCultivationPage extends StatefulWidget {
 }
 
 class _AddCultivationPageState extends State<AddCultivationPage> {
-  final bloc = CultivationBloc(
+  final cbloc = CultivationBloc(
       GetIt.I<InitServices>().hasuraService.cultivationRepository);
+  final pbloc =
+      ProductBloc(GetIt.I<InitServices>().hasuraService.productRepository);
+  int productIndex = 0;
+  Stream<List<ProductModel>> productStream;
   int idProducto;
   String nameProducto = "--NoNe---";
   @override
@@ -38,7 +44,8 @@ class _AddCultivationPageState extends State<AddCultivationPage> {
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.add),
         onPressed: () {
-          bloc.createCultivation(5, this.idProducto);
+          int idUser = GetIt.I<InitServices>().authService.userLogin.id;
+          cbloc.createCultivation(idUser, this.idProducto);
         },
       ),
     );
@@ -46,7 +53,7 @@ class _AddCultivationPageState extends State<AddCultivationPage> {
 
   Widget _nameCultivation() {
     return TextFormField(
-      controller: bloc.controllerName,
+      controller: cbloc.controllerName,
       textCapitalization: TextCapitalization.words,
       decoration: InputDecoration(
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(20.0)),
@@ -67,7 +74,7 @@ class _AddCultivationPageState extends State<AddCultivationPage> {
 
   Widget _descriptionCultivation() {
     return TextFormField(
-      controller: bloc.controllerDescription,
+      controller: cbloc.controllerDescription,
       maxLines: 8,
       textCapitalization: TextCapitalization.words,
       decoration: InputDecoration(
@@ -86,40 +93,41 @@ class _AddCultivationPageState extends State<AddCultivationPage> {
     );
   }
 
-  List<DropdownMenuItem<String>> getOptionsDropdown(List<PublicationModel> lt) {
+  List<DropdownMenuItem<String>> getOptionsDropdown(List<ProductModel> lt) {
     List<DropdownMenuItem<String>> list = new List();
     lt.forEach((element) {
       list.add(DropdownMenuItem(
-        child: Text(element.cultivation.name),
-        value: element.cultivation.id.toString(),
+        child: Text(element.name),
+        value: productIndex.toString(),
       ));
+      this.productIndex++;
     });
+    this.productIndex = 0;
     return list;
   }
 
   Widget _productCultivation() {
+    this.productStream = pbloc.productController;
     return Row(
       children: <Widget>[
         ImageIcon(new NetworkImage(
             "https://image.flaticon.com/icons/png/512/1146/1146445.png")),
         SizedBox(width: 30.0),
         Expanded(
-            child: StreamBuilder<List<PublicationModel>>(
-                stream: widget.publicationStream,
+            child: StreamBuilder<List<ProductModel>>(
+                stream: this.productStream,
                 builder: (context, snapshot) {
                   if (!snapshot.hasData) {
-                    print(snapshot);
                     return Text('Empty');
                   } else {}
-                  print("" + snapshot.data.toString());
+
                   return DropdownButton(
-                    value: null,
                     items: getOptionsDropdown(snapshot.data),
+                    value: '0',
                     onChanged: (opt) {
                       setState(() {
-                        this.idProducto = int.parse(opt);
+                        this.productIndex = int.parse(opt);
                       });
-                      print(this.idProducto);
                     },
                   );
                 })),

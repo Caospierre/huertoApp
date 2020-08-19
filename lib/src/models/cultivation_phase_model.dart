@@ -6,20 +6,20 @@ import 'dart:convert';
 
 import 'package:huerto_app/src/models/product_model.dart';
 
-CultivationPhaseModel cultivation_PhaseModelFromJson(String str) =>
+CultivationPhaseModel cultivationPhaseModelFromJson(String str) =>
     CultivationPhaseModel.fromJson(json.decode(str));
 
-String cultivation_PhaseModelToJson(CultivationPhaseModel data) =>
+String cultivationPhaseModelToJson(CultivationPhaseModel data) =>
     json.encode(data.toJson());
 
 class CultivationPhaseModel {
-  bool state_phase;
+  bool statePhase;
   String name, image, duration, description;
   int id;
   ProductModel product;
 
   CultivationPhaseModel({
-    this.state_phase,
+    this.statePhase,
     this.name,
     this.image,
     this.duration,
@@ -30,22 +30,21 @@ class CultivationPhaseModel {
 
   factory CultivationPhaseModel.fromJson(Map<String, dynamic> json) =>
       new CultivationPhaseModel(
-        state_phase: json["state_phase"],
+        statePhase: json["state_phase"],
         name: json["name"],
         image: json["image"],
         duration: json["duration"],
         description: json["description"],
         id: json["id"],
-        product: ProductModel.fromJson(json["product"]),
       );
 
   Map<String, dynamic> toJson() => {
         "name": name,
         "image": image,
         "duration": duration,
+        "statePhase": statePhase,
         "description": description,
         "id": id,
-        "product": product.toJson(),
       };
 
   static List<CultivationPhaseModel> fromJsonList(List list) {

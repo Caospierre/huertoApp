@@ -14,13 +14,15 @@ class SignUp extends StatefulWidget {
 class _SignUpState extends State<SignUp> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final GlobalKey<FormState> _formkey = GlobalKey<FormState>();
+  final bloc = LoginBloc(GetIt.I<InitServices>().hasuraService.appRepository);
   UserModel _userLogin;
 
   String _name, _email, _password;
 
   checkAuthincation() async {
-    _auth.onAuthStateChanged.listen((user) {
+    _auth.onAuthStateChanged.listen((user) async {
       if (user != null) {
+        this._userLogin = await bloc.isUser(user.email);
         Navigator.pushNamed(context, NavigatorToPath.Test,
             arguments: this._userLogin.id);
       }
@@ -89,6 +91,12 @@ class _SignUpState extends State<SignUp> {
 //        title: Text('Sign Up'),
 //      ),
       body: Container(
+        decoration: BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage("assets/images/Started.png"),
+            fit: BoxFit.cover,
+          ),
+        ),
         padding: EdgeInsets.fromLTRB(30, 50, 30, 40),
         child: Center(
           child: ListView(
@@ -104,7 +112,7 @@ class _SignUpState extends State<SignUp> {
                     Container(
                       padding: EdgeInsets.fromLTRB(10.0, 50.0, 10.0, 50.0),
                       child: Image(
-                        image: AssetImage('asset/index.png'),
+                        image: AssetImage("assets/images/Tree.png"),
                         height: 100,
                         width: 100,
                       ),
@@ -187,7 +195,7 @@ class _SignUpState extends State<SignUp> {
                                         borderRadius:
                                             BorderRadius.circular(30)),
                                     hintStyle: TextStyle(color: Colors.white),
-                                    hintText: 'E-mail'),
+                                    hintText: 'Correo Electrónico'),
                                 onSaved: (input) => _email = input,
                               ),
                             ),
@@ -225,7 +233,7 @@ class _SignUpState extends State<SignUp> {
                                         borderRadius:
                                             BorderRadius.circular(30)),
                                     hintStyle: TextStyle(color: Colors.white),
-                                    hintText: 'Passwod'),
+                                    hintText: 'Contraseña'),
                                 onSaved: (input) => _password = input,
                               ),
                             ),
@@ -242,7 +250,7 @@ class _SignUpState extends State<SignUp> {
                                 ),
                                 onPressed: signup,
                                 child: Text(
-                                  'Sign Up',
+                                  'Registrar',
                                   style: TextStyle(
                                       color: Colors.white, fontSize: 20),
                                 )),
@@ -253,7 +261,7 @@ class _SignUpState extends State<SignUp> {
                             GestureDetector(
                               onTap: navigateToSignInScreen,
                               child: Text(
-                                'Already have an account? click here',
+                                'Tienes una ? Presiona aqui',
                                 textAlign: TextAlign.center,
                                 style: TextStyle(
                                     fontSize: 16.0, color: Colors.blue),

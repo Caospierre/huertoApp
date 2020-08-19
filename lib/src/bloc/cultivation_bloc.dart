@@ -19,11 +19,9 @@ class CultivationBloc extends BlocBase {
 
   Future<bool> createCultivation(int userId, int idCultivo) async {
     try {
-      print(controllerName.text);
-      print(controllerDescription.text);
       var cultivation = await _repository.createCultivation(
           controllerName.text, controllerDescription.text, 1, userId);
-      print("cultivo:" + cultivation.description.toString());
+
       return true;
     } catch (ex) {
       print(ex);

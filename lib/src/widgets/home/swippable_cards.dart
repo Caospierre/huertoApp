@@ -43,7 +43,6 @@ class _SwippableCardsState extends State<SwippableCards> {
       stream: this.widget.publicationStream,
       builder: (context, snapshot) {
         if (!snapshot.hasData) {
-          print(snapshot);
           return Center(child: CircularProgressIndicator());
         } else {}
         print("" + snapshot.data.toString());
@@ -163,9 +162,9 @@ class _SwippableCardsState extends State<SwippableCards> {
       case AvailableImages.like:
         print("Trueque");
         bloc.txtPubcontroller.text = _publicationsCopy[0].id.toString();
-        bloc.txtUsercontroller.text = _publicationsCopy[0].users.id.toString();
+        bloc.txtUsercontroller.text =
+            GetIt.I<InitServices>().authService.userLogin.id.toString();
         bloc.checkPublication();
-        print(_publicationsCopy[0].cultivation.product.name);
 
         break;
 

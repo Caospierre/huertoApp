@@ -17,50 +17,9 @@ class AccountPage extends StatefulWidget {
 }
 
 class _AccountPageState extends State<AccountPage> {
-  final FirebaseAuth _auth = FirebaseAuth.instance;
-  BuildContext context;
-
-  FirebaseUser user;
-  bool isSignedIn = false;
-  String imageUrl;
-
-  checkAuthentication() async {
-    _auth.onAuthStateChanged.listen((user) {
-      if (user == null) {
-        Navigator.pushReplacementNamed(this.context, '/signin');
-      }
-    });
-  }
-
-  getUser() async {
-    FirebaseUser firebaseUser = await _auth.currentUser();
-    await firebaseUser?.reload();
-    firebaseUser = await _auth.currentUser();
-
-    if (firebaseUser != null) {
-      setState(() {
-        this.user = firebaseUser;
-        this.isSignedIn = true;
-        this.imageUrl = user.photoUrl;
-      });
-    }
-  }
-
-  signout() async {
-    _auth.signOut();
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    //this.checkAuthentication();
-    this.getUser();
-  }
-
   var deviceWidth, deviceHeight;
   @override
   Widget build(BuildContext context) {
-    setState(() => this.context = context);
     deviceHeight = MediaQuery.of(context).size.height;
     deviceWidth = MediaQuery.of(context).size.width;
 
@@ -69,7 +28,6 @@ class _AccountPageState extends State<AccountPage> {
       stream: this.widget.publicationStream,
       builder: (context, snapshot) {
         if (!snapshot.hasData) {
-          print(snapshot);
           return Center(child: CircularProgressIndicator());
         } else {}
         return Column(

@@ -1,16 +1,18 @@
 import 'package:bloc_pattern/bloc_pattern.dart';
-import 'package:get_it/get_it.dart';
 import 'package:hasura_connect/hasura_connect.dart';
 import 'package:huerto_app/src/models/cultivation_phase_model.dart';
-import 'package:huerto_app/src/services/init_services.dart';
+import 'package:huerto_app/src/models/user_cultivation_phase_model.dart';
+import 'package:huerto_app/utils/api_info.dart';
 
 class CultivationPhaseRepository extends Disposable {
-  final HasuraConnect connection;
+  HasuraConnect connection;
 
-  CultivationPhaseRepository(this.connection);
+  CultivationPhaseRepository() {
+    this.connection = HasuraConecction.conection;
+  }
 
   Future<CultivationPhaseModel> createCultivationPhase(
-      bool state_phase,
+      bool statePphase,
       String name,
       String image,
       String duration,
@@ -58,7 +60,7 @@ class CultivationPhaseRepository extends Disposable {
   }
 
   Future<CultivationPhaseModel> updateCultivationPhase(
-      bool state_phase,
+      bool statePhase,
       String name,
       String image,
       String duration,
@@ -76,7 +78,7 @@ class CultivationPhaseRepository extends Disposable {
     """;
 
     var data = await connection.mutation(query, variables: {
-      "state_phase": state_phase,
+      "statePhase": statePhase,
       "name": name,
       "image": image,
       "duration": duration,
@@ -86,34 +88,30 @@ class CultivationPhaseRepository extends Disposable {
     var id = data["data"]["update_cultivation_phase"]["returning"][0]["id"];
     return CultivationPhaseModel(
         id: id,
-        state_phase: state_phase,
+        statePhase: statePhase,
         name: name,
         image: image,
         duration: duration,
         description: description);
   }
 
-  Stream<List<CultivationPhaseModel>> getCultivationPhase() {
+  Stream<List<UserCultivationPhaseModel>> getUserCultivationPhase(
+      int idpublication) {
     var query = """
-      subscription {
-        cultivation_phase(order_by: {id: asc}) {
-          state_phase
-          name
-          image
-          duration
+      subscription getUserCultivationPhase(\$idpublication:Int!) {
+        user_cultivation_phase(where: {id_publication: {_eq: \$idpublication}}, order_by: {description: asc}) {
+          statePhase
           description
-          producto {
-            id
-            name
-          }
+          id
         }
       }
     """;
 
-    Snapshot snapshot = connection.subscription(query);
+    Snapshot snapshot = connection
+        .subscription(query, variables: {"idpublication": idpublication});
     return snapshot.stream.map(
-      (jsonList) => CultivationPhaseModel.fromJsonList(
-          jsonList["data"]["cultivation_phase"]),
+      (jsonList) => UserCultivationPhaseModel.fromJsonList(
+          jsonList["data"]["user_cultivation_phase"]),
     );
   }
 

@@ -1,5 +1,4 @@
 import 'package:bloc_pattern/bloc_pattern.dart';
-import 'package:hasura_connect/hasura_connect.dart';
 import 'package:huerto_app/src/models/publication_model.dart';
 import 'package:huerto_app/utils/api_info.dart';
 
@@ -48,7 +47,7 @@ class PublicationRepository extends Disposable {
 
   void checkedPublication(int _id, int _iduser) async {
     // ignore: non_constant_identifier_names
-    var id = 23, user_transaccio_id = 5;
+    var id = _id, user_transaccio_id = _iduser;
     var query = """
      mutation checkedPublication(\$id:Int!,\$user_transaccio_id:Int!) {
          update_publications_by_pk(pk_columns: {id:\$id}, _set: {isChecked: true,user_transaccio_id: \$user_transaccio_id}) {
@@ -59,9 +58,6 @@ class PublicationRepository extends Disposable {
 
     var data = await HasuraConecction.conection.mutation(query,
         variables: {"id": id, "user_transaccio_id": user_transaccio_id});
-    ;
-    print('Update');
-    print(data.toString());
   }
 
   @override

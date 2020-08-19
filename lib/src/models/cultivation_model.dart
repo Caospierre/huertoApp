@@ -56,9 +56,7 @@ class CultivationModel {
     list
         .map((item) => CultivationModel.fromJson(item))
         .toList()
-        .forEach((element) {
-      print(element.name);
-    });
+        .forEach((element) {});
     return list.map((item) => CultivationModel.fromJson(item)).toList();
   }
 }

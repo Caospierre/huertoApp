@@ -2,13 +2,14 @@ import 'package:bloc_pattern/bloc_pattern.dart';
 import 'package:get_it/get_it.dart';
 import 'package:huerto_app/src/models/cultivation_model.dart';
 import 'package:hasura_connect/hasura_connect.dart';
-import 'package:huerto_app/src/services/init_services.dart';
+import 'package:huerto_app/src/models/product_model.dart';
+import 'package:huerto_app/utils/api_info.dart';
 
 class ProductRepository extends Disposable {
   HasuraConnect connection;
 
   ProductRepository() {
-    this.connection = GetIt.I<InitServices>().hasuraService.hasuraConect;
+    this.connection = HasuraConnect(HasuraBackendAPI);
   }
   Future<CultivationModel> createProducto(
       String name, String description, int userId) async {
@@ -81,6 +82,24 @@ class ProductRepository extends Disposable {
     return snapshot.stream.map(
       (jsonList) =>
           CultivationModel.fromJsonList(jsonList["data"]["cultivation"]),
+    );
+  }
+
+  Stream<List<ProductModel>> getProducts() {
+    var query = """
+      subscription {
+          product 
+          {
+            name
+            id
+            photo
+          }
+      }
+    """;
+
+    Snapshot snapshot = connection.subscription(query);
+    return snapshot.stream.map(
+      (jsonList) => ProductModel.fromJsonList(jsonList["data"]["product"]),
     );
   }
 

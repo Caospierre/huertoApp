@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:huerto_app/src/bloc/home_bloc.dart';
-import 'package:huerto_app/src/module/home_module.dart';
 
 class HomePage extends StatefulWidget {
   @override

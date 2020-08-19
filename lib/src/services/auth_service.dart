@@ -1,13 +1,16 @@
+import 'package:bloc_pattern/bloc_pattern.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:get_it/get_it.dart';
 import 'package:huerto_app/src/bloc/login_bloc.dart';
 import 'package:huerto_app/src/models/user_model.dart';
+import 'package:rxdart/rxdart.dart';
 import 'init_services.dart';
 
-class AuthService {
+class AuthService extends Disposable {
   FirebaseAuth _auth = FirebaseAuth.instance;
+  var userController;
 
   GoogleSignIn _googleSignIn = GoogleSignIn();
   FirebaseUser _user;
@@ -17,11 +20,13 @@ class AuthService {
   GlobalKey<FormState> _formkey;
 
   AuthService() {
+    this.userController = BehaviorSubject<UserModel>();
     this._auth = FirebaseAuth.instance;
     this._googleSignIn = GoogleSignIn();
   }
 
   UserModel get userLogin => _userLogin;
+  set userLogin(UserModel _userLogin) => {this._userLogin = _userLogin};
   FirebaseAuth get auth => _auth;
   GoogleSignIn get googleSignIn => _googleSignIn;
   bool get isSignedIn => _isSignedIn;
@@ -40,8 +45,7 @@ class AuthService {
         );
         final bloc =
             LoginBloc(GetIt.I<InitServices>().hasuraService.appRepository);
-        if (await bloc.isUser(_email)) {
-          print(_email);
+        if (await bloc.isUser(_email) != null) {
           this._userLogin = bloc.user;
         }
       } catch (e) {
@@ -90,8 +94,7 @@ class AuthService {
       final bloc =
           LoginBloc(GetIt.I<InitServices>().hasuraService.appRepository);
       if (user.email != null) {
-        print("Firabase> " + user.email);
-        if (!(await bloc.isUser(user.email))) {
+        if (await bloc.isUser(user.email) == null) {
           bloc.createUser(user.email);
           this._userLogin = bloc.user;
         }
@@ -168,5 +171,10 @@ class AuthService {
             ],
           );
         });
+  }
+
+  @override
+  void dispose() {
+    this.userController.close();
   }
 }

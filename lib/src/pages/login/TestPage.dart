@@ -19,6 +19,8 @@ class TestPage extends StatefulWidget {
 }
 
 class _TestPageState extends State<TestPage> {
+  var barTitle = ['Mi Cosecha', 'Trueque o Compra', 'Perfil', 'Guia'];
+  int indexTitle = 0;
   HomeBloc hbloc;
   Stream<List<PublicationModel>> slistp;
   Stream<List<PublicationModel>> cultlist;
@@ -26,13 +28,12 @@ class _TestPageState extends State<TestPage> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   BuildContext context;
   FirebaseUser user;
-  UserModel _userLogin;
+  UserModel _userLogin = GetIt.I<InitServices>().authService.userLogin;
 
   bool isSignedIn = false;
   String imageUrl;
 
   checkAuthentication() async {
-    widget.idUser;
     _auth.onAuthStateChanged.listen((user) {
       if (user == null) {
         try {
@@ -58,7 +59,6 @@ class _TestPageState extends State<TestPage> {
         bloc.isUser(user.email);
         this._userLogin = bloc.user;
       });
-      print("Id Login: " + widget.idUser.toString());
 
       if (widget.idUser != null) {
         hbloc = HomeBloc(
@@ -85,8 +85,9 @@ class _TestPageState extends State<TestPage> {
   @override
   Widget build(BuildContext context) {
     setState(() => this.context = context);
+
     final appBar = AppBar(
-      title: Text("Mi cosecha",
+      title: Text(this.barTitle[this.indexTitle],
           style: TextStyle(color: statusBarColor, fontSize: 28.0)),
       centerTitle: true,
       actions: [
@@ -107,9 +108,13 @@ class _TestPageState extends State<TestPage> {
           _buildTab(Icons.shopping_basket),
           _buildTab(Icons.search),
           _buildTab(Icons.account_circle),
-          _buildTab(Icons.access_alarm),
-          _buildTab(Icons.accessible),
+          _buildTab(Icons.book),
         ],
+        onTap: (value) {
+          setState(() {
+            this.indexTitle = value;
+          });
+        },
       ),
     );
 
@@ -117,15 +122,13 @@ class _TestPageState extends State<TestPage> {
       children: [
         SavedPage(this.cultlist),
         SearchPage(this.slistp),
-        SearchPage(this.slistp),
-        SearchPage(this.slistp),
-        //AccountPage(),
         AccountPage(this.transslist),
+        SavedPage(this.cultlist), //AccountPage(),
       ],
     );
 
     return DefaultTabController(
-      length: 5,
+      length: 4,
       child: Container(
           decoration: BoxDecoration(
             image: DecorationImage(

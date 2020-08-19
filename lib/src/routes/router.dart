@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:huerto_app/src/pages/login/TestPage.dart';
 import 'package:huerto_app/src/pages/cultivation/add_cultivation_page.dart';
 
-import 'package:huerto_app/src/pages/publication_details.dart';
+import 'package:huerto_app/src/pages/home/publication_details.dart';
 import 'package:huerto_app/src/pages/home/home_page.dart';
 import 'package:huerto_app/src/pages/login/SignIn.dart';
 import 'package:huerto_app/src/pages/login//SignUp.dart';

@@ -1,38 +1,26 @@
 import 'dart:math';
 
 import 'package:bloc_pattern/bloc_pattern.dart';
-import 'package:huerto_app/src/models/cultivation_phase_model.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:get_it/get_it.dart';
+import 'package:huerto_app/src/models/user_cultivation_phase_model.dart';
+import 'package:huerto_app/src/services/init_services.dart';
 import 'package:rxdart/rxdart.dart';
-
-import 'package:huerto_app/src/bloc/index/app_bloc.dart';
 import '../repository/cultivation_phase_repository.dart';
 
 class CultivationPhaseBloc extends BlocBase {
-  final CultivationPhaseRepository _repository;
-  final AppBloc appBloc;
+  CultivationPhaseRepository _repository;
 
-  CultivationPhaseBloc(this._repository, this.appBloc) {
-    Observable(_repository.getCultivationPhase())
+  CultivationPhaseBloc(int idpublication) {
+    this._repository =
+        GetIt.I<InitServices>().hasuraService.cultivationPhaseRepository;
+    Observable(_repository.getUserCultivationPhase(idpublication))
         .pipe(cultivationPhaseController);
   }
 
   var controller = TextEditingController();
   var cultivationPhaseController =
-      BehaviorSubject<List<CultivationPhaseModel>>();
-
-  CultivationPhaseModel random() {
-    var randomIndex = Random().nextInt(cultivationPhaseController.value.length);
-    return cultivationPhaseController.value[randomIndex];
-  }
-
-  //void sendPublication() {
-  //_repository.sendPublication(
-  //controller.text,
-  //appBloc.userController.value.id,
-  //);
-  //controller.clear();
-  //}
+      BehaviorSubject<List<UserCultivationPhaseModel>>();
 
   //dispose will be called automatically by closing its streams
   @override

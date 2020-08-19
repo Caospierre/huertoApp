@@ -1,6 +1,8 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:huerto_app/src/bloc/cultivation_phase_bloc.dart';
 import 'package:huerto_app/src/models/publication_model.dart';
+import 'package:huerto_app/src/models/user_cultivation_phase_model.dart';
 import 'package:line_icons/line_icons.dart';
 import 'package:huerto_app/utils/utils.dart';
 import 'package:huerto_app/src/widgets/home/price_rating_bar.dart';
@@ -14,6 +16,11 @@ class PublicationDetailsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final screenHeight = MediaQuery.of(context).size.height;
+    CultivationPhaseBloc phasebloc = CultivationPhaseBloc(this.publication.id);
+    Stream<List<UserCultivationPhaseModel>> phaselist =
+        phasebloc.cultivationPhaseController;
+    print(phaselist);
+    phaselist.length.then((value) => {print("toto:" + value.toString())});
 
     final cancelBtn = Positioned(
       top: 50.0,
@@ -85,7 +92,6 @@ class PublicationDetailsPage extends StatelessWidget {
         ),
       ],
     );
-
     final _rating = Row(
       children: <Widget>[
         RatingBar(
@@ -120,6 +126,43 @@ class PublicationDetailsPage extends StatelessWidget {
         ),
       ),
     );
+
+    return Scaffold(
+        body: StreamBuilder<List<UserCultivationPhaseModel>>(
+      stream: phaselist,
+      builder: (context, snapshot) {
+        if (!snapshot.hasData) {
+          return Column(
+            children: <Widget>[
+              Stack(
+                children: <Widget>[Center(child: CircularProgressIndicator())],
+              ),
+            ],
+          );
+        } else {}
+
+        return Column(
+          children: <Widget>[
+            Stack(
+              children: <Widget>[
+                Container(height: screenHeight - 20),
+                imageBg,
+                cancelBtn,
+                _details,
+                getSecondSection(snapshot.data, context, screenHeight),
+              ],
+            ),
+          ],
+        );
+      },
+    ));
+  }
+
+  Positioned getSecondSection(
+    List<UserCultivationPhaseModel> listphases,
+    BuildContext context,
+    double screenHeight,
+  ) {
     final _distance = Container(
       padding: EdgeInsets.only(bottom: 10.0),
       child: Text(
@@ -178,24 +221,7 @@ class PublicationDetailsPage extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: <Widget>[
-          _buildIconCard(
-            context,
-            AvailableImages.website,
-            "Cultivo",
-            Color(0xFFffc751),
-          ),
-          _buildIconCard(
-            context,
-            AvailableImages.iphone,
-            "Guia",
-            Color(0xFF68c1c2),
-          ),
-          _buildIconCard(
-            context,
-            AvailableImages.navigate,
-            "JEAN",
-            Color(0xFFACE3EE),
-          ),
+          buildList(context, listphases),
         ],
       ),
     );
@@ -214,49 +240,66 @@ class PublicationDetailsPage extends StatelessWidget {
           ),
           color: Colors.white,
         ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+        child: SingleChildScrollView(
+            child: Column(
           children: <Widget>[
-            _distance,
-            _description,
-            _openingHours,
-            _footerBtns
+            Column(children: <Widget>[
+              _distance,
+              _description,
+              _openingHours,
+            ]),
+            Column(
+              children: <Widget>[
+                _footerBtns,
+              ],
+            )
           ],
-        ),
+        )),
       ),
     );
 
-    return Scaffold(
-      body: SingleChildScrollView(
-        child: Column(
-          children: <Widget>[
-            Stack(
-              children: <Widget>[
-                Container(height: screenHeight),
-                imageBg,
-                cancelBtn,
-                _details,
-                secondSection
-              ],
-            ),
-          ],
+    return secondSection;
+  }
+
+  Widget buildList(BuildContext context, List<UserCultivationPhaseModel> list) {
+    List<UserCultivationPhaseModel> leftSide = [];
+    List<UserCultivationPhaseModel> rightSide = [];
+    list.forEach((publication) {
+      int index = list.indexOf(publication);
+      bool isOddNum = isOddNumber(index);
+      isOddNum ? rightSide.add(publication) : leftSide.add(publication);
+    });
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      children: <Widget>[
+        Column(
+          children:
+              rightSide.map((res) => _buildIconCard(context, res)).toList(),
         ),
-      ),
+        Column(
+          children:
+              leftSide.map((res) => _buildIconCard(context, res)).toList(),
+        ),
+      ],
     );
   }
 
+  bool isOddNumber(int number) {
+    return number % 2 == 0 ? false : true;
+  }
+
   Widget _buildIconCard(
-      BuildContext context, String img, String name, Color color) {
+      BuildContext context, UserCultivationPhaseModel phases) {
     return Container(
       child: Column(
         children: <Widget>[
-          Image.asset(img, height: 70.0),
+          Image.asset(AvailableImages.website, height: 70.0),
           SizedBox(
             height: 3.0,
           ),
           Text(
-            name,
-            style: TextStyle(color: color),
+            phases.description,
+            style: TextStyle(color: Color(0xFFACE3EE)),
           )
         ],
       ),

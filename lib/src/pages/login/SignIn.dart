@@ -25,13 +25,17 @@ class _SignInState extends State<SignIn> {
 
   final GlobalKey<FormState> _formkey = GlobalKey<FormState>();
 
+  final bloc = LoginBloc(GetIt.I<InitServices>().hasuraService.appRepository);
   String _email, _passwaord;
 
   checkAuthentication() async {
     _auth.onAuthStateChanged.listen((user) async {
       if (user != null) {
         try {
-          Navigator.pushNamed(context, NavigatorToPath.Test, arguments: 5);
+          bloc.isUser(user.email);
+          this._userLogin = await bloc.isUser(user.email);
+          Navigator.pushNamed(this.context, NavigatorToPath.Test,
+              arguments: this._userLogin.id);
         } catch (e) {
           print(e.toString());
         }
@@ -62,10 +66,8 @@ class _SignInState extends State<SignIn> {
           final bloc =
               LoginBloc(GetIt.I<InitServices>().hasuraService.appRepository);
           if (user.user.email != null) {
-            print("U:" + user.user.email);
-            if (!await bloc.isUser(user.user.email)) {
-              // bloc.createUser(user.user.email);
-              print("Login:" + _userLogin.email);
+            if (await bloc.isUser(user.user.email) != null) {
+              print("Login Basic:" + _userLogin.email);
             }
           }
         }
@@ -100,16 +102,13 @@ class _SignInState extends State<SignIn> {
 
       assert(user.uid == currentuser.uid);
 
-      final bloc =
-          LoginBloc(GetIt.I<InitServices>().hasuraService.appRepository);
-
       if (user.email != null) {
         print("u2" + user.email);
-        if (!(await bloc.isUser(user.email))) {
+        if (await bloc.isUser(user.email) == null) {
           bloc.createUser(user.email);
         }
         this._userLogin = bloc.user;
-        print("EmailXD: " + _userLogin.email);
+        print("Login Gooogle: " + _userLogin.email);
       }
 
       return user;
@@ -143,6 +142,12 @@ class _SignInState extends State<SignIn> {
 //        title: Text('Sign In'),
 //      ),
       body: Container(
+        decoration: BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage("assets/images/Started.png"),
+            fit: BoxFit.cover,
+          ),
+        ),
         padding: EdgeInsets.fromLTRB(30, 50, 30, 40),
         child: Center(
           child: ListView(
@@ -195,7 +200,7 @@ class _SignInState extends State<SignIn> {
                                         borderRadius:
                                             BorderRadius.circular(30)),
                                     hintStyle: TextStyle(color: Colors.white),
-                                    hintText: 'E-mail'),
+                                    hintText: 'Correo Electrónico'),
                                 onSaved: (input) => _email = input,
                               ),
                             ),
@@ -234,7 +239,7 @@ class _SignInState extends State<SignIn> {
                                         borderRadius:
                                             BorderRadius.circular(30)),
                                     hintStyle: TextStyle(color: Colors.white),
-                                    hintText: 'Passwod'),
+                                    hintText: 'Contraseña'),
                                 onSaved: (input) => _passwaord = input,
                               ),
                             ),
@@ -251,7 +256,7 @@ class _SignInState extends State<SignIn> {
                                 ),
                                 onPressed: signin,
                                 child: Text(
-                                  'Log In',
+                                  'Iniciar Sesion',
                                   style: TextStyle(
                                       color: Colors.white, fontSize: 20),
                                 )),
@@ -262,7 +267,7 @@ class _SignInState extends State<SignIn> {
                             GestureDetector(
                               onTap: navigateToSignUpScreen,
                               child: Text(
-                                'Create an account',
+                                'Crear una Cuenta',
                                 textAlign: TextAlign.center,
                                 style: TextStyle(
                                     fontSize: 16.0, color: Colors.blue),
@@ -272,7 +277,7 @@ class _SignInState extends State<SignIn> {
                               padding: EdgeInsets.only(top: 20),
                             ),
                             Text(
-                              "- OR -",
+                              "- O -",
                               textAlign: TextAlign.center,
                               style:
                                   TextStyle(fontSize: 20.0, color: Colors.blue),
@@ -281,6 +286,7 @@ class _SignInState extends State<SignIn> {
                               padding: EdgeInsets.only(top: 20),
                             ),
                             GoogleSignInButton(
+                              text: 'Iniciar con Google',
                               onPressed: () {
                                 _signInWithGoogle()
                                     .then((FirebaseUser user) =>

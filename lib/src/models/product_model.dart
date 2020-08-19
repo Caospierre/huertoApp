@@ -4,7 +4,9 @@
 
 import 'dart:convert';
 
+import 'package:huerto_app/src/models/cultivation_phase_model.dart';
 import 'package:huerto_app/src/models/plague_disease_model.dart';
+import 'package:huerto_app/src/models/user_cultivation_phase_model.dart';
 
 ProductModel productModelFromJson(String str) =>
     ProductModel.fromJson(json.decode(str));
@@ -12,36 +14,43 @@ ProductModel productModelFromJson(String str) =>
 String productModelToJson(ProductModel data) => json.encode(data.toJson());
 
 class ProductModel {
-  String name, photo, description, period_sowing, term_harvest;
+  String name, photo, description, periodSowing, termHarvest;
+  List<UserCultivationPhaseModel> cultivationPhase;
   int id;
-  Plague_DiseaseModel plague_disease;
+  Plague_DiseaseModel plagueDisease;
 
-  ProductModel({
-    this.name,
-    this.photo,
-    this.period_sowing,
-    this.term_harvest,
-    this.description,
-    this.id,
-    this.plague_disease,
-  });
+  ProductModel(
+      {this.id,
+      this.name,
+      this.photo,
+      this.periodSowing,
+      this.termHarvest,
+      this.description,
+      this.plagueDisease,
+      this.cultivationPhase});
 
-  factory ProductModel.fromJson(Map<String, dynamic> json) => new ProductModel(
-        name: json["name"],
-        photo: json["photo"],
-        period_sowing: json["period_sowing"],
-        term_harvest: json["term_harvest"],
-        description: json["description"],
-        id: json["id"],
-      );
+  factory ProductModel.fromJson(Map<String, dynamic> json) {
+    ProductModel product = new ProductModel(
+      id: json["id"],
+      name: json["name"],
+      photo: json["photo"],
+      periodSowing: json["periodSowing"],
+      termHarvest: json["termHarvest"],
+      description: json["description"],
+      cultivationPhase: new List<UserCultivationPhaseModel>(),
+    );
+
+    return product;
+  }
 
   Map<String, dynamic> toJson() => {
+        "id": id,
         "name": name,
         "photo": photo,
-        "period_sowing": period_sowing,
-        "term_harvest": term_harvest,
+        "periodSowing": periodSowing,
+        "termHarvest": termHarvest,
         "description": description,
-        "id": id,
+        "cultivationPhase": cultivationPhase,
       };
 
   static List<ProductModel> fromJsonList(List list) {

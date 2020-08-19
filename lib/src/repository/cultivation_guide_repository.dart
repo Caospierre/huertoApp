@@ -1,22 +1,20 @@
 import 'package:bloc_pattern/bloc_pattern.dart';
-import 'package:get_it/get_it.dart';
 import 'package:huerto_app/src/models/cultivation_guide_model.dart';
 import 'package:hasura_connect/hasura_connect.dart';
-import 'package:huerto_app/src/services/init_services.dart';
+import 'package:huerto_app/utils/api_info.dart';
 
 class CultivationGuideRepository extends Disposable {
   HasuraConnect connection;
 
   CultivationGuideRepository() {
-    this.connection = GetIt.I<InitServices>().hasuraService.hasuraConect;
+    this.connection = HasuraConecction.conection;
   }
 
   Future<CultivationGuideModel> createCultivationGuide(
-      String name,
-      String image,
-      String description,
-      String guide_link,
-      int cultivation_phaseId) async {
+    String name,
+    String image,
+    String description,
+  ) async {
     var query = """
       mutation createCultivationGuide(\$name:String!,\$image:String!,\$description:String!,\$guide_link:String!, \$cultivation_phaseId:int!) {
         insert_cultivation_guide(objects: {name: \$name, image: \$image, description: \$description, guide_link: \$guide_link, id_cultivation_phase: \$cultivation_phaseId}) {
@@ -31,15 +29,14 @@ class CultivationGuideRepository extends Disposable {
       "name": name,
       "image": image,
       "description": description,
-      "guide_link": guide_link
     });
     var id = data["data"]["insert_cultivation_guide"]["returning"][0]["id"];
     return CultivationGuideModel(
-        id: id,
-        name: name,
-        image: image,
-        description: description,
-        guide_link: guide_link);
+      id: id,
+      name: name,
+      image: image,
+      description: description,
+    );
   }
 
   Future<CultivationGuideModel> deleteCultivationGuide(int id) async {

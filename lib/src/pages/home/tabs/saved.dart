@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:huerto_app/src/bloc/cultivation_phase_bloc.dart';
 import 'package:huerto_app/src/models/publication_model.dart';
+import 'package:huerto_app/src/models/user_cultivation_phase_model.dart';
 import 'package:huerto_app/src/routes/router.dart';
 import 'package:huerto_app/src/widgets/home/publication_card.dart';
 import 'package:huerto_app/utils/colors.dart';
@@ -22,10 +24,8 @@ class SavedPage extends StatelessWidget {
       stream: this.publicationStream,
       builder: (context, snapshot) {
         if (!snapshot.hasData) {
-          print(snapshot);
           return Center(child: CircularProgressIndicator());
         } else {}
-        print("" + snapshot.data.toString());
 
         return Stack(
           alignment: Alignment.center,
@@ -38,7 +38,6 @@ class SavedPage extends StatelessWidget {
   }
 
   void addCrowd() {
-    print('data');
     Navigator.pushNamed(context, NavigatorToPath.AddCultivation,
         arguments: this.publicationStream);
   }
@@ -89,9 +88,12 @@ class SavedPage extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: <Widget>[
         Column(
-          children: rightSide
-              .map((res) => PublicationCard(publication: res))
-              .toList(),
+          children: rightSide.map((res) {
+            CultivationPhaseBloc phasebloc = CultivationPhaseBloc(res.id);
+            Stream<List<UserCultivationPhaseModel>> phaselist =
+                phasebloc.cultivationPhaseController;
+            PublicationCard(publication: res);
+          }).toList(),
         ),
         Column(
           children:

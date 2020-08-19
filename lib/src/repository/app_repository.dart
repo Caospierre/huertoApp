@@ -49,7 +49,6 @@ class AppRepository extends Disposable {
   }
 
   Stream<List<PublicationModel>> getPublications(int idUser) {
-    print("IdUser1>" + idUser.toString());
     var query = """
       subscription getPubs(\$data:Int!)  {
         publications  (where: {isActive: {_eq: true}, id_usuario: {_neq: \$data}, isChecked: {_eq: false}}) {
@@ -90,8 +89,6 @@ class AppRepository extends Disposable {
   }
 
   Stream<List<PublicationModel>> getUserPublications(int idUser) {
-    print("IdUser2>" + idUser.toString());
-
     var query = """
       subscription getMyPubs(\$data:Int!) {
         publications(where: {isActive: {_eq: true}, id_usuario: {_eq:  \$data}, isChecked: {_eq: false}}) {
@@ -116,6 +113,7 @@ class AppRepository extends Disposable {
                 id
                 name
                 photo
+
               }
             }
           }
@@ -131,8 +129,6 @@ class AppRepository extends Disposable {
   }
 
   Stream<List<PublicationModel>> getTransaccion(int idUser) {
-    print("IdUser3>" + idUser.toString());
-
     var query = """
       subscription getTransaccion(\$data:Int!) {
         publications(where: { user_transaccio_id: {_eq: \$data}, isChecked: {_eq: true}})  {
