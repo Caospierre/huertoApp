@@ -1,14 +1,19 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:huerto_app/src/bloc/publication_bloc.dart';
 import 'package:huerto_app/src/models/publication_model.dart';
 import 'package:huerto_app/src/services/init_services.dart';
+import 'package:huerto_app/src/widgets/home/price_rating_bar.dart';
+import 'package:huerto_app/src/widgets/home/rating_bar.dart';
 import 'package:huerto_app/utils/utils.dart';
 import 'package:huerto_app/src/widgets/home/publication_card_big.dart';
 
 // ignore: must_be_immutable
 class SwippableCards extends StatefulWidget {
   final Stream<List<PublicationModel>> publicationStream;
+  
 
   SwippableCards(this.publicationStream) {}
 
@@ -38,21 +43,128 @@ class _SwippableCardsState extends State<SwippableCards> {
 
   @override
   Widget build(BuildContext context) {
+    
+    final screenHeight = MediaQuery.of(context).size.height;
+    final screenWidth = MediaQuery.of(context).size.width;
+
+    final _filledCircle = Container(
+      height: 4.0,
+      width: 4.0,
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        color: Colors.white60,
+      ),
+    );
+
+    final _name = Text(
+      "No Existe Publicacion",
+      style: TextStyle(
+        color: Colors.white,
+        fontSize: 24.0,
+        fontWeight: FontWeight.bold,
+      ),
+    );
+
+    final _location = Row(
+      children: <Widget>[
+        Text(
+          "Locación",
+          style: TextStyle(
+            fontSize: 18.0,
+            color: Colors.white60,
+          ),
+        ),
+        SizedBox(width: 5.0),
+        _filledCircle,
+        SizedBox(width: 5.0),
+        Text(
+          "Tipo De Publicación",
+          style: TextStyle(
+            fontSize: 18.0,
+            color: Colors.white60,
+          ),
+        ),
+      ],
+    );
+
+    final _rating = Row(
+      children: <Widget>[
+        RatingBar(
+          rating: 0,
+          color: Colors.white,
+          size: 20.0,
+        ),
+        SizedBox(width: 5.0),
+        _filledCircle,
+        SizedBox(width: 5.0),
+        PriceRatingBar(
+          rating: 0,
+          size: 20.0,
+        ),
+      ],
+    );
+
+    final _details = Positioned(
+      bottom: 20.0,
+      left: 10.0,
+      right: 10.0,
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(15.0),
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0),
+          child: Container(
+            padding: EdgeInsets.fromLTRB(15.0, 15.0, 15.0, 15.0),
+            height: screenHeight * .15,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[_name, _location, _rating],
+            ),
+          ),
+        ),
+      ),
+    );
+
     return Center(
         child: StreamBuilder<List<PublicationModel>>(
       stream: this.widget.publicationStream,
       builder: (context, snapshot) {
         if (!snapshot.hasData) {
           return Center(child: CircularProgressIndicator());
-        } else {}
+        }
         print("" + snapshot.data.toString());
-        return Stack(
+        if(snapshot.data.length==0){
+          return Stack(
           alignment: Alignment.center,
-          children: _getSwipeCards(snapshot.data),
-        );
+          children: <Widget>[
+             Material(
+              borderRadius: BorderRadius.circular(20.0),
+              elevation: 4.0,
+              child: Container(
+                height: screenHeight * 0.6,
+                width: screenWidth,
+                decoration: BoxDecoration(
+                  image: DecorationImage(
+                    image: NetworkImage("https://1.bp.blogspot.com/-Y2TBmGkP1Qk/VgBv9G8EiuI/AAAAAAAAA-A/EuaExDn7iXUK3tQrvTWbLsXgtHalgbf8ACPcBGAYYCw/s1600/302.jpg"),
+                    fit: BoxFit.cover,
+                  ),
+                  borderRadius: BorderRadius.circular(20.0),
+                ),
+              ),
+            ),
+            _details
+          ],     
+          );
+        }else{
+          return Stack(
+          alignment: Alignment.center,
+          children: _getSwipeCards(snapshot.data),     
+          );
+        }
       },
     ));
   }
+
 
   List<Widget> _getSwipeCards(List<PublicationModel> publications) {
     double initTop = 15.0;
@@ -100,6 +212,8 @@ class _SwippableCardsState extends State<SwippableCards> {
         ),
       );
     }
+
+  
 
     final footerBtns = Positioned(
       bottom: 20.0,
@@ -175,4 +289,6 @@ class _SwippableCardsState extends State<SwippableCards> {
       default:
     }
   }
+
+  
 }
