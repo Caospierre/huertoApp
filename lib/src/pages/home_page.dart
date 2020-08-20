@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:huerto_app/src/bloc/home_bloc.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -43,7 +42,6 @@ class _HomePageState extends State<HomePage> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     this.checkAuthentication();
     this.getUser();

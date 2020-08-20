@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:huerto_app/src/bloc/cultivation_bloc.dart';
-import 'package:huerto_app/src/bloc/home_bloc.dart';
 import 'package:huerto_app/src/bloc/product_bloc.dart';
 import 'package:huerto_app/src/models/product_model.dart';
 import 'package:huerto_app/src/models/publication_model.dart';
@@ -22,7 +21,6 @@ class _AddCultivationPageState extends State<AddCultivationPage> {
   int productIndex = 0;
   ProductModel productSelected;
   Stream<List<ProductModel>> productStream;
-  int idProducto;
   String nameProducto = "";
   @override
   Widget build(BuildContext context) {
@@ -50,7 +48,7 @@ class _AddCultivationPageState extends State<AddCultivationPage> {
         child: Icon(Icons.add),
         onPressed: () {
           int idUser = GetIt.I<InitServices>().authService.userLogin.id;
-          cbloc.createCultivation(idUser, this.idProducto);
+          cbloc.createCultivation(idUser, this.productIndex);
         },
       ),
     );

@@ -4,7 +4,6 @@ import 'package:huerto_app/src/bloc/cultivation_phase_bloc.dart';
 import 'package:huerto_app/src/models/publication_model.dart';
 import 'package:huerto_app/src/models/user_cultivation_phase_model.dart';
 import 'package:line_icons/line_icons.dart';
-import 'package:huerto_app/utils/utils.dart';
 import 'package:huerto_app/src/widgets/home/price_rating_bar.dart';
 import 'package:huerto_app/src/widgets/home/rating_bar.dart';
 
@@ -74,7 +73,7 @@ class PublicationDetailsPage extends StatelessWidget {
     final _location = Row(
       children: <Widget>[
         Text(
-          publication.location,
+          publication.location != null ? publication.location : "Indefinido",
           style: TextStyle(
             fontSize: 18.0,
             color: Colors.white60,

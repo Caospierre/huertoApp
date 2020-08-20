@@ -3,6 +3,8 @@ import 'package:huerto_app/src/models/cultivation_model.dart';
 import 'package:hasura_connect/hasura_connect.dart';
 import 'package:huerto_app/src/models/cultivation_phase_model.dart';
 import 'package:huerto_app/src/models/publication_model.dart';
+import 'package:huerto_app/src/models/user_cultivation_phase_model.dart';
+import 'package:huerto_app/src/repository/cultivation_phase_repository.dart';
 import 'package:huerto_app/utils/api_info.dart';
 
 class CultivationRepository extends Disposable {
@@ -31,40 +33,22 @@ class CultivationRepository extends Disposable {
       "userId": userId
     });
     var id = data["data"]["insert_cultivation"]["returning"][0]["id"];
-
-    this.createPublicatioTemp(id, userId);
-    return CultivationModel(id: id, name: name, description: description);
-  }
-
-  Future<CultivationPhaseModel> getCultivationPhase(int idproduct) async {
-    var query = """
-      getUser(\$data:Int!){
-        users(where: {email: {_eq: \$data}}) {
-          name
-          id
-          password
-          email
-          phone
-
-        }
-      }
-    """;
-
-    var data = await HasuraConecction.conection
-        .query(query, variables: {"data": idproduct});
-
-    if (data["data"]["users"].isEmpty) {
-      return null;
-    } else {
-      return CultivationPhaseModel.fromJson(data["data"]["users"][0]);
-    }
+    PublicationModel pub = await this.createPublicatioTemp(id, userId);
+    List<CultivationPhaseModel> phaselist =
+        await new CultivationPhaseRepository()
+            .getCultivationPhaseById(productId);
+    phaselist.forEach((phase) {
+      this.insertUserCultivationPhase(
+          phase.id, pub.id, phase.name, phase.description, phase.image);
+    });
+    return CultivationModel(id: id);
   }
 
   Future<PublicationModel> createPublicatioTemp(
       int cultivoId, int userId) async {
     var query = """
         mutation createPubsTemp( \$cultivoId:Int!, \$userId:Int!) {
-          insert_publications(objects: {id_cultivo:  \$cultivoId, id_usuario:  \$userId,distance:"5km away",rating:5 description:"" priceScale:0 ,type:"",isActive:true }) {
+          insert_publications(objects: {id_cultivo:  \$cultivoId, id_usuario:  \$userId,distance:"5km away",rating:5 description:"Indefinido" priceScale:0 ,type:"Indefinido",isActive:false }) {
               returning{
               id
             }
@@ -92,6 +76,30 @@ class CultivationRepository extends Disposable {
     var data = await connection.mutation(query, variables: {});
     var id = data["data"]["delete_cultivation"]["returning"][0]["id"];
     return CultivationModel(id: id);
+  }
+
+  Future<UserCultivationPhaseModel> insertUserCultivationPhase(int idphase,
+      int idpub, String name, String description, String image) async {
+    var query = """
+      mutation insertUserCultivationPhase(\$idphase:Int!,\$idpub:Int!,\$name:String!, \$description:String!,\$image:String!) {
+          insert_user_cultivation_phase(objects: {id_phase: \$idphase, id_publication: \$idpub, name: \$name, description: \$description, image: \$image}){
+              returning{
+                id
+              }
+        }
+      }
+    """;
+
+    var data = await connection.mutation(query, variables: {
+      "idphase": idphase,
+      "idpub": idpub,
+      "name": name,
+      "description": description,
+      "image": image
+    });
+    var id =
+        data["data"]["insert_user_cultivation_phase"]["returning"][0]["id"];
+    return UserCultivationPhaseModel(id: id);
   }
 
   Future<CultivationModel> updateCultivation(

@@ -1,5 +1,4 @@
 import 'package:bloc_pattern/bloc_pattern.dart';
-import 'package:huerto_app/src/bloc/index/app_bloc.dart';
 import 'package:huerto_app/src/models/cultivation_model.dart';
 import 'package:flutter/cupertino.dart';
 
@@ -17,10 +16,11 @@ class CultivationBloc extends BlocBase {
 
   CultivationModel get cultivation => _cultivation;
 
-  Future<bool> createCultivation(int userId, int idCultivo) async {
+  Future<bool> createCultivation(int userId, int idproducto) async {
     try {
+      print("id" + idproducto.toString());
       var cultivation = await _repository.createCultivation(
-          controllerName.text, controllerDescription.text, 1, userId);
+          controllerName.text, controllerDescription.text, idproducto, userId);
 
       return true;
     } catch (ex) {

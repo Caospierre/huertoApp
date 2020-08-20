@@ -3,10 +3,6 @@ import 'package:huerto_app/src/models/publication_model.dart';
 import 'package:huerto_app/src/widgets/home/review_card.dart';
 
 import 'package:huerto_app/utils/utils.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:get_it/get_it.dart';
-import 'package:huerto_app/src/services/init_services.dart';
-import 'package:huerto_app/src/routes/router.dart';
 
 class AccountPage extends StatefulWidget {
   final Stream<List<PublicationModel>> publicationStream;
