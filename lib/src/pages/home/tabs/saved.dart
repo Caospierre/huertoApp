@@ -181,6 +181,7 @@ class SavedPage extends StatelessWidget {
   Widget buildList(List<PublicationModel> list) {
     List<PublicationModel> leftSide = [];
     List<PublicationModel> rightSide = [];
+    print("TAM: " + list.length.toString());
     list.forEach((publication) {
       int index = list.indexOf(publication);
       bool isOddNum = isOddNumber(index);
@@ -190,12 +191,9 @@ class SavedPage extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: <Widget>[
         Column(
-          children: rightSide.map((res) {
-            CultivationPhaseBloc phasebloc = CultivationPhaseBloc(res.id);
-            Stream<List<UserCultivationPhaseModel>> phaselist =
-                phasebloc.cultivationPhaseController;
-            PublicationCard(publication: res);
-          }).toList(),
+          children: rightSide
+              .map((res) => PublicationCard(publication: res))
+              .toList(),
         ),
         Column(
           children:

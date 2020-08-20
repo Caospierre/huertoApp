@@ -4,8 +4,6 @@
 
 import 'dart:convert';
 
-import 'package:huerto_app/src/models/publication_model.dart';
-
 UserModel userModelFromJson(String str) => UserModel.fromJson(json.decode(str));
 
 String userModelToJson(UserModel data) => json.encode(data.toJson());

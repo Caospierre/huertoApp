@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:bloc_pattern/bloc_pattern.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get_it/get_it.dart';

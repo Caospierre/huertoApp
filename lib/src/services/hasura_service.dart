@@ -17,10 +17,10 @@ class HasuraService {
     this._hasuraConect = HasuraConnect(HasuraBackendAPI);
     print(HasuraBackendAPI);
     this._appRepository = new AppRepository();
-    this._publicationRepository = PublicationRepository();
-    this._cultivationRepository = CultivationRepository();
-    this._productRepository = ProductRepository();
-    this._cultivationPhaseRepository = CultivationPhaseRepository();
+    this._publicationRepository = new PublicationRepository();
+    this._cultivationRepository = new CultivationRepository();
+    this._productRepository = new ProductRepository();
+    this._cultivationPhaseRepository = new CultivationPhaseRepository();
   }
 
   AppRepository get appRepository => _appRepository;

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:huerto_app/src/models/publication_model.dart';
 import 'package:huerto_app/src/routes/router.dart';
 import 'package:huerto_app/src/widgets/home/rating_bar.dart';
-import 'package:huerto_app/src/models/review.dart';
 
 class ReviewCard extends StatelessWidget {
   final PublicationModel review;
@@ -57,7 +56,7 @@ class ReviewCard extends StatelessWidget {
     final _location = Row(
       children: <Widget>[
         Text(
-          review.location,
+          review.location != null ? review.location : "Indefinido",
           style: TextStyle(
             fontSize: 14.0,
             color: Colors.grey.withOpacity(0.6),
@@ -100,7 +99,7 @@ class ReviewCard extends StatelessWidget {
           _filledCircle,
           SizedBox(width: 5.0),
           Text(
-            review.date,
+            review.date != null ? review.date : "Indefinido",
             style: TextStyle(
               fontWeight: FontWeight.w500,
               color: Colors.grey.withOpacity(0.8),

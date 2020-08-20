@@ -1,8 +1,6 @@
 import 'package:bloc_pattern/bloc_pattern.dart';
-import 'package:get_it/get_it.dart';
 import 'package:hasura_connect/hasura_connect.dart';
 import 'package:huerto_app/src/models/plague_disease_model.dart';
-import 'package:huerto_app/src/services/init_services.dart';
 
 class PlagueDiseaseRepository extends Disposable {
   final HasuraConnect connection;
@@ -98,7 +96,9 @@ class PlagueDiseaseRepository extends Disposable {
     );
   }
 
-  Future<Plague_DiseaseModel> getPlagueDiseaseByProduct(int _id_product,) async {
+  Future<Plague_DiseaseModel> getPlagueDiseaseByProduct(
+    int _id_product,
+  ) async {
     var query = """
       getPlagueDiseaseByProduct(\$_id_product:Int!){
         plague_disease(where: {id_product: {_eq: \$_id_product}}) {
@@ -110,7 +110,8 @@ class PlagueDiseaseRepository extends Disposable {
       }
     """;
 
-    var data = await connection.query(query, variables: {"_id_product": _id_product});
+    var data =
+        await connection.query(query, variables: {"_id_product": _id_product});
     if (data["data"]["cultivation_phase"].isEmpty) {
       return null;
     } else {

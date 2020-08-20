@@ -36,7 +36,7 @@ class PublicationCard extends StatelessWidget {
     final _location = Row(
       children: <Widget>[
         Text(
-          publication.location,
+          publication.location == null ? publication.location : "Indefinido",
           style: TextStyle(
             fontSize: 12.0,
             color: Colors.white60,

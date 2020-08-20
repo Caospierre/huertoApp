@@ -4,7 +4,6 @@
 
 import 'dart:convert';
 
-import 'package:huerto_app/src/models/cultivation_phase_model.dart';
 import 'package:huerto_app/src/models/plague_disease_model.dart';
 import 'package:huerto_app/src/models/user_cultivation_phase_model.dart';
 
