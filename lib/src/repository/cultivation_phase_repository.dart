@@ -115,6 +115,28 @@ class CultivationPhaseRepository extends Disposable {
     );
   }
 
+  Future<CultivationPhaseModel> getCultivationPhaseById(int _id_product, int _id) async {
+    var query = """
+      getCultivationPhaseById(\$_id_product:Int!, \$_id:Int!){
+        cultivation_phase(where: {id_producto: {_eq: \$_id_product}, id: {_eq: \$_id}}) {
+          description
+          duration
+          image
+          name
+          statePhase
+        }
+      }
+    """;
+
+    var data = await connection.query(query, variables: {"_id_product": _id_product,"_id": _id});
+    if (data["data"]["cultivation_phase"].isEmpty) {
+      return null;
+    } else {
+      return CultivationPhaseModel.fromJson(data["data"]["cultivation_phase"][0]);
+    }
+  }
+
+
   @override
   void dispose() {
     connection.dispose();

@@ -98,6 +98,26 @@ class PlagueDiseaseRepository extends Disposable {
     );
   }
 
+  Future<Plague_DiseaseModel> getPlagueDiseaseByProduct(int _id_product,) async {
+    var query = """
+      getPlagueDiseaseByProduct(\$_id_product:Int!){
+        plague_disease(where: {id_product: {_eq: \$_id_product}}) {
+          name
+          description
+          damge
+          image
+        }
+      }
+    """;
+
+    var data = await connection.query(query, variables: {"_id_product": _id_product});
+    if (data["data"]["cultivation_phase"].isEmpty) {
+      return null;
+    } else {
+      return Plague_DiseaseModel.fromJson(data["data"]["cultivation_phase"][0]);
+    }
+  }
+
   @override
   void dispose() {
     connection.dispose();
