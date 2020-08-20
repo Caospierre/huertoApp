@@ -288,17 +288,16 @@ class PublicationDetailsPage extends StatelessWidget {
     return number % 2 == 0 ? true : false;
   }
 
-  Widget _buildIconCard(
-      BuildContext context, UserCultivationPhaseModel phases) {
+  Widget _buildIconCard(BuildContext context, UserCultivationPhaseModel phase) {
     return Container(
       child: Column(
         children: <Widget>[
-          Image.asset(AvailableImages.website, height: 70.0),
+          Image.asset(phase.image, height: 70.0),
           SizedBox(
             height: 3.0,
           ),
           Text(
-            phases.description,
+            phase.name,
             style: TextStyle(color: Color(0xFFACE3EE)),
           )
         ],

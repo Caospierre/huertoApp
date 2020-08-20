@@ -102,6 +102,8 @@ class CultivationPhaseRepository extends Disposable {
         user_cultivation_phase(where: {id_publication: {_eq: \$idpublication}}, order_by: {description: asc}) {
           statePhase
           description
+          name
+          image
           id
         }
       }

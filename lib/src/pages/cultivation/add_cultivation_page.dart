@@ -6,6 +6,7 @@ import 'package:huerto_app/src/bloc/product_bloc.dart';
 import 'package:huerto_app/src/models/product_model.dart';
 import 'package:huerto_app/src/models/publication_model.dart';
 import 'package:huerto_app/src/services/init_services.dart';
+import 'package:huerto_app/utils/utils.dart';
 
 class AddCultivationPage extends StatefulWidget {
   final Stream<List<PublicationModel>> publicationStream;
@@ -16,16 +17,19 @@ class AddCultivationPage extends StatefulWidget {
 }
 
 class _AddCultivationPageState extends State<AddCultivationPage> {
-  final cbloc = CultivationBloc(
-      GetIt.I<InitServices>().hasuraService.cultivationRepository);
-  final pbloc =
-      ProductBloc(GetIt.I<InitServices>().hasuraService.productRepository);
+  CultivationBloc cbloc;
+  ProductBloc pbloc;
   int productIndex = 0;
+  ProductModel productSelected;
   Stream<List<ProductModel>> productStream;
   int idProducto;
-  String nameProducto = "--NoNe---";
+  String nameProducto = "";
   @override
   Widget build(BuildContext context) {
+    cbloc = CultivationBloc(
+        GetIt.I<InitServices>().hasuraService.cultivationRepository);
+    pbloc =
+        ProductBloc(GetIt.I<InitServices>().hasuraService.productRepository);
     return Scaffold(
       appBar: AppBar(
         title: Text("Añadir Cultivo"),
@@ -33,11 +37,12 @@ class _AddCultivationPageState extends State<AddCultivationPage> {
       body: ListView(
         padding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 10.0),
         children: <Widget>[
+          showImageProduct(),
+          _productCultivation(),
+          Divider(),
           _nameCultivation(),
           Divider(),
           _descriptionCultivation(),
-          Divider(),
-          _productCultivation(),
           Divider(),
         ],
       ),
@@ -49,6 +54,24 @@ class _AddCultivationPageState extends State<AddCultivationPage> {
         },
       ),
     );
+  }
+
+  Container showImageProduct() {
+    return Container(
+        margin: EdgeInsets.only(right: 10.0, bottom: 20.0),
+        height: 285.0,
+        width: 50.0,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(12.0),
+          image: DecorationImage(
+            image: this.productSelected != null
+                ? NetworkImage(
+                    this.productSelected.photo,
+                  )
+                : AssetImage(AvailableImages.logo),
+            fit: BoxFit.fill,
+          ),
+        ));
   }
 
   Widget _nameCultivation() {
@@ -93,17 +116,17 @@ class _AddCultivationPageState extends State<AddCultivationPage> {
     );
   }
 
-  List<DropdownMenuItem<String>> getOptionsDropdown(List<ProductModel> lt) {
-    List<DropdownMenuItem<String>> list = new List();
-    lt.forEach((element) {
-      list.add(DropdownMenuItem(
-        child: Text(element.name),
-        value: productIndex.toString(),
-      ));
-      this.productIndex++;
-    });
-    this.productIndex = 0;
-    return list;
+  List<DropdownMenuItem<ProductModel>> getOptionsDropdown(
+      List<ProductModel> lt) {
+    return lt.map((ProductModel product) {
+      return new DropdownMenuItem<ProductModel>(
+        value: product,
+        child: new Text(
+          product.name,
+          style: new TextStyle(color: Colors.black),
+        ),
+      );
+    }).toList();
   }
 
   Widget _productCultivation() {
@@ -119,16 +142,20 @@ class _AddCultivationPageState extends State<AddCultivationPage> {
                 builder: (context, snapshot) {
                   if (!snapshot.hasData) {
                     return Text('Empty');
-                  } else {}
+                  }
 
-                  return DropdownButton(
-                    items: getOptionsDropdown(snapshot.data),
-                    value: '0',
-                    onChanged: (opt) {
+                  return new DropdownButton<ProductModel>(
+                    hint: new Text("Selecciona un producto"),
+                    value: this.productSelected,
+                    onChanged: (ProductModel newValue) {
                       setState(() {
-                        this.productIndex = int.parse(opt);
+                        this.productSelected = newValue;
+                        this.productIndex = this.productSelected.id;
+
+                        cbloc.controllerName.text = this.productSelected.name;
                       });
                     },
+                    items: getOptionsDropdown(snapshot.data),
                   );
                 })),
       ],

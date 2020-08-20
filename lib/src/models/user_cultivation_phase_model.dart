@@ -12,25 +12,26 @@ String cultivationPhaseModelToJson(UserCultivationPhaseModel data) =>
 
 class UserCultivationPhaseModel {
   bool statePhase;
-  String description;
+  String description, name, image;
   int id;
 
-  UserCultivationPhaseModel({
-    this.statePhase,
-    this.description,
-    this.id,
-  });
+  UserCultivationPhaseModel(
+      {this.statePhase, this.description, this.id, this.image, this.name});
 
   factory UserCultivationPhaseModel.fromJson(Map<String, dynamic> json) =>
       new UserCultivationPhaseModel(
         statePhase: json["state_phase"],
         description: json["description"],
+        name: json["name"],
+        image: json["image"],
         id: json["id"],
       );
 
   Map<String, dynamic> toJson() => {
         "statePhase": statePhase,
         "description": description,
+        "name": name,
+        "image": image,
         "id": id,
       };
 

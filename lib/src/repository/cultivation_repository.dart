@@ -1,6 +1,7 @@
 import 'package:bloc_pattern/bloc_pattern.dart';
 import 'package:huerto_app/src/models/cultivation_model.dart';
 import 'package:hasura_connect/hasura_connect.dart';
+import 'package:huerto_app/src/models/cultivation_phase_model.dart';
 import 'package:huerto_app/src/models/publication_model.dart';
 import 'package:huerto_app/utils/api_info.dart';
 
@@ -30,8 +31,33 @@ class CultivationRepository extends Disposable {
       "userId": userId
     });
     var id = data["data"]["insert_cultivation"]["returning"][0]["id"];
+
     this.createPublicatioTemp(id, userId);
     return CultivationModel(id: id, name: name, description: description);
+  }
+
+  Future<CultivationPhaseModel> getCultivationPhase(int idproduct) async {
+    var query = """
+      getUser(\$data:Int!){
+        users(where: {email: {_eq: \$data}}) {
+          name
+          id
+          password
+          email
+          phone
+
+        }
+      }
+    """;
+
+    var data = await HasuraConecction.conection
+        .query(query, variables: {"data": idproduct});
+
+    if (data["data"]["users"].isEmpty) {
+      return null;
+    } else {
+      return CultivationPhaseModel.fromJson(data["data"]["users"][0]);
+    }
   }
 
   Future<PublicationModel> createPublicatioTemp(
