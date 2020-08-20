@@ -111,6 +111,27 @@ class CultivationGuideRepository extends Disposable {
     );
   }
 
+  Future<CultivationGuideModel> getCultivationGuideById(int _id_cultivation_phase, int _id) async {
+    var query = """
+      getCultivationGuideById(\$_id_cultivation_phase:Int!, \$_id:Int!){
+        cultivation_guide(where: {id_cultivation_phase: {_eq: \$_id_cultivation_phase}, id: {_eq: \$_id}}) {
+          id
+          name
+          image
+          guide_link
+          description
+        }
+      }
+    """;
+
+    var data = await connection.query(query, variables: {"_id_product": _id_cultivation_phase,"_id": _id});
+    if (data["data"]["cultivation_phase"].isEmpty) {
+      return null;
+    } else {
+      return CultivationGuideModel.fromJson(data["data"]["cultivation_phase"][0]);
+    }
+  }
+
   @override
   void dispose() {
     connection.dispose();
