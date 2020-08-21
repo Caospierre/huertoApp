@@ -99,7 +99,7 @@ class CultivationPhaseRepository extends Disposable {
       int idpublication) {
     var query = """
       subscription getUserCultivationPhase(\$idpublication:Int!) {
-        user_cultivation_phase(where: {id_publication: {_eq: \$idpublication}}, order_by: {description: asc}) {
+        user_cultivation_phase(where: {id_publication: {_eq: \$idpublication}}, order_by: {level_id: asc}) {
           statePhase
           description
           name
@@ -125,6 +125,7 @@ class CultivationPhaseRepository extends Disposable {
           image
           name
           id
+          level_id
           description
           statePhase
         }
