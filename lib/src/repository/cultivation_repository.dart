@@ -37,10 +37,12 @@ class CultivationRepository extends Disposable {
     List<CultivationPhaseModel> phaselist =
         await new CultivationPhaseRepository()
             .getCultivationPhaseById(productId);
-    phaselist.forEach((phase) {
-      this.insertUserCultivationPhase(
-          phase.id, pub.id, phase.name, phase.description, phase.image);
-    });
+    if (phaselist != null) {
+      phaselist.forEach((phase) {
+        this.insertUserCultivationPhase(phase.id, pub.id, phase.name,
+            phase.description, phase.image, phase.level);
+      });
+    }
     return CultivationModel(id: id);
   }
 
@@ -78,11 +80,16 @@ class CultivationRepository extends Disposable {
     return CultivationModel(id: id);
   }
 
-  Future<UserCultivationPhaseModel> insertUserCultivationPhase(int idphase,
-      int idpub, String name, String description, String image) async {
+  Future<UserCultivationPhaseModel> insertUserCultivationPhase(
+      int idphase,
+      int idpub,
+      String name,
+      String description,
+      String image,
+      int level) async {
     var query = """
-      mutation insertUserCultivationPhase(\$idphase:Int!,\$idpub:Int!,\$name:String!, \$description:String!,\$image:String!) {
-          insert_user_cultivation_phase(objects: {id_phase: \$idphase, id_publication: \$idpub, name: \$name, description: \$description, image: \$image}){
+      mutation insertUserCultivationPhase(\$idphase:Int!,\$idpub:Int!,\$level:Int!,\$name:String!, \$description:String!,\$image:String!) {
+          insert_user_cultivation_phase(objects: {id_phase: \$idphase, id_publication: \$idpub, name: \$name, description: \$description, image: \$image, level_id: \$level}){
               returning{
                 id
               }
@@ -95,7 +102,8 @@ class CultivationRepository extends Disposable {
       "idpub": idpub,
       "name": name,
       "description": description,
-      "image": image
+      "image": image,
+      "level": level
     });
     var id =
         data["data"]["insert_user_cultivation_phase"]["returning"][0]["id"];
