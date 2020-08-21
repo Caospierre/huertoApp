@@ -98,7 +98,7 @@ class SavedPage extends StatelessWidget {
 
     this.context = context;
     final body = SingleChildScrollView(
-        child: StreamBuilder<List<PublicationModel>>(
+      child: StreamBuilder<List<PublicationModel>>(
       stream: this.publicationStream,
       builder: (context, snapshot) {
         if (!snapshot.hasData) {
@@ -123,7 +123,15 @@ class SavedPage extends StatelessWidget {
                     ),
                   ),
                 ),
-                _details
+                _details,
+                FloatingActionButton.extended(
+                onPressed: () {
+                  addCrowd();
+                },
+                label: Text('Agregar'),
+                icon: Icon(Icons.add_circle_outline),
+                backgroundColor: primaryGradientStart,
+              ),
               ],
             ),
           );
@@ -135,7 +143,6 @@ class SavedPage extends StatelessWidget {
         }
       },
     ));
-
     return body;
   }
 
