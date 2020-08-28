@@ -1,3 +1,4 @@
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get_it/get_it.dart';
@@ -32,6 +33,50 @@ class _TestPageState extends State<TestPage> {
 
   bool isSignedIn = false;
   String imageUrl;
+
+  final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
+
+  _getToken() {
+    _firebaseMessaging.getToken().then((token) {
+      print("Device Token: $token");
+    });
+  }
+
+  List<Message> messagesList = new List<Message>();
+ 
+  _configureFirebaseListeners() {
+    _firebaseMessaging.configure(
+      onMessage: (Map<String, dynamic> message) async {
+        print('onMessage: $message');
+        _setMessage(message);
+      },
+      onLaunch: (Map<String, dynamic> message) async {
+        print('onLaunch: $message');
+        _setMessage(message);
+      },
+      onResume: (Map<String, dynamic> message) async {
+        print('onResume: $message');
+        _setMessage(message);
+      },
+    );
+    _firebaseMessaging.requestNotificationPermissions(
+      const IosNotificationSettings(sound: true, badge: true, alert: true),
+    );
+  }
+
+  _setMessage(Map<String, dynamic> message) {
+    final notification = message['notification'];
+    final data = message['data'];
+    final String title = notification['title'];
+    final String body = notification['body'];
+    String mMessage = data['message'];
+    print("Title: $title, body: $body, message: $mMessage");
+    setState(() {
+      Message msg = Message(title, body, mMessage);
+      messagesList.add(msg);
+      print(messagesList);
+    });
+}
 
   checkAuthentication() async {
     _auth.onAuthStateChanged.listen((user) {
@@ -80,6 +125,8 @@ class _TestPageState extends State<TestPage> {
     super.initState();
     this.checkAuthentication();
     this.getUser();
+    _getToken();
+    _configureFirebaseListeners();
   }
 
   @override
@@ -117,13 +164,31 @@ class _TestPageState extends State<TestPage> {
         },
       ),
     );
-
     final body = TabBarView(
       children: [
         SavedPage(this.cultlist),
         SearchPage(this.slistp),
         AccountPage(this.transslist),
-        SavedPage(this.cultlist), //AccountPage(),
+        //SavedPage(this.cultlist), //AccountPage(),
+        Container(
+          child: ListView.builder(
+        itemCount: null == messagesList ? 0 : messagesList.length,
+        itemBuilder: (BuildContext context, int index) {
+          return Card(
+            child: Padding(
+              padding: EdgeInsets.all(10.0),
+              child: Text(
+                messagesList[index].message,
+                style: TextStyle(
+                  fontSize: 16.0,
+                  color: Colors.black,
+                ),
+              ),
+            ),
+          );
+        },
+      ),
+        ),
       ],
     );
 
@@ -150,5 +215,16 @@ class _TestPageState extends State<TestPage> {
       color: Colors.white,
       child: Icon(icon, size: 40.0),
     );
+  }
+}
+
+class Message {
+  String title;
+  String body;
+  String message;
+  Message(title, body, message) {
+    this.title = title;
+    this.body = body;
+    this.message = message;
   }
 }

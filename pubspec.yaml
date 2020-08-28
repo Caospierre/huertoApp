@@ -22,6 +22,7 @@ dependencies:
   toast: ^0.1.5
   line_icons: ^0.2.0
   get_it: ^4.0.1
+  firebase_messaging:
   
 dev_dependencies:
   flutter_test:
