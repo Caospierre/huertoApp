@@ -1,7 +1,9 @@
 import 'package:bloc_pattern/bloc_pattern.dart';
 import 'package:hasura_connect/hasura_connect.dart';
 import 'package:huerto_app/src/models/cultivation_phase_model.dart';
+import 'package:huerto_app/src/models/publication_model.dart';
 import 'package:huerto_app/src/models/user_cultivation_phase_model.dart';
+import 'package:huerto_app/src/models/user_model.dart';
 import 'package:huerto_app/utils/api_info.dart';
 
 class CultivationPhaseRepository extends Disposable {
@@ -95,6 +97,58 @@ class CultivationPhaseRepository extends Disposable {
         description: description);
   }
 
+  Future<UserCultivationPhaseModel> updatePhaseState(
+      bool statePhase, DateTime notification, int idphase) async {
+    var query = """
+      mutation updateUserPhase(\$statePhase:Boolean!,\$notification:timestamp!,\$id:Int!) {
+          update_user_cultivation_phase(_set: {statePhase: \$statePhase, notification: \$notification}, where: {id: {_eq: \$id}}) {
+            returning {
+              id
+            }
+          }
+      }
+    """;
+
+    var data = await connection.mutation(query, variables: {
+      "statePhase": statePhase,
+      "id": idphase,
+      "notification": notification.toString(),
+    });
+
+    var id =
+        data["data"]["update_user_cultivation_phase"]["returning"][0]["id"];
+    return UserCultivationPhaseModel(
+      id: id,
+    );
+  }
+
+  Future<UserCultivationPhaseModel> updatePhaseStateNext(
+      bool statePhase, int idphase) async {
+    print(idphase);
+    var query = """
+      mutation updateUserPhase(\$statePhase:Boolean!,\$id:Int!) {
+          update_user_cultivation_phase(_set: {statePhase: \$statePhase}, where: {id: {_eq: \$id}}) {
+            returning {
+              id
+            }
+          }
+      }
+    """;
+
+    var data = await connection.mutation(query, variables: {
+      "statePhase": statePhase,
+      "id": idphase,
+    });
+
+    var id =
+        data["data"]["update_user_cultivation_phase"]["returning"][0]["id"];
+    print("Updated Phase");
+
+    return UserCultivationPhaseModel(
+      id: id,
+    );
+  }
+
   Stream<List<UserCultivationPhaseModel>> getUserCultivationPhase(
       int idpublication) {
     var query = """
@@ -105,12 +159,15 @@ class CultivationPhaseRepository extends Disposable {
           name
           image
           id
+          level_id
+          steps
         }
       }
     """;
 
     Snapshot snapshot = connection
         .subscription(query, variables: {"idpublication": idpublication});
+    print("Updated Phase");
     return snapshot.stream.map(
       (jsonList) => UserCultivationPhaseModel.fromJsonList(
           jsonList["data"]["user_cultivation_phase"]),
@@ -128,6 +185,7 @@ class CultivationPhaseRepository extends Disposable {
           level_id
           description
           statePhase
+          steps
         }
       }
     """;
@@ -141,6 +199,41 @@ class CultivationPhaseRepository extends Disposable {
       return CultivationPhaseModel.fromJsonList(
           data["data"]["cultivation_phase"]);
     }
+  }
+
+  Future<UserModel> updateUserPhone(int iduser, String phone) async {
+    var query = """
+      mutation updateUser(\$id:Int!,\$phone:String!) {
+          update_users(where: {id: {_eq: \$id}}, _set: {phone: \$phone})
+           {
+            returning{
+              id
+            }
+          }
+      }
+    """;
+
+    var data = await connection
+        .mutation(query, variables: {"id": iduser, "phone": phone});
+    var id = data["data"]["update_users"]["returning"][0]["id"];
+    return UserModel(id: id);
+  }
+
+  Future<PublicationModel> updateActivePub(int idpub) async {
+    var query = """
+      mutation updateUpublication(\$id:Int!) {
+          update_publications(where: {id: {_eq: \$id}}, _set: {isActive:true})
+           {
+            returning{
+              id
+            }
+          }
+      }
+    """;
+
+    var data = await connection.mutation(query, variables: {"id": idpub});
+    var id = data["data"]["update_publications"]["returning"][0]["id"];
+    return PublicationModel(id: id);
   }
 
   @override

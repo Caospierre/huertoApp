@@ -5,7 +5,9 @@
 import 'dart:convert';
 
 import 'package:huerto_app/src/models/cultivation_model.dart';
+import 'package:huerto_app/src/models/user_cultivation_phase_model.dart';
 import 'package:huerto_app/src/models/user_model.dart';
+import 'package:huerto_app/src/repository/cultivation_phase_repository.dart';
 
 PublicationModel publicationModelFromJson(String str) =>
     PublicationModel.fromJson(json.decode(str));
@@ -22,10 +24,12 @@ class PublicationModel {
   String name;
   String photo;
   String type;
+  bool isChecked;
   int priceScale;
   int rating;
   String description;
   UserModel users;
+  Stream<List<UserCultivationPhaseModel>> phases;
 
   PublicationModel({
     this.id,
@@ -40,24 +44,31 @@ class PublicationModel {
     this.rating,
     this.description,
     this.users,
+    this.isChecked,
+    this.phases,
   });
 
-  factory PublicationModel.fromJson(Map<String, dynamic> json) =>
-      new PublicationModel(
-        id: json["id"],
-        name: json["name"],
-        photo: json["photo"],
-        location: json["location"],
-        date: json["date"],
-        distance: json["distance"],
-        priceScale: json["priceScale"],
-        rating: json["rating"],
-        type: json["type"],
-        description: json["description"],
-        users: UserModel.fromJson(json["users"]),
-        cultivation: CultivationModel.fromJson(json["cultivation"]),
-      );
-
+  factory PublicationModel.fromJson(Map<String, dynamic> json) {
+    int idpub = json["id"];
+    Stream<List<UserCultivationPhaseModel>> _phases =
+        CultivationPhaseRepository().getUserCultivationPhase(idpub);
+    return new PublicationModel(
+      id: json["id"],
+      name: json["name"],
+      photo: json["photo"],
+      location: json["location"],
+      date: json["date"],
+      distance: json["distance"],
+      priceScale: json["priceScale"],
+      rating: json["rating"],
+      type: json["type"],
+      description: json["description"],
+      users: UserModel.fromJson(json["users"]),
+      isChecked: json["isChecked"],
+      cultivation: CultivationModel.fromJson(json["cultivation"]),
+      phases: _phases,
+    );
+  }
   Map<String, dynamic> toJson() => {
         "id": id,
         "name": name,
@@ -71,6 +82,8 @@ class PublicationModel {
         "type": type,
         "description": description,
         "users": users.toJson(),
+        "isChecked": isChecked,
+        "phases": phases,
       };
 
   static List<PublicationModel> fromJsonList(List list) {

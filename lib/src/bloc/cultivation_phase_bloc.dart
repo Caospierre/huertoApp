@@ -12,8 +12,21 @@ class CultivationPhaseBloc extends BlocBase {
   CultivationPhaseBloc(int idpublication) {
     this._repository =
         GetIt.I<InitServices>().hasuraService.cultivationPhaseRepository;
-    Observable(_repository.getUserCultivationPhase(idpublication))
-        .pipe(cultivationPhaseController);
+    if (idpublication != -1) {
+      Observable(_repository.getUserCultivationPhase(idpublication))
+          .pipe(cultivationPhaseController);
+    }
+  }
+
+  void updatePhaseStatus(
+      bool statePhase, DateTime notification, int idphase, int idnext) {
+    this._repository.updatePhaseState(statePhase, notification, idphase);
+    this._repository.updatePhaseStateNext(true, idnext);
+  }
+
+  void updatePublication(String phone, idpub, int iduser) {
+    this._repository.updateUserPhone(iduser, phone);
+    this._repository.updateActivePub(idpub);
   }
 
   var controller = TextEditingController();

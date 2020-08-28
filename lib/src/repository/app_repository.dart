@@ -1,4 +1,5 @@
 import 'package:bloc_pattern/bloc_pattern.dart';
+import 'package:huerto_app/src/models/publicacion_interested_users.dart';
 import 'package:huerto_app/src/models/publication_model.dart';
 import 'package:huerto_app/src/models/user_model.dart';
 import 'package:hasura_connect/hasura_connect.dart';
@@ -48,6 +49,80 @@ class AppRepository extends Disposable {
     return UserModel(id: id, email: email);
   }
 
+  Future<UserModel> updateUser(String iduser, String phone) async {
+    var query = """
+      mutation createUser(\$id:Int!,\$phone:String!) {
+          update_users(where: {id: {_eq: \$id}}, _set: {phone: \$phone})
+          {
+            returning{
+              id
+            }
+          }
+        }
+      }
+    """;
+
+    var data = await HasuraConecction.conection
+        .mutation(query, variables: {"id": iduser, "phone": phone});
+    var id = data["data"]["update_users"]["returning"][0]["id"];
+    return UserModel(id: id);
+  }
+
+  Stream<List<PublicationInterestedUserModel>> getuserInterestedMyPublication(
+      int idUser) {
+    var query = """
+      subscription userInterestedMyPublication(\$data:Int!)  {
+        publicacion_interested_users(where: {publication: {isChecked: {_eq: false}}, own_user_id: {_eq: \$data}}) {     
+          id
+          own_user_id
+          user {
+            id
+            email
+            name
+            phone
+          }
+          publication {
+            id
+            location
+            date
+            distance
+            priceScale
+            rating
+            type
+            description
+            isChecked
+            users {
+              id
+              name
+              email
+            }
+            cultivation {
+              name
+              description
+              id
+              product {
+                id
+                name
+                photo
+                description               
+              }
+            }
+          }
+
+        }
+
+      }
+    """;
+
+    Snapshot snapshot = HasuraConecction.conection
+        .subscription(query, variables: {"data": idUser});
+    ;
+    return snapshot.stream.map(
+      (jsonList) => PublicationInterestedUserModel.fromJsonList(
+          jsonList["data"]["publicacion_interested_users"]),
+    );
+  }
+
   Stream<List<PublicationModel>> getPublications(int idUser) {
     var query = """
       subscription getPubs(\$data:Int!)  {
@@ -60,6 +135,7 @@ class AppRepository extends Disposable {
             rating
             type
             description
+            isChecked
             users {
               id
               name
@@ -73,6 +149,7 @@ class AppRepository extends Disposable {
                 id
                 name
                 photo
+                description               
               }
             }
           }
@@ -100,6 +177,7 @@ class AppRepository extends Disposable {
             rating
             type
             description
+            isChecked
             users {
               id
               name
@@ -113,7 +191,7 @@ class AppRepository extends Disposable {
                 id
                 name
                 photo
-
+               description
               }
             }
           }
@@ -140,6 +218,7 @@ class AppRepository extends Disposable {
             rating
             type
             description
+            isChecked
             users {
               id
               name
@@ -153,6 +232,7 @@ class AppRepository extends Disposable {
                 id
                 name
                 photo
+                description
               }
             }
           }

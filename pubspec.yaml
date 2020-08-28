@@ -22,6 +22,8 @@ dependencies:
   toast: ^0.1.5
   line_icons: ^0.2.0
   get_it: ^4.0.1
+  flutter_beautiful_popup: ^1.5.0
+  url_launcher: ^5.5.0
   
 dev_dependencies:
   flutter_test:
@@ -31,23 +33,7 @@ flutter:
 
   uses-material-design: true
   assets:
-    - assets/images/Started.png
-    - assets/images/Tree.png
-    - assets/images/woman.jpg
-    - assets/images/burger.jpg
-    - assets/images/cafe.jpg
-    - assets/images/gelato.jpg
-    - assets/images/tacos.jpg
-    - assets/images/iphone.png
-    - assets/images/navigate.png
-    - assets/images/website.png
-    - assets/images/like.png
-    - assets/images/hate.png
-    - assets/images/back.png
-    - assets/images/list.png
-    - assets/images/logo.png
-    - assets/images/manzana.jpg
-    - assets/images/zanahoria.jpg
-    - assets/images/tomate.jpg   
+    - assets/images/
+
     
      

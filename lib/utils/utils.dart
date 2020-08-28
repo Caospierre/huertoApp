@@ -27,9 +27,14 @@ class AvailableImages {
   static const iphone = 'assets/images/iphone.png';
   static const navigate = 'assets/images/navigate.png';
   static const website = 'assets/images/website.png';
+  static const rocket = 'assets/images/rocket_green.png';
+  static const term = 'assets/images/term.png';
+  static const success = 'assets/images/success.png';
 
   static const like = 'assets/images/like.png';
   static const hate = 'assets/images/hate.png';
   static const back = 'assets/images/back.png';
   static const list = 'assets/images/list.png';
+  static const info =
+      "Somos una comunidad de cultivadores y nos cuidamos entre nosotros. Revisa los productos cultivados por la comunidad e interactua directo con su propietarion sin intermediarios";
 }

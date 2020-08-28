@@ -1,4 +1,5 @@
 import 'package:bloc_pattern/bloc_pattern.dart';
+import 'package:huerto_app/src/models/publicacion_interested_users.dart';
 import 'package:huerto_app/src/models/publication_model.dart';
 import 'package:huerto_app/utils/api_info.dart';
 
@@ -16,6 +17,7 @@ class PublicationRepository extends Disposable {
             rating
             type
             description
+            isChecked
             users {
               id
               email
@@ -58,6 +60,31 @@ class PublicationRepository extends Disposable {
 
     var data = await HasuraConecction.conection.mutation(query,
         variables: {"id": id, "user_transaccio_id": user_transaccio_id});
+  }
+
+  Future<PublicationInterestedUserModel> insertInterestedUserPub(
+    int iduser,
+    int idpub,
+    int idUserOwn,
+  ) async {
+    var query = """
+        mutation insertInterestedUserPub(\$iduser:Int!,\$idpub:Int!,\$idUserOwn:Int!,) {
+          insert_publicacion_interested_users(objects: {id_publicacion: \$idpub, id_user: \$iduser, own_user_id: \$idUserOwn}) {
+            returning {
+              id
+
+            }
+          }
+        }
+    """;
+    var data = await HasuraConecction.conection.mutation(query, variables: {
+      "iduser": iduser,
+      "idpub": idpub,
+      "idUserOwn": idUserOwn,
+    });
+    var id = data["data"]["insert_publicacion_interested_users"]["returning"][0]
+        ["id"];
+    return PublicationInterestedUserModel(id: id);
   }
 
   @override

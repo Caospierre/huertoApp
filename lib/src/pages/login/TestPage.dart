@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get_it/get_it.dart';
 import 'package:huerto_app/src/bloc/home_bloc.dart';
 import 'package:huerto_app/src/bloc/login_bloc.dart';
+import 'package:huerto_app/src/bloc/product_bloc.dart';
 import 'package:huerto_app/src/models/publication_model.dart';
 import 'package:huerto_app/src/models/user_model.dart';
 import 'package:huerto_app/src/pages/home/tabs/account.dart';
@@ -20,6 +21,9 @@ class TestPage extends StatefulWidget {
 
 class _TestPageState extends State<TestPage> {
   var barTitle = ['Mi Cosecha', 'Trueque o Compra', 'Perfil', 'Guia'];
+
+  ProductBloc pbloc =
+      ProductBloc(GetIt.I<InitServices>().hasuraService.productRepository);
   int indexTitle = 0;
   HomeBloc hbloc;
   Stream<List<PublicationModel>> slistp;
@@ -66,6 +70,10 @@ class _TestPageState extends State<TestPage> {
         this.slistp = hbloc.publicationsController;
         this.cultlist = hbloc.cultivationController;
         this.transslist = hbloc.transaccionController;
+        GetIt.I<InitServices>().preferencesService.products =
+            pbloc.productController;
+        GetIt.I<InitServices>().preferencesService.mypublish =
+            hbloc.myPublishController;
       }
     }
     // print("${user.displayName} is the user ${user.photoUrl}");
@@ -97,7 +105,7 @@ class _TestPageState extends State<TestPage> {
         )
       ],
       bottom: TabBar(
-        unselectedLabelColor: unselectedTabLabelColor,
+        unselectedLabelColor: Color(0xFF4569DB),
         labelColor: Theme.of(context).accentColor,
         labelPadding: EdgeInsets.only(left: 0.0, right: 0.0),
         indicatorWeight: 5.0,

@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:bloc_pattern/bloc_pattern.dart';
+import 'package:huerto_app/src/models/publicacion_interested_users.dart';
 import 'package:huerto_app/src/models/publication_model.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:rxdart/rxdart.dart';
@@ -16,6 +17,8 @@ class HomeBloc extends BlocBase {
         .pipe(cultivationController);
     Observable(_repository.getTransaccion(this._idUser))
         .pipe(transaccionController);
+    Observable(_repository.getuserInterestedMyPublication(this._idUser))
+        .pipe(myPublishController);
   }
   Stream<List<PublicationModel>> getPubStream() {
     return _repository.getPublications(this._idUser);
@@ -29,6 +32,8 @@ class HomeBloc extends BlocBase {
   var publicationsController = BehaviorSubject<List<PublicationModel>>();
   var cultivationController = BehaviorSubject<List<PublicationModel>>();
   var transaccionController = BehaviorSubject<List<PublicationModel>>();
+  var myPublishController =
+      BehaviorSubject<List<PublicationInterestedUserModel>>();
 
   PublicationModel random() {
     var randomIndex = Random().nextInt(publicationsController.value.length);
@@ -50,6 +55,7 @@ class HomeBloc extends BlocBase {
     publicationsController.close();
     cultivationController.close();
     transaccionController.close();
+    myPublishController.close();
     super.dispose();
   }
 }

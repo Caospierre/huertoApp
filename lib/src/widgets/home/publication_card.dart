@@ -1,8 +1,10 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
 import 'package:huerto_app/src/models/publication_model.dart';
 import 'package:huerto_app/src/routes/router.dart';
+import 'package:huerto_app/src/services/init_services.dart';
 import 'package:huerto_app/src/widgets/home/price_rating_bar.dart';
 import 'rating_bar.dart';
 
@@ -36,7 +38,9 @@ class PublicationCard extends StatelessWidget {
     final _location = Row(
       children: <Widget>[
         Text(
-          publication.location == null ? publication.location : "Indefinido",
+          publication.cultivation.name == null
+              ? publication.cultivation.name
+              : "Indefinido",
           style: TextStyle(
             fontSize: 12.0,
             color: Colors.white60,
@@ -46,7 +50,7 @@ class PublicationCard extends StatelessWidget {
         _filledCircle,
         SizedBox(width: 5.0),
         Text(
-          publication.type,
+          "En progreso",
           style: TextStyle(
             fontSize: 12.0,
             color: Colors.white60,
@@ -93,6 +97,9 @@ class PublicationCard extends StatelessWidget {
           NavigatorToPath.Publication,
           arguments: publication,
         );
+        GetIt.I<InitServices>()
+            .preferencesService
+            .setproductPhase(publication.id);
       },
       child: Stack(
         children: <Widget>[

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:huerto_app/src/services/hasura_service.dart';
+import 'package:huerto_app/src/services/preferences_service.dart';
 import 'auth_service.dart';
 import 'navigator_service.dart';
 
@@ -7,20 +8,23 @@ class InitServices {
   final AuthService authService;
   final NavigatorService navigatorService;
   final HasuraService hasuraService;
-  InitServices({
-    this.authService,
-    this.navigatorService,
-    this.hasuraService,
-  });
+  final PreferencesService preferencesService;
+  InitServices(
+      {this.authService,
+      this.navigatorService,
+      this.hasuraService,
+      this.preferencesService});
 
   static Future<InitServices> initialize() async {
     final AuthService _authService = new AuthService();
     final HasuraService _hasuraService = new HasuraService();
     final NavigatorService _navigatorService = new NavigatorService();
+    final PreferencesService _preferencesService = new PreferencesService();
     return InitServices(
       authService: _authService,
       navigatorService: _navigatorService,
       hasuraService: _hasuraService,
+      preferencesService: _preferencesService,
     );
   }
 
