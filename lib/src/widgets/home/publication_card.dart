@@ -38,24 +38,13 @@ class PublicationCard extends StatelessWidget {
     final _location = Row(
       children: <Widget>[
         Text(
-          publication.cultivation.name == null
-              ? publication.cultivation.name
-              : "Indefinido",
+          'En Progreso',
           style: TextStyle(
             fontSize: 12.0,
             color: Colors.white60,
           ),
         ),
         SizedBox(width: 5.0),
-        _filledCircle,
-        SizedBox(width: 5.0),
-        Text(
-          "En progreso",
-          style: TextStyle(
-            fontSize: 12.0,
-            color: Colors.white60,
-          ),
-        ),
       ],
     );
 

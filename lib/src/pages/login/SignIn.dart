@@ -176,8 +176,8 @@ class _SignInState extends State<SignIn> {
                                 cursorColor: Colors.white,
                                 style: TextStyle(color: Colors.white),
                                 validator: (input) {
-                                   if (input.isEmpty) {
-                                    return 'Ingresa Un Correo';
+                                  if (input.isEmpty) {
+                                    return 'Provide an email';
                                   }
                                 },
                                 decoration: InputDecoration(
@@ -240,7 +240,10 @@ class _SignInState extends State<SignIn> {
                                             BorderRadius.circular(30)),
                                     hintStyle: TextStyle(color: Colors.white),
                                     hintText: 'Contraseña'),
-                                onSaved: (input) => _passwaord = input,
+                                onSaved: (input) {
+                                  _passwaord = input;
+                                  print(_passwaord);
+                                },
                               ),
                             ),
                             Padding(

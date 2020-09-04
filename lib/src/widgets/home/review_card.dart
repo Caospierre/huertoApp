@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
 import 'package:huerto_app/src/models/publicacion_interested_users.dart';
 import 'package:huerto_app/src/models/review.dart';
 import 'package:huerto_app/src/routes/router.dart';
+import 'package:huerto_app/src/services/init_services.dart';
 import 'package:huerto_app/src/widgets/home/rating_bar.dart';
 import 'package:huerto_app/utils/colors.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -45,7 +47,7 @@ class ReviewCard extends StatelessWidget {
     final _name = InkWell(
       onTap: () {
         Navigator.pushNamed(context, NavigatorToPath.Publication,
-            arguments: review);
+            arguments: review.publication);
       },
       child: Text(
         review.publication.cultivation.product.name != null
@@ -89,7 +91,7 @@ class ReviewCard extends StatelessWidget {
               _launchCaller();
             },
           ),
-        )
+        ),
       ],
     );
 
@@ -121,6 +123,19 @@ class ReviewCard extends StatelessWidget {
             style: TextStyle(
               fontWeight: FontWeight.w500,
               color: Colors.green,
+            ),
+          ),
+          Container(
+            margin: EdgeInsets.symmetric(horizontal: 50.0),
+            child: FloatingActionButton.extended(
+              label: Text('Entregar'),
+              backgroundColor: primaryColor,
+              onPressed: () {
+                GetIt.I<InitServices>()
+                    .hasuraService
+                    .cultivationPhaseRepository
+                    .updateCheckedPub(review.publication.id);
+              },
             ),
           )
         ],
