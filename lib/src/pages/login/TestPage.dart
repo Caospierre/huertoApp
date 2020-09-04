@@ -1,9 +1,15 @@
+import 'dart:async';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_contact/contacts.dart';
 import 'package:get_it/get_it.dart';
 import 'package:huerto_app/src/bloc/home_bloc.dart';
 import 'package:huerto_app/src/bloc/login_bloc.dart';
+import 'package:huerto_app/src/models/notification_model.dart';
 import 'package:huerto_app/src/models/publication_model.dart';
 import 'package:huerto_app/src/models/user_model.dart';
 import 'package:huerto_app/src/pages/home/tabs/account.dart';
@@ -11,6 +17,8 @@ import 'package:huerto_app/src/pages/home/tabs/saved.dart';
 import 'package:huerto_app/src/pages/home/tabs/search.dart';
 import 'package:huerto_app/src/services/init_services.dart';
 import 'package:huerto_app/utils/colors.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'package:rflutter_alert/rflutter_alert.dart';
 
 class TestPage extends StatefulWidget {
   final int idUser;
@@ -20,7 +28,7 @@ class TestPage extends StatefulWidget {
 }
 
 class _TestPageState extends State<TestPage> {
-  var barTitle = ['Mi Cosecha', 'Trueque o Compra', 'Perfil', 'Guia'];
+  var barTitle = ['Mi Cosecha', 'Trueque o Compra', 'Perfil', 'Notificación'];
   int indexTitle = 0;
   HomeBloc hbloc;
   Stream<List<PublicationModel>> slistp;
@@ -34,7 +42,9 @@ class _TestPageState extends State<TestPage> {
   bool isSignedIn = false;
   String imageUrl;
 
+  final String serverToken = '<Server-Token>';
   final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
+
 
   _getToken() {
     _firebaseMessaging.getToken().then((token) {
@@ -69,14 +79,64 @@ class _TestPageState extends State<TestPage> {
     final data = message['data'];
     final String title = notification['title'];
     final String body = notification['body'];
-    String mMessage = data['message'];
-    print("Title: $title, body: $body, message: $mMessage");
+    String uMessage = data['user'];
+    String npMessage = data['number_phone'];
+    String iMessage = data['image'];
+    String dMessage = data['description'];
+    print("Titulo: $title, Cuerpo: $body, usuario: $uMessage, numero: $npMessage, imagen: $iMessage,  descripcion: $dMessage");
     setState(() {
-      Message msg = Message(title, body, mMessage);
-      messagesList.add(msg);
-      print(messagesList);
+      if(title == null && body == null){
+        Message msg = Message("Existe Una Publicación", "",uMessage, npMessage, iMessage, dMessage);
+        messagesList.add(msg);
+        print(messagesList);
+      }else{
+        Message msg = Message(title,body,uMessage, npMessage, iMessage, dMessage);
+        messagesList.add(msg);
+        print(messagesList);
+      }
+      
     });
-}
+  }
+
+  Future<Map<String, dynamic>> sendAndRetrieveMessage() async {
+    await _firebaseMessaging.requestNotificationPermissions(
+      const IosNotificationSettings(sound: true, badge: true, alert: true, provisional: false),
+    );
+
+    await http.post(
+      'https://fcm.googleapis.com/fcm/send',
+      headers: <String, String>{
+        'Content-Type': 'application/json',
+        'Authorization': 'key=$serverToken',
+      },
+      body: jsonEncode(
+      <String, dynamic>{
+        'notification': <String, dynamic>{
+          'body': 'this is a body',
+          'title': 'this is a title'
+        },
+        'priority': 'high',
+        'data': <String, dynamic>{
+          'click_action': 'FLUTTER_NOTIFICATION_CLICK',
+          'id': '1',
+          'status': 'done'
+        },
+        'to': await _firebaseMessaging.getToken(),
+      },
+      ),
+    );
+
+    final Completer<Map<String, dynamic>> completer =
+      Completer<Map<String, dynamic>>();
+
+    _firebaseMessaging.configure(
+      onMessage: (Map<String, dynamic> message) async {
+        completer.complete(message);
+      },
+    );
+
+    return completer.future;
+  }  
 
   checkAuthentication() async {
     _auth.onAuthStateChanged.listen((user) {
@@ -116,6 +176,8 @@ class _TestPageState extends State<TestPage> {
     // print("${user.displayName} is the user ${user.photoUrl}");
   }
 
+  
+
   signout() async {
     _auth.signOut();
   }
@@ -127,6 +189,38 @@ class _TestPageState extends State<TestPage> {
     this.getUser();
     _getToken();
     _configureFirebaseListeners();
+    _askPermissions();
+  }
+
+  Future<void> _askPermissions() async {
+    final permissionStatus = await _getContactPermission();
+    if (permissionStatus != PermissionStatus.granted) {
+      _handleInvalidPermissions(permissionStatus);
+    }
+  }
+
+  Future<PermissionStatus> _getContactPermission() async {
+    final status = await Permission.contacts.status;
+    if (!status.isGranted && !status.isPermanentlyDenied) {
+      final result = await Permission.contacts.request();
+      return result ?? PermissionStatus.undetermined;
+    } else {
+      return status;
+    }
+  }
+
+  void _handleInvalidPermissions(PermissionStatus permissionStatus) {
+    if (permissionStatus == PermissionStatus.denied) {
+      throw PlatformException(
+          code: 'PERMISSION_DENIED',
+          message: 'Access to location data denied',
+          details: null);
+    } else if (permissionStatus == PermissionStatus.restricted) {
+      throw PlatformException(
+          code: 'PERMISSION_DISABLED',
+          message: 'Location data is not available on device',
+          details: null);
+    }
   }
 
   @override
@@ -172,20 +266,67 @@ class _TestPageState extends State<TestPage> {
         //SavedPage(this.cultlist), //AccountPage(),
         Container(
           child: ListView.builder(
-        itemCount: null == messagesList ? 0 : messagesList.length,
-        itemBuilder: (BuildContext context, int index) {
+          itemCount: null == messagesList ? 0 : messagesList.length,
+          itemBuilder: (BuildContext context, int index) {
           return Card(
-            child: Padding(
-              padding: EdgeInsets.all(10.0),
-              child: Text(
-                messagesList[index].message,
-                style: TextStyle(
-                  fontSize: 16.0,
-                  color: Colors.black,
+            clipBehavior: Clip.antiAlias,
+            child: Column(
+              children: [
+                Image(image: new NetworkImage(messagesList[index].image),fit: BoxFit.cover, width: 400,),
+                ListTile(
+                  leading: Icon(Icons.store),
+                  title: Text(messagesList[index].title),
+                  subtitle: Text(
+                    messagesList[index].user+"\n"+messagesList[index].numberphone,
+                    style: TextStyle(color: Colors.black.withOpacity(0.6)),
+                  ),
                 ),
-              ),
+                Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Text(
+                    messagesList[index].description,
+                    style: TextStyle(color: Colors.black.withOpacity(0.6)),
+                  ),
+                ),
+                ButtonBar(
+                  alignment: MainAxisAlignment.start,
+                  children: [
+                    FlatButton(
+                      textColor: const Color(0xFF6200EE),
+                      onPressed: () async {
+                        // Perform some action
+                        List<Item> phone = new List<Item>();
+                        phone.add(new Item(value: messagesList[index].numberphone));
+                        Contact contact = Contact(givenName: messagesList[index].user, phones: phone);
+                        await Contacts.addContact(contact);
+                        _onAlertWithStylePressed(context);
+                      },
+                      child: Row(
+                        children: [
+                          Icon(Icons.contacts),
+                          Text('Guardar Contacto'),
+                        ],
+                      ),
+                      
+                    ),
+                    FlatButton(
+                      textColor: const Color(0xFF6200EE),
+                      onPressed: () {
+                        // Perform some action
+                      },
+                      child: Row(
+                        children: [
+                          Icon(Icons.message),
+                          Text('Enviar Mensaje'),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ],
             ),
           );
+          
         },
       ),
         ),
@@ -216,15 +357,47 @@ class _TestPageState extends State<TestPage> {
       child: Icon(icon, size: 40.0),
     );
   }
-}
 
-class Message {
-  String title;
-  String body;
-  String message;
-  Message(title, body, message) {
-    this.title = title;
-    this.body = body;
-    this.message = message;
+  // Advanced using of alerts
+  _onAlertWithStylePressed(context) {
+    // Reusable alert style
+    var alertStyle = AlertStyle(
+      animationType: AnimationType.fromTop,
+      isCloseButton: false,
+      isOverlayTapDismiss: false,
+      descStyle: TextStyle(fontWeight: FontWeight.bold),
+      animationDuration: Duration(milliseconds: 400),
+      alertBorder: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(0.0),
+        side: BorderSide(
+          color: Colors.grey,
+        ),
+      ),
+      titleStyle: TextStyle(
+        color: Colors.red,
+      ),
+      constraints: BoxConstraints.expand(width: 300)
+    );
+
+    // Alert dialog using custom alert style
+    Alert(
+      context: context,
+      style: alertStyle,
+      type: AlertType.success,
+      title: "Contacto",
+      desc: "Contacto Guardado Exitosamente",
+      buttons: [
+        DialogButton(
+          child: Text(
+            "Cerrar",
+            style: TextStyle(color: Colors.white, fontSize: 20),
+          ),
+          onPressed: () => Navigator.pop(context),
+          color: Color.fromRGBO(0, 179, 134, 1.0),
+          radius: BorderRadius.circular(0.0),
+        ),
+      ],
+    ).show();
   }
 }
+
