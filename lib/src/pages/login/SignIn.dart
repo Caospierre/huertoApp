@@ -72,7 +72,7 @@ class _SignInState extends State<SignIn> {
           }
         }
       } catch (e) {
-        showError(e);
+        showError(e.toString());
       }
     }
   }

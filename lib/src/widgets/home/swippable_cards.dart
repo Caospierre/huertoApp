@@ -5,6 +5,7 @@ import 'package:flutter_beautiful_popup/main.dart';
 import 'package:get_it/get_it.dart';
 import 'package:huerto_app/src/bloc/publication_bloc.dart';
 import 'package:huerto_app/src/models/publication_model.dart';
+import 'package:huerto_app/src/pages/login/TestPage.dart';
 import 'package:huerto_app/src/routes/router.dart';
 import 'package:huerto_app/src/services/init_services.dart';
 import 'package:huerto_app/src/widgets/home/price_rating_bar.dart';
