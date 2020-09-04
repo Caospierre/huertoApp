@@ -282,7 +282,8 @@ class _SwippableCardsState extends State<SwippableCards> {
         bloc.txtUsercontroller.text =
             GetIt.I<InitServices>().authService.userLogin.id.toString();
         bloc.checkPublication(_publicationsCopy[0].users.id);
-
+        notificationConfirm("Transaccion Exitosa",
+            "El Anunciante se contactara contigo Pronto");
         break;
 
       case AvailableImages.list:
@@ -299,6 +300,24 @@ class _SwippableCardsState extends State<SwippableCards> {
       context: context,
       template: TemplateGift,
     );
+    popup.recolor(Color(0xFF5B16D0));
+    popup.show(
+      title: title,
+      content: content,
+      actions: [
+        popup.button(
+          label: 'Cerrar',
+          onPressed: Navigator.of(context).pop,
+        ),
+      ],
+      // bool barrierDismissible = false,
+      // Widget close,
+    );
+  }
+
+  void notificationConfirm(String title, String content) {
+    final popup =
+        BeautifulPopup(context: context, template: TemplateNotification);
     popup.recolor(Color(0xFF5B16D0));
     popup.show(
       title: title,

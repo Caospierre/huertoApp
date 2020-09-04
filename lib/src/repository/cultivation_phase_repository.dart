@@ -239,7 +239,7 @@ class CultivationPhaseRepository extends Disposable {
   Future<PublicationModel> updateCheckedPub(int idpub) async {
     var query = """
       mutation updateUpublication(\$id:Int!) {
-          update_publications(where: {id: {_eq: \$id}}, _set: {isCheked:true})
+          update_publications(where: {id: {_eq: \$id}}, _set: {isChecked :true})
            {
             returning{
               id

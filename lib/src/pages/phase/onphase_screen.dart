@@ -217,7 +217,7 @@ class _OnPhaseScreenState extends State<OnPhaseScreen> {
                                     .id);
 
                             Navigator.of(context).pop();
-                            notificationFinish();
+
                             Navigator.pop(context);
                           },
                         ),
@@ -225,6 +225,7 @@ class _OnPhaseScreenState extends State<OnPhaseScreen> {
                       close: Container(),
                       barrierDismissible: true,
                     );
+                    notificationFinish();
                   } else {
                     print('No se puede Publicar ' +
                         widget.listPhase.length.toString());
