@@ -72,7 +72,7 @@ class _SignInState extends State<SignIn> {
           }
         }
       } catch (e) {
-        showError(e);
+        showError(e.toString());
       }
     }
   }
@@ -103,7 +103,7 @@ class _SignInState extends State<SignIn> {
       assert(user.uid == currentuser.uid);
 
       if (user.email != null) {
-        print("u2" + user.email);
+        print("LOGIN" + user.email);
         if (await bloc.isUser(user.email) == null) {
           bloc.createUser(user.email);
         }
@@ -176,8 +176,8 @@ class _SignInState extends State<SignIn> {
                                 cursorColor: Colors.white,
                                 style: TextStyle(color: Colors.white),
                                 validator: (input) {
-                                  if (input.isEmpty) {
-                                    return 'Provide an email';
+                                   if (input.isEmpty) {
+                                    return 'Ingresa Un Correo';
                                   }
                                 },
                                 decoration: InputDecoration(

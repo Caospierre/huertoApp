@@ -3,31 +3,29 @@ import 'package:get_it/get_it.dart';
 import 'package:huerto_app/src/bloc/cultivation_bloc.dart';
 import 'package:huerto_app/src/bloc/product_bloc.dart';
 import 'package:huerto_app/src/models/product_model.dart';
-import 'package:huerto_app/src/models/publication_model.dart';
 import 'package:huerto_app/src/services/init_services.dart';
 import 'package:huerto_app/utils/utils.dart';
 
 class AddCultivationPage extends StatefulWidget {
-  final Stream<List<PublicationModel>> publicationStream;
+  final Stream<List<ProductModel>> productStream;
 
-  AddCultivationPage(this.publicationStream);
+  AddCultivationPage(this.productStream);
   @override
   _AddCultivationPageState createState() => _AddCultivationPageState();
 }
 
 class _AddCultivationPageState extends State<AddCultivationPage> {
   CultivationBloc cbloc;
-  ProductBloc pbloc;
+
   int productIndex = 0;
   ProductModel productSelected;
-  Stream<List<ProductModel>> productStream;
+
   String nameProducto = "";
   @override
   Widget build(BuildContext context) {
     cbloc = CultivationBloc(
         GetIt.I<InitServices>().hasuraService.cultivationRepository);
-    pbloc =
-        ProductBloc(GetIt.I<InitServices>().hasuraService.productRepository);
+
     return Scaffold(
       appBar: AppBar(
         title: Text("Añadir Cultivo"),
@@ -48,7 +46,9 @@ class _AddCultivationPageState extends State<AddCultivationPage> {
         child: Icon(Icons.add),
         onPressed: () {
           int idUser = GetIt.I<InitServices>().authService.userLogin.id;
+
           cbloc.createCultivation(idUser, this.productIndex);
+          Navigator.pop(context);
         },
       ),
     );
@@ -128,7 +128,6 @@ class _AddCultivationPageState extends State<AddCultivationPage> {
   }
 
   Widget _productCultivation() {
-    this.productStream = pbloc.productController;
     return Row(
       children: <Widget>[
         ImageIcon(new NetworkImage(
@@ -136,7 +135,7 @@ class _AddCultivationPageState extends State<AddCultivationPage> {
         SizedBox(width: 30.0),
         Expanded(
             child: StreamBuilder<List<ProductModel>>(
-                stream: this.productStream,
+                stream: GetIt.I<InitServices>().preferencesService.products,
                 builder: (context, snapshot) {
                   if (!snapshot.hasData) {
                     return Text('Empty');

@@ -14,7 +14,7 @@ String cultivationPhaseModelToJson(CultivationPhaseModel data) =>
 
 class CultivationPhaseModel {
   bool statePhase;
-  String name, image, duration, description;
+  String name, image, duration, description, steps;
   int id, level;
   ProductModel product;
 
@@ -26,17 +26,20 @@ class CultivationPhaseModel {
       this.description,
       this.id,
       this.product,
-      this.level});
+      this.level,
+      this.steps});
 
   factory CultivationPhaseModel.fromJson(Map<String, dynamic> json) =>
       new CultivationPhaseModel(
-          statePhase: json["state_phase"],
-          name: json["name"],
-          image: json["image"],
-          duration: json["duration"],
-          description: json["description"],
-          id: json["id"],
-          level: json["level_id"]);
+        statePhase: json["statePhase"],
+        name: json["name"],
+        image: json["image"],
+        duration: json["duration"],
+        description: json["description"],
+        id: json["id"],
+        level: json["level_id"],
+        steps: json["steps"],
+      );
 
   Map<String, dynamic> toJson() => {
         "name": name,
@@ -45,6 +48,7 @@ class CultivationPhaseModel {
         "statePhase": statePhase,
         "description": description,
         "level_id": level,
+        "steps": steps,
         "id": id,
       };
 

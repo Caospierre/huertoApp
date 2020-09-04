@@ -17,9 +17,13 @@ class PublicationBloc extends BlocBase {
 
   var txtUsercontroller = TextEditingController();
   var publicationsController = BehaviorSubject<List<PublicationModel>>();
-  void checkPublication() {
-    this._repository.checkedPublication(int.parse(this.txtPubcontroller.text),
-        int.parse(this.txtUsercontroller.text));
+  void checkPublication(int idUserOwn) {
+    /* this._repository.checkedPublication(int.parse(this.txtPubcontroller.text),
+        int.parse(this.txtUsercontroller.text));*/
+    this._repository.insertInterestedUserPub(
+        int.parse(this.txtUsercontroller.text),
+        int.parse(this.txtPubcontroller.text),
+        idUserOwn);
   }
 
   void sendPublication() {

@@ -27,7 +27,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       //  debugShowCheckedModeBanner: false,
       title: 'Mi Cosecha',
-      theme: ThemeData(),
+      theme: ThemeData(primaryColor: Color(0xFF5B16D0)),
       home: SignIn(),
       //initialRoute: router.NavigatorToPath.SignIn,
       onGenerateRoute: router.generateRoute,

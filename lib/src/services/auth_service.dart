@@ -4,6 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:get_it/get_it.dart';
 import 'package:huerto_app/src/bloc/login_bloc.dart';
+import 'package:huerto_app/src/models/publication_model.dart';
 import 'package:huerto_app/src/models/user_model.dart';
 import 'package:rxdart/rxdart.dart';
 import 'init_services.dart';
@@ -11,7 +12,7 @@ import 'init_services.dart';
 class AuthService extends Disposable {
   FirebaseAuth _auth = FirebaseAuth.instance;
   var userController;
-
+  PublicationModel _temporalpub;
   GoogleSignIn _googleSignIn = GoogleSignIn();
   FirebaseUser _user;
   UserModel _userLogin;
@@ -30,6 +31,9 @@ class AuthService extends Disposable {
   FirebaseAuth get auth => _auth;
   GoogleSignIn get googleSignIn => _googleSignIn;
   bool get isSignedIn => _isSignedIn;
+  PublicationModel get temporalpub => _temporalpub;
+  set temporalpub(PublicationModel temporalpub) =>
+      {this._temporalpub = temporalpub};
   GlobalKey<FormState> get formkey => _formkey;
   set formkey(GlobalKey<FormState> formkey) => {this._formkey = formkey};
 

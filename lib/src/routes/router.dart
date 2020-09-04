@@ -6,6 +6,7 @@ import 'package:huerto_app/src/pages/home/publication_details.dart';
 import 'package:huerto_app/src/pages/home/home_page.dart';
 import 'package:huerto_app/src/pages/login/SignIn.dart';
 import 'package:huerto_app/src/pages/login//SignUp.dart';
+import 'package:huerto_app/src/pages/phase/onphase_screen.dart';
 import 'package:huerto_app/src/pages/started.dart';
 import 'package:huerto_app/src/pages/error_page.dart';
 
@@ -19,6 +20,7 @@ class NavigatorToPath {
   static const String Test = '/test';
   static const String Error = 'error';
   static const String AddCultivation = '/add_cultivation';
+  static const String PhaseDetail = '/phase_detail';
 }
 
 Route<dynamic> generateRoute(RouteSettings settings) {
@@ -43,6 +45,10 @@ Route<dynamic> generateRoute(RouteSettings settings) {
       return MaterialPageRoute(
           builder: (_) =>
               PublicationDetailsPage(publication: settings.arguments));
+      break;
+    case NavigatorToPath.PhaseDetail:
+      return MaterialPageRoute(
+          builder: (_) => OnPhaseScreen(listPhase: settings.arguments));
       break;
     default:
       return MaterialPageRoute(builder: (_) => HomePage());

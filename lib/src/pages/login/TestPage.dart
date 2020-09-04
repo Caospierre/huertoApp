@@ -10,6 +10,7 @@ import 'package:get_it/get_it.dart';
 import 'package:huerto_app/src/bloc/home_bloc.dart';
 import 'package:huerto_app/src/bloc/login_bloc.dart';
 import 'package:huerto_app/src/models/notification_model.dart';
+import 'package:huerto_app/src/bloc/product_bloc.dart';
 import 'package:huerto_app/src/models/publication_model.dart';
 import 'package:huerto_app/src/models/user_model.dart';
 import 'package:huerto_app/src/pages/home/tabs/account.dart';
@@ -29,6 +30,9 @@ class TestPage extends StatefulWidget {
 
 class _TestPageState extends State<TestPage> {
   var barTitle = ['Mi Cosecha', 'Trueque o Compra', 'Perfil', 'Notificación'];
+
+  ProductBloc pbloc =
+      ProductBloc(GetIt.I<InitServices>().hasuraService.productRepository);
   int indexTitle = 0;
   HomeBloc hbloc;
   Stream<List<PublicationModel>> slistp;
@@ -42,7 +46,7 @@ class _TestPageState extends State<TestPage> {
   bool isSignedIn = false;
   String imageUrl;
 
-  final String serverToken = '<Server-Token>';
+  final String serverToken = 'AAAAzuUQuB4:APA91bEf-NEe8pcusP6PfeFemvO_dYywEK9r7i_VJsOSZneYiCUQvQS9OPfDaGwxtET16vXcxARqWjmzOq8ScyUhJHyHJGRR_5V48Yhdj8AmFNNrXCRYnzWYyJ5v6DsuUsohuxkRUuyvs';
   final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
 
 
@@ -98,7 +102,7 @@ class _TestPageState extends State<TestPage> {
     });
   }
 
-  Future<Map<String, dynamic>> sendAndRetrieveMessage() async {
+  Future<Map<String, dynamic>> sendAndRetrieveMessage( String user, String number_phone, String image, String description) async {
     await _firebaseMessaging.requestNotificationPermissions(
       const IosNotificationSettings(sound: true, badge: true, alert: true, provisional: false),
     );
@@ -112,14 +116,16 @@ class _TestPageState extends State<TestPage> {
       body: jsonEncode(
       <String, dynamic>{
         'notification': <String, dynamic>{
-          'body': 'this is a body',
-          'title': 'this is a title'
+          'body': 'Existe Una Nueva Publicacion',
+          'title': 'Revisalo Te Puede Interesar'
         },
         'priority': 'high',
         'data': <String, dynamic>{
           'click_action': 'FLUTTER_NOTIFICATION_CLICK',
-          'id': '1',
-          'status': 'done'
+          'user': '$user',
+          'number_phone': '$number_phone',
+          'image': '$image',
+          'description': '$description',
         },
         'to': await _firebaseMessaging.getToken(),
       },
@@ -171,6 +177,10 @@ class _TestPageState extends State<TestPage> {
         this.slistp = hbloc.publicationsController;
         this.cultlist = hbloc.cultivationController;
         this.transslist = hbloc.transaccionController;
+        GetIt.I<InitServices>().preferencesService.products =
+            pbloc.productController;
+        GetIt.I<InitServices>().preferencesService.mypublish =
+            hbloc.myPublishController;
       }
     }
     // print("${user.displayName} is the user ${user.photoUrl}");
@@ -238,7 +248,7 @@ class _TestPageState extends State<TestPage> {
         )
       ],
       bottom: TabBar(
-        unselectedLabelColor: unselectedTabLabelColor,
+        unselectedLabelColor: Color(0xFF4569DB),
         labelColor: Theme.of(context).accentColor,
         labelPadding: EdgeInsets.only(left: 0.0, right: 0.0),
         indicatorWeight: 5.0,

@@ -4,6 +4,7 @@ import 'package:hasura_connect/hasura_connect.dart';
 import 'package:huerto_app/src/models/cultivation_phase_model.dart';
 import 'package:huerto_app/src/models/publication_model.dart';
 import 'package:huerto_app/src/models/user_cultivation_phase_model.dart';
+import 'package:huerto_app/src/models/user_model.dart';
 import 'package:huerto_app/src/repository/cultivation_phase_repository.dart';
 import 'package:huerto_app/utils/api_info.dart';
 
@@ -39,8 +40,15 @@ class CultivationRepository extends Disposable {
             .getCultivationPhaseById(productId);
     if (phaselist != null) {
       phaselist.forEach((phase) {
-        this.insertUserCultivationPhase(phase.id, pub.id, phase.name,
-            phase.description, phase.image, phase.level);
+        this.insertUserCultivationPhase(
+            phase.id,
+            pub.id,
+            phase.name,
+            phase.description,
+            phase.image,
+            phase.steps,
+            phase.level,
+            phase.statePhase);
       });
     }
     return CultivationModel(id: id);
@@ -50,7 +58,7 @@ class CultivationRepository extends Disposable {
       int cultivoId, int userId) async {
     var query = """
         mutation createPubsTemp( \$cultivoId:Int!, \$userId:Int!) {
-          insert_publications(objects: {id_cultivo:  \$cultivoId, id_usuario:  \$userId,distance:"5km away",rating:5 description:"Indefinido" priceScale:0 ,type:"Indefinido",isActive:false }) {
+          insert_publications(objects: {id_cultivo:  \$cultivoId, id_usuario:  \$userId,distance:"5km away",rating:5 description:"Producto cultivado con Mi cosecha app" priceScale:0 ,type:"Vegetal",isActive:false }) {
               returning{
               id
             }
@@ -86,10 +94,12 @@ class CultivationRepository extends Disposable {
       String name,
       String description,
       String image,
-      int level) async {
+      String steps,
+      int level,
+      bool statePhase) async {
     var query = """
-      mutation insertUserCultivationPhase(\$idphase:Int!,\$idpub:Int!,\$level:Int!,\$name:String!, \$description:String!,\$image:String!) {
-          insert_user_cultivation_phase(objects: {id_phase: \$idphase, id_publication: \$idpub, name: \$name, description: \$description, image: \$image, level_id: \$level}){
+      mutation insertUserCultivationPhase(\$idphase:Int!,\$idpub:Int!,\$level:Int!,\$name:String!, \$description:String!,\$image:String!,\$steps:String!,\$statePhase:Boolean!) {
+          insert_user_cultivation_phase(objects: {id_phase: \$idphase, id_publication: \$idpub, name: \$name, description: \$description, image: \$image,steps: \$steps, level_id: \$level,statePhase: \$statePhase}){
               returning{
                 id
               }
@@ -103,7 +113,9 @@ class CultivationRepository extends Disposable {
       "name": name,
       "description": description,
       "image": image,
-      "level": level
+      "steps": steps,
+      "level": level,
+      "statePhase": statePhase
     });
     var id =
         data["data"]["insert_user_cultivation_phase"]["returning"][0]["id"];
@@ -142,6 +154,8 @@ class CultivationRepository extends Disposable {
           product{
             id
             name
+            description
+            
           }
         }
       }

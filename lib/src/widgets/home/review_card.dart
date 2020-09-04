@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:huerto_app/src/models/publication_model.dart';
+import 'package:huerto_app/src/models/publicacion_interested_users.dart';
+import 'package:huerto_app/src/models/review.dart';
 import 'package:huerto_app/src/routes/router.dart';
 import 'package:huerto_app/src/widgets/home/rating_bar.dart';
+import 'package:huerto_app/utils/colors.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class ReviewCard extends StatelessWidget {
-  final PublicationModel review;
+  final PublicationInterestedUserModel review;
 
   const ReviewCard({Key key, @required this.review}) : super(key: key);
   @override
@@ -21,7 +24,7 @@ class ReviewCard extends StatelessWidget {
     final img = GestureDetector(
       onTap: () {
         Navigator.pushNamed(context, NavigatorToPath.Publication,
-            arguments: review);
+            arguments: review.publication);
       },
       child: Container(
         margin: EdgeInsets.only(right: 10.0),
@@ -31,7 +34,7 @@ class ReviewCard extends StatelessWidget {
           borderRadius: BorderRadius.circular(12.0),
           image: DecorationImage(
             image: NetworkImage(
-              review.cultivation.product.photo,
+              review.publication.cultivation.product.photo,
             ),
             fit: BoxFit.cover,
           ),
@@ -45,7 +48,9 @@ class ReviewCard extends StatelessWidget {
             arguments: review);
       },
       child: Text(
-        review.cultivation.product.name,
+        review.publication.cultivation.product.name != null
+            ? review.publication.cultivation.product.name
+            : "Producto Sin Nombre",
         style: TextStyle(
           fontSize: 16.0,
           fontWeight: FontWeight.bold,
@@ -56,29 +61,42 @@ class ReviewCard extends StatelessWidget {
     final _location = Row(
       children: <Widget>[
         Text(
-          review.location != null ? review.location : "Indefinido",
+          review.users.name != null ? review.users.name : review.users.email,
           style: TextStyle(
-            fontSize: 14.0,
-            color: Colors.grey.withOpacity(0.6),
+            fontSize: 16.0,
+            color: Colors.green,
           ),
         ),
         SizedBox(width: 5.0),
         _filledCircle,
         SizedBox(width: 5.0),
         Text(
-          review.type,
+          review.users.phone != null
+              ? review.users.phone
+              : "Telf no registrado",
           style: TextStyle(
             fontSize: 14.0,
-            color: Colors.grey.withOpacity(0.6),
+            color: Colors.deepOrangeAccent,
           ),
         ),
+        Container(
+          child: FlatButton(
+            child: Icon(
+              Icons.phone,
+              color: primaryColor,
+            ),
+            onPressed: () {
+              _launchCaller();
+            },
+          ),
+        )
       ],
     );
 
     final _content = Container(
       width: MediaQuery.of(context).size.width * 0.6,
       child: Text(
-        review.description,
+        review.publication.cultivation.description,
         style: TextStyle(),
       ),
     );
@@ -94,15 +112,15 @@ class ReviewCard extends StatelessWidget {
       margin: EdgeInsets.only(top: 10.0),
       child: Row(
         children: <Widget>[
-          RatingBar(rating: review.rating + .0),
+          RatingBar(rating: review.publication.rating + .0),
           SizedBox(width: 5.0),
           _filledCircle,
           SizedBox(width: 5.0),
           Text(
-            review.date != null ? review.date : "Indefinido",
+            review.users.phone != null ? review.publication.type : "Indefinido",
             style: TextStyle(
               fontWeight: FontWeight.w500,
-              color: Colors.grey.withOpacity(0.8),
+              color: Colors.green,
             ),
           )
         ],
@@ -120,8 +138,17 @@ class ReviewCard extends StatelessWidget {
       padding: EdgeInsets.only(top: 20.0),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[img, details],
+        children: <Widget>[details, img],
       ),
     );
+  }
+
+  _launchCaller() async {
+    var url = "tel:" + this.review.users.phone;
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      throw 'Could not launch $url';
+    }
   }
 }

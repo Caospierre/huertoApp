@@ -1,10 +1,13 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
 import 'package:huerto_app/src/bloc/cultivation_phase_bloc.dart';
+import 'package:huerto_app/src/bloc/product_bloc.dart';
 import 'package:huerto_app/src/models/publication_model.dart';
 import 'package:huerto_app/src/models/user_cultivation_phase_model.dart';
 import 'package:huerto_app/src/routes/router.dart';
+import 'package:huerto_app/src/services/init_services.dart';
 import 'package:huerto_app/src/widgets/home/price_rating_bar.dart';
 import 'package:huerto_app/src/widgets/home/publication_card.dart';
 import 'package:huerto_app/src/widgets/home/rating_bar.dart';
@@ -22,7 +25,6 @@ class SavedPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     final screenHeight = MediaQuery.of(context).size.height;
     final screenWidth = MediaQuery.of(context).size.width;
 
@@ -98,13 +100,13 @@ class SavedPage extends StatelessWidget {
 
     this.context = context;
     final body = SingleChildScrollView(
-      child: StreamBuilder<List<PublicationModel>>(
+        child: StreamBuilder<List<PublicationModel>>(
       stream: this.publicationStream,
       builder: (context, snapshot) {
         if (!snapshot.hasData) {
           return Center(child: CircularProgressIndicator());
         }
-        if(snapshot.data.length==0){
+        if (snapshot.data.length == 0) {
           return GestureDetector(
             child: Stack(
               children: <Widget>[
@@ -116,7 +118,8 @@ class SavedPage extends StatelessWidget {
                     width: screenWidth * 0.45,
                     decoration: BoxDecoration(
                       image: DecorationImage(
-                        image: NetworkImage("https://live.staticflickr.com/2213/2227852450_cf1a392514_b.jpg"),
+                        image: NetworkImage(
+                            "https://live.staticflickr.com/2213/2227852450_cf1a392514_b.jpg"),
                         fit: BoxFit.cover,
                       ),
                       borderRadius: BorderRadius.circular(20.0),
@@ -125,20 +128,20 @@ class SavedPage extends StatelessWidget {
                 ),
                 _details,
                 FloatingActionButton.extended(
-                onPressed: () {
-                  addCrowd();
-                },
-                label: Text('Agregar'),
-                icon: Icon(Icons.add_circle_outline),
-                backgroundColor: primaryGradientStart,
-              ),
+                  onPressed: () {
+                    addCrowd();
+                  },
+                  label: Text('Agregar'),
+                  icon: Icon(Icons.add_circle_outline),
+                  backgroundColor: primaryGradientStart,
+                ),
               ],
             ),
           );
-        }else{
+        } else {
           return Stack(
-          alignment: Alignment.center,
-          children: _buildComponents(snapshot.data),
+            alignment: Alignment.center,
+            children: _buildComponents(snapshot.data),
           );
         }
       },
@@ -148,7 +151,7 @@ class SavedPage extends StatelessWidget {
 
   void addCrowd() {
     Navigator.pushNamed(context, NavigatorToPath.AddCultivation,
-        arguments: this.publicationStream);
+        arguments: null);
   }
 
   List<Widget> _buildComponents(List<PublicationModel> publications) {

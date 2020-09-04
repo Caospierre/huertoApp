@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
+import 'package:huerto_app/src/models/publicacion_interested_users.dart';
 import 'package:huerto_app/src/models/publication_model.dart';
+import 'package:huerto_app/src/services/init_services.dart';
 import 'package:huerto_app/src/widgets/home/review_card.dart';
 
 import 'package:huerto_app/utils/utils.dart';
@@ -20,8 +23,8 @@ class _AccountPageState extends State<AccountPage> {
     deviceWidth = MediaQuery.of(context).size.width;
 
     return SingleChildScrollView(
-        child: StreamBuilder<List<PublicationModel>>(
-      stream: this.widget.publicationStream,
+        child: StreamBuilder<List<PublicationInterestedUserModel>>(
+      stream: GetIt.I<InitServices>().preferencesService.mypublish,
       builder: (context, snapshot) {
         if (!snapshot.hasData) {
           return Center(child: CircularProgressIndicator());
@@ -80,7 +83,7 @@ class _AccountPageState extends State<AccountPage> {
             style: TextStyle(fontSize: 26.0, fontWeight: FontWeight.w800),
           ),
           Text(
-            "Bienvenido ",
+            GetIt.I<InitServices>().authService.userLogin.email,
             style: TextStyle(
               color: Colors.grey.withOpacity(0.9),
               fontSize: 20.0,
@@ -105,7 +108,8 @@ class _AccountPageState extends State<AccountPage> {
     return userImageSection;
   }
 
-  Container _buildReviewsSection(List<PublicationModel> _reviews) {
+  Container _buildReviewsSection(
+      List<PublicationInterestedUserModel> _reviews) {
     final br = Radius.circular(30.0);
     final reviewList =
         _reviews.map((review) => ReviewCard(review: review)).toList();
@@ -121,7 +125,7 @@ class _AccountPageState extends State<AccountPage> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           Text(
-            "Tus Trueques",
+            "Usuarios Interesados en tus cultivos",
             style: TextStyle(
               color: Colors.black54,
               fontSize: 18.0,

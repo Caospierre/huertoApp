@@ -1,9 +1,12 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_beautiful_popup/main.dart';
 import 'package:get_it/get_it.dart';
 import 'package:huerto_app/src/bloc/publication_bloc.dart';
 import 'package:huerto_app/src/models/publication_model.dart';
+import 'package:huerto_app/src/pages/login/TestPage.dart';
+import 'package:huerto_app/src/routes/router.dart';
 import 'package:huerto_app/src/services/init_services.dart';
 import 'package:huerto_app/src/widgets/home/price_rating_bar.dart';
 import 'package:huerto_app/src/widgets/home/rating_bar.dart';
@@ -13,7 +16,6 @@ import 'package:huerto_app/src/widgets/home/publication_card_big.dart';
 // ignore: must_be_immutable
 class SwippableCards extends StatefulWidget {
   final Stream<List<PublicationModel>> publicationStream;
-  
 
   SwippableCards(this.publicationStream) {}
 
@@ -43,7 +45,6 @@ class _SwippableCardsState extends State<SwippableCards> {
 
   @override
   Widget build(BuildContext context) {
-    
     final screenHeight = MediaQuery.of(context).size.height;
     final screenWidth = MediaQuery.of(context).size.width;
 
@@ -133,38 +134,38 @@ class _SwippableCardsState extends State<SwippableCards> {
           return Center(child: CircularProgressIndicator());
         }
         print("" + snapshot.data.toString());
-        if(snapshot.data.length==0){
+        if (snapshot.data.length == 0) {
           return Stack(
-          alignment: Alignment.center,
-          children: <Widget>[
-             Material(
-              borderRadius: BorderRadius.circular(20.0),
-              elevation: 4.0,
-              child: Container(
-                height: screenHeight * 0.6,
-                width: screenWidth,
-                decoration: BoxDecoration(
-                  image: DecorationImage(
-                    image: NetworkImage("https://1.bp.blogspot.com/-Y2TBmGkP1Qk/VgBv9G8EiuI/AAAAAAAAA-A/EuaExDn7iXUK3tQrvTWbLsXgtHalgbf8ACPcBGAYYCw/s1600/302.jpg"),
-                    fit: BoxFit.cover,
+            alignment: Alignment.center,
+            children: <Widget>[
+              Material(
+                borderRadius: BorderRadius.circular(20.0),
+                elevation: 4.0,
+                child: Container(
+                  height: screenHeight * 0.6,
+                  width: screenWidth,
+                  decoration: BoxDecoration(
+                    image: DecorationImage(
+                      image: NetworkImage(
+                          "https://1.bp.blogspot.com/-Y2TBmGkP1Qk/VgBv9G8EiuI/AAAAAAAAA-A/EuaExDn7iXUK3tQrvTWbLsXgtHalgbf8ACPcBGAYYCw/s1600/302.jpg"),
+                      fit: BoxFit.cover,
+                    ),
+                    borderRadius: BorderRadius.circular(20.0),
                   ),
-                  borderRadius: BorderRadius.circular(20.0),
                 ),
               ),
-            ),
-            _details
-          ],     
+              _details
+            ],
           );
-        }else{
+        } else {
           return Stack(
-          alignment: Alignment.center,
-          children: _getSwipeCards(snapshot.data),     
+            alignment: Alignment.center,
+            children: _getSwipeCards(snapshot.data),
           );
         }
       },
     ));
   }
-
 
   List<Widget> _getSwipeCards(List<PublicationModel> publications) {
     double initTop = 15.0;
@@ -212,8 +213,6 @@ class _SwippableCardsState extends State<SwippableCards> {
         ),
       );
     }
-
-  
 
     final footerBtns = Positioned(
       bottom: 20.0,
@@ -268,27 +267,51 @@ class _SwippableCardsState extends State<SwippableCards> {
   void onLongPressButtons(String image) {
     switch (image) {
       case AvailableImages.back:
-        print("Regresar");
+        print("REGRESAR");
         break;
       case AvailableImages.hate:
-        print("Compra");
+        print("INFO PUBLICACION");
+        Navigator.popAndPushNamed(
+          context,
+          NavigatorToPath.Publication,
+          arguments: _publicationsCopy[0],
+        );
         break;
       case AvailableImages.like:
-        print("Trueque");
+        print("ME INTERESA");
         bloc.txtPubcontroller.text = _publicationsCopy[0].id.toString();
         bloc.txtUsercontroller.text =
             GetIt.I<InitServices>().authService.userLogin.id.toString();
-        bloc.checkPublication();
+        bloc.checkPublication(_publicationsCopy[0].users.id);
 
         break;
 
       case AvailableImages.list:
-        print("Actividades");
+        print("AYUDA");
+        notificationFinish("Informacion", AvailableImages.info);
         break;
 
       default:
     }
   }
 
-  
+  void notificationFinish(String title, String content) {
+    final popup = BeautifulPopup(
+      context: context,
+      template: TemplateGift,
+    );
+    popup.recolor(Color(0xFF5B16D0));
+    popup.show(
+      title: title,
+      content: content,
+      actions: [
+        popup.button(
+          label: 'Cerrar',
+          onPressed: Navigator.of(context).pop,
+        ),
+      ],
+      // bool barrierDismissible = false,
+      // Widget close,
+    );
+  }
 }
