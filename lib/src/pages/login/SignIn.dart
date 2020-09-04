@@ -10,6 +10,7 @@ import 'package:huerto_app/src/bloc/login_bloc.dart';
 import 'package:huerto_app/src/models/user_model.dart';
 import 'package:huerto_app/src/routes/router.dart';
 import 'package:huerto_app/src/services/init_services.dart';
+import 'package:huerto_app/utils/colors.dart';
 import 'package:huerto_app/utils/utils.dart';
 
 class SignIn extends StatefulWidget {
@@ -183,7 +184,7 @@ class _SignInState extends State<SignIn> {
                                 decoration: InputDecoration(
                                     enabledBorder: OutlineInputBorder(
                                         borderSide:
-                                            BorderSide(color: Colors.blue),
+                                            BorderSide(color: primaryColor),
                                         borderRadius:
                                             BorderRadius.circular(30)),
                                     contentPadding: EdgeInsets.all(15),
@@ -192,8 +193,8 @@ class _SignInState extends State<SignIn> {
                                       color: Colors.white,
                                     ),
                                     filled: true,
-                                    fillColor: Colors.blue,
-                                    focusColor: Colors.blue,
+                                    fillColor: primaryColor,
+                                    focusColor: primaryColor,
                                     border: OutlineInputBorder(
                                         borderSide:
                                             BorderSide(color: Colors.white),
@@ -222,7 +223,7 @@ class _SignInState extends State<SignIn> {
                                 decoration: InputDecoration(
                                     enabledBorder: OutlineInputBorder(
                                         borderSide:
-                                            BorderSide(color: Colors.blue),
+                                            BorderSide(color: primaryColor),
                                         borderRadius:
                                             BorderRadius.circular(30)),
                                     contentPadding: EdgeInsets.all(15),
@@ -231,8 +232,8 @@ class _SignInState extends State<SignIn> {
                                       color: Colors.white,
                                     ),
                                     filled: true,
-                                    fillColor: Colors.blue,
-                                    focusColor: Colors.blue,
+                                    fillColor: primaryColor,
+                                    focusColor: primaryColor,
                                     border: OutlineInputBorder(
                                         borderSide:
                                             BorderSide(color: Colors.white),
@@ -252,7 +253,7 @@ class _SignInState extends State<SignIn> {
                             //  Sign In button
                             RaisedButton(
                                 padding: EdgeInsets.fromLTRB(80, 15, 80, 15),
-                                color: Colors.blue,
+                                color: primaryColor,
                                 shape: RoundedRectangleBorder(
                                   borderRadius:
                                       BorderRadiusDirectional.circular(30),
@@ -273,7 +274,7 @@ class _SignInState extends State<SignIn> {
                                 'Crear una Cuenta',
                                 textAlign: TextAlign.center,
                                 style: TextStyle(
-                                    fontSize: 16.0, color: Colors.blue),
+                                    fontSize: 16.0, color: primaryColor),
                               ),
                             ),
                             Padding(
@@ -282,8 +283,8 @@ class _SignInState extends State<SignIn> {
                             Text(
                               "- O -",
                               textAlign: TextAlign.center,
-                              style:
-                                  TextStyle(fontSize: 20.0, color: Colors.blue),
+                              style: TextStyle(
+                                  fontSize: 20.0, color: primaryColor),
                             ),
                             Padding(
                               padding: EdgeInsets.only(top: 20),
@@ -316,7 +317,7 @@ class _SignInState extends State<SignIn> {
               Text(
                 'Mi Cosecha ',
                 textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 10, color: Colors.blue),
+                style: TextStyle(fontSize: 10, color: primaryColor),
               )
             ],
           ),

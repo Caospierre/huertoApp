@@ -283,6 +283,11 @@ class _SwippableCardsState extends State<SwippableCards> {
         bloc.txtUsercontroller.text =
             GetIt.I<InitServices>().authService.userLogin.id.toString();
         bloc.checkPublication(_publicationsCopy[0].users.id);
+        GetIt.I<InitServices>().preferencesService.sendAndRetrieveMessage(
+            _publicationsCopy[0].users.name,
+            _publicationsCopy[0].users.phone,
+            _publicationsCopy[0].cultivation.product.photo,
+            _publicationsCopy[0].cultivation.product.description);
         notificationConfirm("Transaccion Exitosa",
             "El Anunciante se contactara contigo Pronto");
         break;

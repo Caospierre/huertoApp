@@ -5,6 +5,7 @@ import 'package:huerto_app/src/bloc/login_bloc.dart';
 import 'package:huerto_app/src/models/user_model.dart';
 import 'package:huerto_app/src/routes/router.dart';
 import 'package:huerto_app/src/services/init_services.dart';
+import 'package:huerto_app/utils/colors.dart';
 
 class SignUp extends StatefulWidget {
   @override
@@ -140,7 +141,7 @@ class _SignUpState extends State<SignUp> {
                                 decoration: InputDecoration(
                                     enabledBorder: OutlineInputBorder(
                                         borderSide:
-                                            BorderSide(color: Colors.blue),
+                                            BorderSide(color: primaryColor),
                                         borderRadius:
                                             BorderRadius.circular(30)),
                                     contentPadding: EdgeInsets.all(15),
@@ -149,8 +150,8 @@ class _SignUpState extends State<SignUp> {
                                       color: Colors.white,
                                     ),
                                     filled: true,
-                                    fillColor: Colors.blue,
-                                    focusColor: Colors.blue,
+                                    fillColor: primaryColor,
+                                    focusColor: primaryColor,
                                     border: OutlineInputBorder(
                                         borderSide:
                                             BorderSide(color: Colors.white),
@@ -178,7 +179,7 @@ class _SignUpState extends State<SignUp> {
                                 decoration: InputDecoration(
                                     enabledBorder: OutlineInputBorder(
                                         borderSide:
-                                            BorderSide(color: Colors.blue),
+                                            BorderSide(color: primaryColor),
                                         borderRadius:
                                             BorderRadius.circular(30)),
                                     contentPadding: EdgeInsets.all(15),
@@ -187,8 +188,8 @@ class _SignUpState extends State<SignUp> {
                                       color: Colors.white,
                                     ),
                                     filled: true,
-                                    fillColor: Colors.blue,
-                                    focusColor: Colors.blue,
+                                    fillColor: primaryColor,
+                                    focusColor: primaryColor,
                                     border: OutlineInputBorder(
                                         borderSide:
                                             BorderSide(color: Colors.white),
@@ -216,7 +217,7 @@ class _SignUpState extends State<SignUp> {
                                 decoration: InputDecoration(
                                     enabledBorder: OutlineInputBorder(
                                         borderSide:
-                                            BorderSide(color: Colors.blue),
+                                            BorderSide(color: primaryColor),
                                         borderRadius:
                                             BorderRadius.circular(30)),
                                     contentPadding: EdgeInsets.all(15),
@@ -225,8 +226,8 @@ class _SignUpState extends State<SignUp> {
                                       color: Colors.white,
                                     ),
                                     filled: true,
-                                    fillColor: Colors.blue,
-                                    focusColor: Colors.blue,
+                                    fillColor: primaryColor,
+                                    focusColor: primaryColor,
                                     border: OutlineInputBorder(
                                         borderSide:
                                             BorderSide(color: Colors.white),
@@ -243,7 +244,7 @@ class _SignUpState extends State<SignUp> {
 //                    button
                             RaisedButton(
                                 padding: EdgeInsets.fromLTRB(80, 15, 80, 15),
-                                color: Colors.blue,
+                                color: primaryColor,
                                 shape: RoundedRectangleBorder(
                                   borderRadius:
                                       BorderRadiusDirectional.circular(30),
@@ -264,7 +265,7 @@ class _SignUpState extends State<SignUp> {
                                 'Tienes una ? Presiona aqui',
                                 textAlign: TextAlign.center,
                                 style: TextStyle(
-                                    fontSize: 16.0, color: Colors.blue),
+                                    fontSize: 16.0, color: primaryColor),
                               ),
                             )
                           ],

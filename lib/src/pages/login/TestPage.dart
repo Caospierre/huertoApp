@@ -29,7 +29,7 @@ class TestPage extends StatefulWidget {
 }
 
 class _TestPageState extends State<TestPage> {
-  var barTitle = ['Mi Cosecha', 'Trueque o Compra', 'Perfil', 'Notificación'];
+  var barTitle = ['Mi Cosecha', 'Tienda', 'Perfil', 'Notificación'];
 
   ProductBloc pbloc =
       ProductBloc(GetIt.I<InitServices>().hasuraService.productRepository);
@@ -46,9 +46,9 @@ class _TestPageState extends State<TestPage> {
   bool isSignedIn = false;
   String imageUrl;
 
-  final String serverToken = 'AAAAzuUQuB4:APA91bEf-NEe8pcusP6PfeFemvO_dYywEK9r7i_VJsOSZneYiCUQvQS9OPfDaGwxtET16vXcxARqWjmzOq8ScyUhJHyHJGRR_5V48Yhdj8AmFNNrXCRYnzWYyJ5v6DsuUsohuxkRUuyvs';
+  final String serverToken =
+      'AAAAzuUQuB4:APA91bEf-NEe8pcusP6PfeFemvO_dYywEK9r7i_VJsOSZneYiCUQvQS9OPfDaGwxtET16vXcxARqWjmzOq8ScyUhJHyHJGRR_5V48Yhdj8AmFNNrXCRYnzWYyJ5v6DsuUsohuxkRUuyvs';
   final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
-
 
   _getToken() {
     _firebaseMessaging.getToken().then((token) {
@@ -57,7 +57,7 @@ class _TestPageState extends State<TestPage> {
   }
 
   List<Message> messagesList = new List<Message>();
- 
+
   _configureFirebaseListeners() {
     _firebaseMessaging.configure(
       onMessage: (Map<String, dynamic> message) async {
@@ -87,24 +87,28 @@ class _TestPageState extends State<TestPage> {
     String npMessage = data['number_phone'];
     String iMessage = data['image'];
     String dMessage = data['description'];
-    print("Titulo: $title, Cuerpo: $body, usuario: $uMessage, numero: $npMessage, imagen: $iMessage,  descripcion: $dMessage");
+    print(
+        "Titulo: $title, Cuerpo: $body, usuario: $uMessage, numero: $npMessage, imagen: $iMessage,  descripcion: $dMessage");
     setState(() {
-      if(title == null && body == null){
-        Message msg = Message("Existe Una Publicación", "",uMessage, npMessage, iMessage, dMessage);
+      if (title == null && body == null) {
+        Message msg = Message("Existe Una Publicación", "", uMessage, npMessage,
+            iMessage, dMessage);
         messagesList.add(msg);
         print(messagesList);
-      }else{
-        Message msg = Message(title,body,uMessage, npMessage, iMessage, dMessage);
+      } else {
+        Message msg =
+            Message(title, body, uMessage, npMessage, iMessage, dMessage);
         messagesList.add(msg);
         print(messagesList);
       }
-      
     });
   }
 
-  Future<Map<String, dynamic>> sendAndRetrieveMessage( String user, String number_phone, String image, String description) async {
+  Future<Map<String, dynamic>> sendAndRetrieveMessage(
+      String user, String numbephone, String image, String description) async {
     await _firebaseMessaging.requestNotificationPermissions(
-      const IosNotificationSettings(sound: true, badge: true, alert: true, provisional: false),
+      const IosNotificationSettings(
+          sound: true, badge: true, alert: true, provisional: false),
     );
 
     await http.post(
@@ -114,26 +118,26 @@ class _TestPageState extends State<TestPage> {
         'Authorization': 'key=$serverToken',
       },
       body: jsonEncode(
-      <String, dynamic>{
-        'notification': <String, dynamic>{
-          'body': 'Existe Una Nueva Publicacion',
-          'title': 'Revisalo Te Puede Interesar'
+        <String, dynamic>{
+          'notification': <String, dynamic>{
+            'body': 'Existe Una Nueva Publicacion',
+            'title': 'Revisalo Te Puede Interesar'
+          },
+          'priority': 'high',
+          'data': <String, dynamic>{
+            'click_action': 'FLUTTER_NOTIFICATION_CLICK',
+            'user': '$user',
+            'number_phone': '$numbephone',
+            'image': '$image',
+            'description': '$description',
+          },
+          'to': await _firebaseMessaging.getToken(),
         },
-        'priority': 'high',
-        'data': <String, dynamic>{
-          'click_action': 'FLUTTER_NOTIFICATION_CLICK',
-          'user': '$user',
-          'number_phone': '$number_phone',
-          'image': '$image',
-          'description': '$description',
-        },
-        'to': await _firebaseMessaging.getToken(),
-      },
       ),
     );
 
     final Completer<Map<String, dynamic>> completer =
-      Completer<Map<String, dynamic>>();
+        Completer<Map<String, dynamic>>();
 
     _firebaseMessaging.configure(
       onMessage: (Map<String, dynamic> message) async {
@@ -142,7 +146,7 @@ class _TestPageState extends State<TestPage> {
     );
 
     return completer.future;
-  }  
+  }
 
   checkAuthentication() async {
     _auth.onAuthStateChanged.listen((user) {
@@ -185,8 +189,6 @@ class _TestPageState extends State<TestPage> {
     }
     // print("${user.displayName} is the user ${user.photoUrl}");
   }
-
-  
 
   signout() async {
     _auth.signOut();
@@ -257,7 +259,7 @@ class _TestPageState extends State<TestPage> {
         ),
         tabs: <Widget>[
           _buildTab(Icons.shopping_basket),
-          _buildTab(Icons.search),
+          _buildTab(Icons.local_grocery_store),
           _buildTab(Icons.account_circle),
           _buildTab(Icons.book),
         ],
@@ -274,72 +276,7 @@ class _TestPageState extends State<TestPage> {
         SearchPage(this.slistp),
         AccountPage(this.transslist),
         //SavedPage(this.cultlist), //AccountPage(),
-        Container(
-          child: ListView.builder(
-          itemCount: null == messagesList ? 0 : messagesList.length,
-          itemBuilder: (BuildContext context, int index) {
-          return Card(
-            clipBehavior: Clip.antiAlias,
-            child: Column(
-              children: [
-                Image(image: new NetworkImage(messagesList[index].image),fit: BoxFit.cover, width: 400,),
-                ListTile(
-                  leading: Icon(Icons.store),
-                  title: Text(messagesList[index].title),
-                  subtitle: Text(
-                    messagesList[index].user+"\n"+messagesList[index].numberphone,
-                    style: TextStyle(color: Colors.black.withOpacity(0.6)),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Text(
-                    messagesList[index].description,
-                    style: TextStyle(color: Colors.black.withOpacity(0.6)),
-                  ),
-                ),
-                ButtonBar(
-                  alignment: MainAxisAlignment.start,
-                  children: [
-                    FlatButton(
-                      textColor: const Color(0xFF6200EE),
-                      onPressed: () async {
-                        // Perform some action
-                        List<Item> phone = new List<Item>();
-                        phone.add(new Item(value: messagesList[index].numberphone));
-                        Contact contact = Contact(givenName: messagesList[index].user, phones: phone);
-                        await Contacts.addContact(contact);
-                        _onAlertWithStylePressed(context);
-                      },
-                      child: Row(
-                        children: [
-                          Icon(Icons.contacts),
-                          Text('Guardar Contacto'),
-                        ],
-                      ),
-                      
-                    ),
-                    FlatButton(
-                      textColor: const Color(0xFF6200EE),
-                      onPressed: () {
-                        // Perform some action
-                      },
-                      child: Row(
-                        children: [
-                          Icon(Icons.message),
-                          Text('Enviar Mensaje'),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          );
-          
-        },
-      ),
-        ),
+        showNotifications()
       ],
     );
 
@@ -372,22 +309,21 @@ class _TestPageState extends State<TestPage> {
   _onAlertWithStylePressed(context) {
     // Reusable alert style
     var alertStyle = AlertStyle(
-      animationType: AnimationType.fromTop,
-      isCloseButton: false,
-      isOverlayTapDismiss: false,
-      descStyle: TextStyle(fontWeight: FontWeight.bold),
-      animationDuration: Duration(milliseconds: 400),
-      alertBorder: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(0.0),
-        side: BorderSide(
-          color: Colors.grey,
+        animationType: AnimationType.fromTop,
+        isCloseButton: false,
+        isOverlayTapDismiss: false,
+        descStyle: TextStyle(fontWeight: FontWeight.bold),
+        animationDuration: Duration(milliseconds: 400),
+        alertBorder: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(0.0),
+          side: BorderSide(
+            color: Colors.grey,
+          ),
         ),
-      ),
-      titleStyle: TextStyle(
-        color: Colors.red,
-      ),
-      constraints: BoxConstraints.expand(width: 300)
-    );
+        titleStyle: TextStyle(
+          color: Colors.red,
+        ),
+        constraints: BoxConstraints.expand(width: 300));
 
     // Alert dialog using custom alert style
     Alert(
@@ -409,5 +345,79 @@ class _TestPageState extends State<TestPage> {
       ],
     ).show();
   }
-}
 
+  Container showNotifications() {
+    return Container(
+      child: ListView.builder(
+        itemCount: null == messagesList ? 0 : messagesList.length,
+        itemBuilder: (BuildContext context, int index) {
+          return Card(
+            clipBehavior: Clip.antiAlias,
+            child: Column(
+              children: [
+                Image(
+                  image: new NetworkImage(messagesList[index].image),
+                  fit: BoxFit.cover,
+                  width: 400,
+                ),
+                ListTile(
+                  leading: Icon(Icons.store),
+                  title: Text(messagesList[index].title),
+                  subtitle: Text(
+                    messagesList[index].user +
+                        "\n" +
+                        messagesList[index].numberphone,
+                    style: TextStyle(color: Colors.black.withOpacity(0.6)),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Text(
+                    messagesList[index].description,
+                    style: TextStyle(color: Colors.black.withOpacity(0.6)),
+                  ),
+                ),
+                ButtonBar(
+                  alignment: MainAxisAlignment.start,
+                  children: [
+                    FlatButton(
+                      textColor: const Color(0xFF6200EE),
+                      onPressed: () async {
+                        // Perform some action
+                        List<Item> phone = new List<Item>();
+                        phone.add(
+                            new Item(value: messagesList[index].numberphone));
+                        Contact contact = Contact(
+                            givenName: messagesList[index].user, phones: phone);
+                        await Contacts.addContact(contact);
+                        _onAlertWithStylePressed(context);
+                      },
+                      child: Row(
+                        children: [
+                          Icon(Icons.contacts),
+                          Text('Guardar Contacto'),
+                        ],
+                      ),
+                    ),
+                    FlatButton(
+                      textColor: const Color(0xFF6200EE),
+                      onPressed: () {
+                        // Perform some action
+                      },
+                      child: Row(
+                        children: [
+                          Icon(Icons.message),
+                          Text('Enviar Mensaje'),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          );
+        },
+      ),
+    );
+  }
+}
