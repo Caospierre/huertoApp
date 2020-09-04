@@ -38,7 +38,9 @@ class PublicationCardBig extends StatelessWidget {
     final _location = Row(
       children: <Widget>[
         Text(
-          publication.location != null ? publication.location : "Indefinido",
+          publication.cultivation.name != null
+              ? publication.cultivation.name
+              : "Indefinido",
           style: TextStyle(
             fontSize: 18.0,
             color: Colors.white60,
@@ -48,7 +50,7 @@ class PublicationCardBig extends StatelessWidget {
         _filledCircle,
         SizedBox(width: 5.0),
         Text(
-          publication.type,
+          publication.users.name,
           style: TextStyle(
             fontSize: 18.0,
             color: Colors.white60,

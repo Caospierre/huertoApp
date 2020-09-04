@@ -24,29 +24,29 @@ class PublicationModel {
   String name;
   String photo;
   String type;
-  bool isChecked;
+  bool isChecked, isActive;
   int priceScale;
   int rating;
   String description;
   UserModel users;
-  Stream<List<UserCultivationPhaseModel>> phases;
+  List<UserCultivationPhaseModel> phases;
 
-  PublicationModel({
-    this.id,
-    this.cultivation,
-    this.name,
-    this.photo,
-    this.date,
-    this.location,
-    this.distance,
-    this.type,
-    this.priceScale,
-    this.rating,
-    this.description,
-    this.users,
-    this.isChecked,
-    this.phases,
-  });
+  PublicationModel(
+      {this.id,
+      this.cultivation,
+      this.name,
+      this.photo,
+      this.date,
+      this.location,
+      this.distance,
+      this.type,
+      this.priceScale,
+      this.rating,
+      this.description,
+      this.users,
+      this.isChecked,
+      this.phases,
+      this.isActive});
 
   factory PublicationModel.fromJson(Map<String, dynamic> json) {
     int idpub = json["id"];
@@ -65,8 +65,10 @@ class PublicationModel {
       description: json["description"],
       users: UserModel.fromJson(json["users"]),
       isChecked: json["isChecked"],
+      isActive: json["isActive"],
       cultivation: CultivationModel.fromJson(json["cultivation"]),
-      phases: _phases,
+      phases: UserCultivationPhaseModel.fromJsonList(
+          json["user_cultivation_phases"]),
     );
   }
   Map<String, dynamic> toJson() => {
@@ -83,6 +85,7 @@ class PublicationModel {
         "description": description,
         "users": users.toJson(),
         "isChecked": isChecked,
+        "isActive": isActive,
         "phases": phases,
       };
 

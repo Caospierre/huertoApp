@@ -236,6 +236,23 @@ class CultivationPhaseRepository extends Disposable {
     return PublicationModel(id: id);
   }
 
+  Future<PublicationModel> updateCheckedPub(int idpub) async {
+    var query = """
+      mutation updateUpublication(\$id:Int!) {
+          update_publications(where: {id: {_eq: \$id}}, _set: {isCheked:true})
+           {
+            returning{
+              id
+            }
+          }
+      }
+    """;
+
+    var data = await connection.mutation(query, variables: {"id": idpub});
+    var id = data["data"]["update_publications"]["returning"][0]["id"];
+    return PublicationModel(id: id);
+  }
+
   @override
   void dispose() {
     connection.dispose();

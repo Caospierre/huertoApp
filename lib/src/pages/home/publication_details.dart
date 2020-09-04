@@ -9,6 +9,7 @@ import 'package:huerto_app/src/services/init_services.dart';
 import 'package:line_icons/line_icons.dart';
 import 'package:huerto_app/src/widgets/home/price_rating_bar.dart';
 import 'package:huerto_app/src/widgets/home/rating_bar.dart';
+import 'package:toast/toast.dart';
 
 class PublicationDetailsPage extends StatefulWidget {
   final PublicationModel publication;
@@ -20,20 +21,10 @@ class PublicationDetailsPage extends StatefulWidget {
 }
 
 class _PublicationDetailsPageState extends State<PublicationDetailsPage> {
-  List<UserCultivationPhaseModel> listPhase;
-  Stream<List<UserCultivationPhaseModel>> strphase;
-
+  String actualPhase = "";
   @override
   Widget build(BuildContext context) {
     final screenHeight = MediaQuery.of(context).size.height;
-    CultivationPhaseBloc phasebloc;
-
-    setState(() {
-      phasebloc = null;
-      strphase = null;
-      phasebloc = CultivationPhaseBloc(this.widget.publication.id);
-      strphase = phasebloc.cultivationPhaseController;
-    });
 
     final cancelBtn = Positioned(
       top: 50.0,
@@ -142,35 +133,8 @@ class _PublicationDetailsPageState extends State<PublicationDetailsPage> {
       ),
     );
 
-    return Scaffold(
-        body: StreamBuilder<List<UserCultivationPhaseModel>>(
-      stream: strphase,
-      builder: (context, snapshot) {
-        print("fases " + snapshot.data.toString());
-
-        if (!snapshot.hasData) {
-          print("SIN DATA");
-          return Column(
-            children: <Widget>[
-              Stack(
-                children: <Widget>[
-                  Container(height: screenHeight - 20),
-                  imageBg,
-                  cancelBtn,
-                  _details,
-                  Center(
-                    child: CircularProgressIndicator(),
-                  ),
-                  Center(
-                    child: Text("Tenemos Inconvi"),
-                  )
-                ],
-              ),
-            ],
-          );
-        } else {
-          this.listPhase = snapshot.data;
-        }
+    return Scaffold(body: new Builder(
+      builder: (context) {
         return Column(
           children: <Widget>[
             Stack(
@@ -179,7 +143,7 @@ class _PublicationDetailsPageState extends State<PublicationDetailsPage> {
                 imageBg,
                 cancelBtn,
                 _details,
-                getSecondSection(context, screenHeight),
+                getSecondSection(context, screenHeight)
               ],
             ),
           ],
@@ -221,7 +185,9 @@ class _PublicationDetailsPageState extends State<PublicationDetailsPage> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: <Widget>[
           Text(
-            "Disponible!",
+            this.widget.publication.isActive
+                ? "Disponible!"
+                : "Fase Actual:" + this.actualPhase,
             style: TextStyle(
               fontWeight: FontWeight.bold,
               fontSize: 15.0,
@@ -231,14 +197,13 @@ class _PublicationDetailsPageState extends State<PublicationDetailsPage> {
           Row(
             children: <Widget>[
               Text(
-                "View hours",
+                "Fases",
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: 15.0,
                   color: Colors.grey.withOpacity(0.4),
                 ),
               ),
-              Icon(Icons.chevron_right, color: Colors.grey.withOpacity(0.4))
             ],
           )
         ],
@@ -250,7 +215,7 @@ class _PublicationDetailsPageState extends State<PublicationDetailsPage> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: <Widget>[
-          buildList(context, this.listPhase),
+          buildList(context, this.widget.publication.phases),
         ],
       ),
     );
@@ -279,7 +244,17 @@ class _PublicationDetailsPageState extends State<PublicationDetailsPage> {
             ]),
             Column(
               children: <Widget>[
-                _footerBtns,
+                !widget.publication.isActive
+                    ? _footerBtns
+                    : Container(
+                        child: Center(
+                          child: Text(
+                            "Gracias por cultivar con nosotros",
+                            style: TextStyle(
+                                color: Theme.of(context).primaryColor),
+                          ),
+                        ),
+                      ),
               ],
             )
           ],
@@ -293,12 +268,15 @@ class _PublicationDetailsPageState extends State<PublicationDetailsPage> {
   Widget buildList(BuildContext context, List<UserCultivationPhaseModel> list) {
     List<UserCultivationPhaseModel> leftSide = [];
     List<UserCultivationPhaseModel> rightSide = [];
-    list.forEach((publication) {
-      int index = list.indexOf(publication);
+    list.forEach((phase) {
+      if (phase.statePhase) {
+        this.actualPhase = phase.name;
+      }
+      int index = list.indexOf(phase);
       bool isOddNum = isOddNumber(index);
-      isOddNum ? rightSide.add(publication) : leftSide.add(publication);
+      isOddNum ? rightSide.add(phase) : leftSide.add(phase);
     });
-    return widget.publication.isChecked
+    return widget.publication.isActive
         ? Row(
             children: <Widget>[
               Center(
@@ -331,23 +309,35 @@ class _PublicationDetailsPageState extends State<PublicationDetailsPage> {
     return GestureDetector(
         onTap: () {
           print("Container was tapped");
-          Navigator.pushNamed(
-            context,
-            NavigatorToPath.PhaseDetail,
-            arguments: this.listPhase,
-          );
+          if (phase.statePhase) {
+            Navigator.pushNamed(
+              context,
+              NavigatorToPath.PhaseDetail,
+              arguments: this.widget.publication.phases,
+            );
+          } else {
+            Toast.show("No puedes ingresar a esta fase", context,
+                duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);
+          }
+
           GetIt.I<InitServices>().authService.temporalpub = widget.publication;
         },
         child: Container(
           child: Column(
             children: <Widget>[
-              Image.network(phase.image, height: 70.0, width: 70.0),
+              !phase.statePhase
+                  ? Image.network(phase.image,
+                      color: Color.fromRGBO(255, 255, 255, 0.5),
+                      colorBlendMode: BlendMode.modulate,
+                      height: 70.0,
+                      width: 70.0)
+                  : Image.network(phase.image, height: 70.0, width: 70.0),
               SizedBox(
                 height: 3.0,
               ),
               Text(
                 phase.name,
-                style: TextStyle(color: Color(0xFFACE3EE)),
+                style: TextStyle(color: Theme.of(context).primaryColor),
               )
             ],
           ),

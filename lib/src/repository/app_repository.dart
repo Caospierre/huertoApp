@@ -91,6 +91,7 @@ class AppRepository extends Disposable {
             type
             description
             isChecked
+            isActive          
             users {
               id
               name
@@ -106,6 +107,15 @@ class AppRepository extends Disposable {
                 photo
                 description               
               }
+            }
+            user_cultivation_phases(order_by: {level_id: asc}) {
+              statePhase
+              description
+              name
+              image
+              id
+              level_id
+              steps
             }
           }
 
@@ -136,6 +146,7 @@ class AppRepository extends Disposable {
             type
             description
             isChecked
+            isActive            
             users {
               id
               name
@@ -152,6 +163,15 @@ class AppRepository extends Disposable {
                 description               
               }
             }
+            user_cultivation_phases(order_by: {level_id: asc}) {
+              statePhase
+              description
+              name
+              image
+              id
+              level_id
+              steps
+            }            
           }
       }
     """;
@@ -178,6 +198,7 @@ class AppRepository extends Disposable {
             type
             description
             isChecked
+            isActive            
             users {
               id
               name
@@ -194,6 +215,15 @@ class AppRepository extends Disposable {
                description
               }
             }
+            user_cultivation_phases(order_by: {level_id: asc}) {
+              statePhase
+              description
+              name
+              image
+              id
+              level_id
+              steps
+            }            
           }
       }
     """;
@@ -219,6 +249,7 @@ class AppRepository extends Disposable {
             type
             description
             isChecked
+            isActive
             users {
               id
               name
@@ -235,6 +266,15 @@ class AppRepository extends Disposable {
                 description
               }
             }
+            user_cultivation_phases(order_by: {level_id: asc}) {
+              statePhase
+              description
+              name
+              image
+              id
+              level_id
+              steps
+            }            
           }
       }
     """;

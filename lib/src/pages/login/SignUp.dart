@@ -172,7 +172,7 @@ class _SignUpState extends State<SignUp> {
                                 style: TextStyle(color: Colors.white),
                                 validator: (input) {
                                   if (input.isEmpty) {
-                                    return 'Provide an email';
+                                    return 'Ingresa un email';
                                   }
                                 },
                                 decoration: InputDecoration(
@@ -210,7 +210,7 @@ class _SignUpState extends State<SignUp> {
                                 obscureText: true,
                                 validator: (input) {
                                   if (input.length < 6) {
-                                    return 'Password must be atleast 6 char long';
+                                    return 'Password deebe ser de 6 caracteres';
                                   }
                                 },
                                 decoration: InputDecoration(
