@@ -22,6 +22,7 @@ class PublicationRepository extends Disposable {
               id
               email
               password
+              phone
             }
             cultivation {
               name

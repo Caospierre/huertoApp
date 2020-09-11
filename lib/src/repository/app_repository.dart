@@ -150,7 +150,8 @@ class AppRepository extends Disposable {
             users {
               id
               name
-              email              
+              email
+              phone              
             }
             cultivation {
               name
@@ -202,7 +203,8 @@ class AppRepository extends Disposable {
             users {
               id
               name
-              email              
+              email
+              phone              
             }
             cultivation {
               name
@@ -253,7 +255,8 @@ class AppRepository extends Disposable {
             users {
               id
               name
-              email              
+              email
+              phone              
             }
             cultivation {
               name
@@ -302,7 +305,8 @@ class AppRepository extends Disposable {
             users {
               id
               name
-              email              
+              email
+              phone              
             }
             cultivation {
               name

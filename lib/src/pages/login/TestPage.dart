@@ -1,5 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter_open_whatsapp/flutter_open_whatsapp.dart';
 import 'package:http/http.dart' as http;
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
@@ -30,7 +32,6 @@ class TestPage extends StatefulWidget {
 
 class _TestPageState extends State<TestPage> {
   var barTitle = ['Mi Cosecha', 'Tienda', 'Perfil', 'Notificación'];
-
   ProductBloc pbloc =
       ProductBloc(GetIt.I<InitServices>().hasuraService.productRepository);
   int indexTitle = 0;
@@ -46,14 +47,30 @@ class _TestPageState extends State<TestPage> {
   bool isSignedIn = false;
   String imageUrl;
 
-  final String serverToken =
-      'AAAAzuUQuB4:APA91bEf-NEe8pcusP6PfeFemvO_dYywEK9r7i_VJsOSZneYiCUQvQS9OPfDaGwxtET16vXcxARqWjmzOq8ScyUhJHyHJGRR_5V48Yhdj8AmFNNrXCRYnzWYyJ5v6DsuUsohuxkRUuyvs';
+  final Firestore _db = Firestore.instance;
   final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
 
   _getToken() {
     _firebaseMessaging.getToken().then((token) {
       print("Device Token: $token");
     });
+  }
+
+  _saveDeviceToken() async {
+
+    String fcmToken = await _firebaseMessaging.getToken();
+
+    if (fcmToken != null) {
+      var huertoapp = _db
+          .collection('DeviceTokens')
+          .document(fcmToken);
+
+      await huertoapp.setData({
+        'device_token': fcmToken,
+        'createdAt': FieldValue.serverTimestamp(),
+        'user': GetIt.I<InitServices>().authService.userLogin.name,
+      });
+    }
   }
 
   List<Message> messagesList = new List<Message>();
@@ -102,50 +119,6 @@ class _TestPageState extends State<TestPage> {
         print(messagesList);
       }
     });
-  }
-
-  Future<Map<String, dynamic>> sendAndRetrieveMessage(
-      String user, String numbephone, String image, String description) async {
-    await _firebaseMessaging.requestNotificationPermissions(
-      const IosNotificationSettings(
-          sound: true, badge: true, alert: true, provisional: false),
-    );
-
-    await http.post(
-      'https://fcm.googleapis.com/fcm/send',
-      headers: <String, String>{
-        'Content-Type': 'application/json',
-        'Authorization': 'key=$serverToken',
-      },
-      body: jsonEncode(
-        <String, dynamic>{
-          'notification': <String, dynamic>{
-            'body': 'Existe Una Nueva Publicacion',
-            'title': 'Revisalo Te Puede Interesar'
-          },
-          'priority': 'high',
-          'data': <String, dynamic>{
-            'click_action': 'FLUTTER_NOTIFICATION_CLICK',
-            'user': '$user',
-            'number_phone': '$numbephone',
-            'image': '$image',
-            'description': '$description',
-          },
-          'to': await _firebaseMessaging.getToken(),
-        },
-      ),
-    );
-
-    final Completer<Map<String, dynamic>> completer =
-        Completer<Map<String, dynamic>>();
-
-    _firebaseMessaging.configure(
-      onMessage: (Map<String, dynamic> message) async {
-        completer.complete(message);
-      },
-    );
-
-    return completer.future;
   }
 
   checkAuthentication() async {
@@ -202,6 +175,7 @@ class _TestPageState extends State<TestPage> {
     _getToken();
     _configureFirebaseListeners();
     _askPermissions();
+    _saveDeviceToken();
   }
 
   Future<void> _askPermissions() async {
@@ -305,8 +279,9 @@ class _TestPageState extends State<TestPage> {
     );
   }
 
+
   // Advanced using of alerts
-  _onAlertWithStylePressed(context) {
+  _onAlertWithStylePressedContact(context) {
     // Reusable alert style
     var alertStyle = AlertStyle(
         animationType: AnimationType.fromTop,
@@ -332,6 +307,47 @@ class _TestPageState extends State<TestPage> {
       type: AlertType.success,
       title: "Contacto",
       desc: "Contacto Guardado Exitosamente",
+      buttons: [
+        DialogButton(
+          child: Text(
+            "Cerrar",
+            style: TextStyle(color: Colors.white, fontSize: 20),
+          ),
+          onPressed: () => Navigator.pop(context),
+          color: Color.fromRGBO(0, 179, 134, 1.0),
+          radius: BorderRadius.circular(0.0),
+        ),
+      ],
+    ).show();
+  }
+
+  // Advanced using of alerts
+  _onAlertWithStylePressedMessage(context) {
+    // Reusable alert style
+    var alertStyle = AlertStyle(
+        animationType: AnimationType.fromTop,
+        isCloseButton: false,
+        isOverlayTapDismiss: false,
+        descStyle: TextStyle(fontWeight: FontWeight.bold),
+        animationDuration: Duration(milliseconds: 400),
+        alertBorder: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(0.0),
+          side: BorderSide(
+            color: Colors.grey,
+          ),
+        ),
+        titleStyle: TextStyle(
+          color: Colors.red,
+        ),
+        constraints: BoxConstraints.expand(width: 300));
+
+    // Alert dialog using custom alert style
+    Alert(
+      context: context,
+      style: alertStyle,
+      type: AlertType.success,
+      title: "Mensaje",
+      desc: "Mensaje Enviado Exitosamente",
       buttons: [
         DialogButton(
           child: Text(
@@ -390,7 +406,7 @@ class _TestPageState extends State<TestPage> {
                         Contact contact = Contact(
                             givenName: messagesList[index].user, phones: phone);
                         await Contacts.addContact(contact);
-                        _onAlertWithStylePressed(context);
+                        _onAlertWithStylePressedContact(context);
                       },
                       child: Row(
                         children: [
@@ -403,6 +419,8 @@ class _TestPageState extends State<TestPage> {
                       textColor: const Color(0xFF6200EE),
                       onPressed: () {
                         // Perform some action
+                        FlutterOpenWhatsapp.sendSingleMessage("+593"+messagesList[index].numberphone,"Estoy Intereaso En Tu Publicacion");
+                        _onAlertWithStylePressedMessage(context);
                       },
                       child: Row(
                         children: [

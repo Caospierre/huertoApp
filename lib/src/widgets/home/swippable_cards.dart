@@ -1,5 +1,7 @@
 import 'dart:ui';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_beautiful_popup/main.dart';
 import 'package:get_it/get_it.dart';
@@ -29,6 +31,9 @@ class _SwippableCardsState extends State<SwippableCards> {
   final bloc = PublicationBloc(
       GetIt.I<InitServices>().hasuraService.publicationRepository);
   List<PublicationModel> _publicationsCopy;
+  final Firestore _db = Firestore.instance;
+  final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
+
 
   _SwippableCardsState(Stream<List<PublicationModel>> publicationStream) {}
 
@@ -278,18 +283,20 @@ class _SwippableCardsState extends State<SwippableCards> {
         );
         break;
       case AvailableImages.like:
+
         print("ME INTERESA");
+        print(_publicationsCopy[0].users.phone);
         bloc.txtPubcontroller.text = _publicationsCopy[0].id.toString();
         bloc.txtUsercontroller.text =
             GetIt.I<InitServices>().authService.userLogin.id.toString();
         bloc.checkPublication(_publicationsCopy[0].users.id);
-        GetIt.I<InitServices>().preferencesService.sendAndRetrieveMessage(
-            _publicationsCopy[0].users.name,
-            _publicationsCopy[0].users.phone,
-            _publicationsCopy[0].cultivation.product.photo,
-            _publicationsCopy[0].cultivation.product.description);
+        saveMessage(_publicationsCopy[0].cultivation.product.description,
+        _publicationsCopy[0].cultivation.product.photo,
+        _publicationsCopy[0].users.phone,
+         _publicationsCopy[0].users.name);
         notificationConfirm("Transaccion Exitosa",
             "El Anunciante se contactara contigo Pronto");
+        
         break;
 
       case AvailableImages.list:
@@ -338,4 +345,18 @@ class _SwippableCardsState extends State<SwippableCards> {
       // Widget close,
     );
   }
+
+  void saveMessage(String description, String image, String number_phone, String user) async {
+    var huertoapp = _db
+        .collection('Messages')
+        .document();
+
+    await huertoapp.setData({
+      'description': description,
+      'image': image,
+      'number_phone': number_phone,
+      'user': user,
+    });
+  }
 }
+
