@@ -127,7 +127,10 @@ class _OnPhaseScreenState extends State<OnPhaseScreen> {
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: <Widget>[
-                                Padding(
+                                FlatButton(
+                                  onPressed: () {
+                                    Navigator.pop(context);
+                                  },
                                   padding:
                                       EdgeInsets.symmetric(horizontal: 15.0),
                                   child: Text(
