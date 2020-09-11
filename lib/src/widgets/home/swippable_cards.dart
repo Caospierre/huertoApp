@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_beautiful_popup/main.dart';
 import 'package:get_it/get_it.dart';
 import 'package:huerto_app/src/bloc/publication_bloc.dart';
+import 'package:huerto_app/src/models/publicacion_interested_users.dart';
 import 'package:huerto_app/src/models/publication_model.dart';
 import 'package:huerto_app/src/pages/login/TestPage.dart';
 import 'package:huerto_app/src/routes/router.dart';
@@ -12,12 +13,13 @@ import 'package:huerto_app/src/widgets/home/price_rating_bar.dart';
 import 'package:huerto_app/src/widgets/home/rating_bar.dart';
 import 'package:huerto_app/utils/utils.dart';
 import 'package:huerto_app/src/widgets/home/publication_card_big.dart';
+import 'package:toast/toast.dart';
 
 // ignore: must_be_immutable
 class SwippableCards extends StatefulWidget {
   final Stream<List<PublicationModel>> publicationStream;
 
-  SwippableCards(this.publicationStream) {}
+  SwippableCards(this.publicationStream);
 
   @override
   _SwippableCardsState createState() =>
@@ -186,6 +188,7 @@ class _SwippableCardsState extends State<SwippableCards> {
       } else {
         width = initWidth - 0.2;
       }
+      print(i.toString() + " " + _publicationsCopy[i].cultivation.product.name);
       cardList.add(
         Positioned(
           top: initTop * (i + 1),
@@ -264,14 +267,14 @@ class _SwippableCardsState extends State<SwippableCards> {
     );
   }
 
-  void onLongPressButtons(String image) {
+  void onLongPressButtons(String image) async {
     switch (image) {
       case AvailableImages.back:
         print("REGRESAR");
         break;
       case AvailableImages.hate:
         print("INFO PUBLICACION");
-        Navigator.popAndPushNamed(
+        Navigator.pushNamed(
           context,
           NavigatorToPath.Publication,
           arguments: _publicationsCopy[0],
@@ -279,17 +282,32 @@ class _SwippableCardsState extends State<SwippableCards> {
         break;
       case AvailableImages.like:
         print("ME INTERESA");
-        bloc.txtPubcontroller.text = _publicationsCopy[0].id.toString();
-        bloc.txtUsercontroller.text =
-            GetIt.I<InitServices>().authService.userLogin.id.toString();
-        bloc.checkPublication(_publicationsCopy[0].users.id);
-        GetIt.I<InitServices>().preferencesService.sendAndRetrieveMessage(
-            _publicationsCopy[0].users.name,
-            _publicationsCopy[0].users.phone,
-            _publicationsCopy[0].cultivation.product.photo,
-            _publicationsCopy[0].cultivation.product.description);
-        notificationConfirm("Transaccion Exitosa",
-            "El Anunciante se contactara contigo Pronto");
+        int selectedIndex = _publicationsCopy.length - 1;
+        int userid = GetIt.I<InitServices>().authService.userLogin.id;
+        bool ipub = await GetIt.I<InitServices>()
+            .hasuraService
+            .appRepository
+            .isBuy(userid, _publicationsCopy[selectedIndex].id);
+        if (!ipub) {
+          bloc.txtPubcontroller.text =
+              _publicationsCopy[selectedIndex].id.toString();
+          bloc.txtUsercontroller.text = userid.toString();
+          bloc.checkPublication(_publicationsCopy[0].users.id);
+          GetIt.I<InitServices>().preferencesService.sendAndRetrieveMessage(
+              _publicationsCopy[0].users.name,
+              _publicationsCopy[0].users.phone,
+              _publicationsCopy[0].cultivation.product.photo,
+              _publicationsCopy[0].cultivation.product.description);
+          notificationConfirm("Transaccion Exitosa",
+              "El Anunciante se contactara contigo Pronto");
+        } else {
+          Toast.show(
+              "Ya has mostrado tu interes por este producto,se contactaran contigo pronto",
+              context,
+              duration: Toast.LENGTH_SHORT,
+              gravity: Toast.BOTTOM);
+        }
+
         break;
 
       case AvailableImages.list:

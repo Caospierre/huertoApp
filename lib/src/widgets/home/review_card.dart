@@ -35,17 +35,21 @@ class _ReviewCardState extends State<ReviewCard> {
         Navigator.pushNamed(context, NavigatorToPath.Publication,
             arguments: widget.review.publication);
       },
-      child: Container(
-        margin: EdgeInsets.only(right: 10.0),
-        height: 40.0,
-        width: 40.0,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(12.0),
-          image: DecorationImage(
-            image: NetworkImage(
-              widget.review.publication.cultivation.product.photo,
+      child: Transform.translate(
+        offset: Offset(250, 0),
+        child: Container(
+          margin: EdgeInsets.only(right: 10.0),
+          alignment: Alignment.topRight,
+          height: 40.0,
+          width: 40.0,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(12.0),
+            image: DecorationImage(
+              image: NetworkImage(
+                widget.review.publication.cultivation.product.photo,
+              ),
+              fit: BoxFit.cover,
             ),
-            fit: BoxFit.cover,
           ),
         ),
       ),
@@ -164,8 +168,7 @@ class _ReviewCardState extends State<ReviewCard> {
 
     return Container(
       padding: EdgeInsets.only(top: 20.0),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      child: Stack(
         children: <Widget>[details, img],
       ),
     );

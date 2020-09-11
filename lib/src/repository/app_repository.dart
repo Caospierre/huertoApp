@@ -32,6 +32,29 @@ class AppRepository extends Disposable {
     }
   }
 
+  Future<bool> isBuy(int iduser, int idpub) async {
+    var query = """
+      getUser(\$idpub:Int!,\$iduser:Int!){
+        publicacion_interested_users(where: {id_user: {_eq: \$iduser}, _and: {publication: {id: {_eq: \$idpub}}}}) {
+          id
+        }
+      }
+
+    """;
+
+    var data = await HasuraConecction.conection.query(query, variables: {
+      "iduser": iduser,
+      "idpub": idpub,
+    });
+
+    if (data["data"]["publicacion_interested_users"].isEmpty) {
+      return false;
+    } else {
+      print(data.toString());
+      return true;
+    }
+  }
+
   Future<UserModel> createUser(String email) async {
     var query = """
       mutation createUser(\$email:String!) {
