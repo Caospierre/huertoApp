@@ -299,10 +299,6 @@ class _SwippableCardsState extends State<SwippableCards> {
               _publicationsCopy[selectedIndex].id.toString();
           bloc.txtUsercontroller.text = userid.toString();
           bloc.checkPublication(_publicationsCopy[selectedIndex].users.id);
-         saveMessage(_publicationsCopy[selectedIndex].cultivation.product.description,
-          _publicationsCopy[selectedIndex].cultivation.product.photo,
-          _publicationsCopy[selectedIndex].users.phone,
-         _publicationsCopy[selectedIndex].users.name);
           notificationConfirm("Transaccion Exitosa",
               "El Anunciante se contactara contigo Pronto");
         } else {
@@ -362,7 +358,7 @@ class _SwippableCardsState extends State<SwippableCards> {
     );
   }
 
-  void saveMessage(String description, String image, String number_phone, String user) async {
+  void saveMessage(String description, String image, String number_phone, String user, String userSend) async {
     var huertoapp = _db
         .collection('Messages')
         .document();
@@ -372,6 +368,7 @@ class _SwippableCardsState extends State<SwippableCards> {
       'image': image,
       'number_phone': number_phone,
       'user': user,
+      'userSend': userSend,
     });
   }
 }

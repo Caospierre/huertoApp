@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_beautiful_popup/main.dart';
 import 'package:get_it/get_it.dart';
@@ -20,6 +21,8 @@ class ReviewCard extends StatefulWidget {
 }
 
 class _ReviewCardState extends State<ReviewCard> {
+
+  final Firestore _db = Firestore.instance;
   @override
   Widget build(BuildContext context) {
     final _filledCircle = Container(
@@ -151,6 +154,12 @@ class _ReviewCardState extends State<ReviewCard> {
                     .hasuraService
                     .cultivationPhaseRepository
                     .updateCheckedPub(widget.review.publication.id);
+                saveMessage(this.widget.review.publication.cultivation.product.description,
+                this.widget.review.publication.cultivation.product.photo,
+                GetIt.I<InitServices>().authService.userLogin.phone,
+                GetIt.I<InitServices>().authService.userLogin.name,
+                this.widget.review.users.name);
+                print(this.widget.review.users.name);    
                 Toast.show(
                     "Transaccion Exitosa, Gracias por confiar en nosotros ",
                     context,
@@ -206,5 +215,19 @@ class _ReviewCardState extends State<ReviewCard> {
       close: Container(),
       barrierDismissible: true,
     );
+  }
+
+  void saveMessage(String description, String image, String number_phone, String user, String userSend) async {
+    var huertoapp = _db
+        .collection('Messages')
+        .document();
+
+    await huertoapp.setData({
+      'description': description,
+      'image': image,
+      'number_phone': number_phone,
+      'user': user,
+      'userSend': userSend,
+    });
   }
 }
