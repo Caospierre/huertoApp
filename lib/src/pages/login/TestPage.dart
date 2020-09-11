@@ -58,13 +58,10 @@ class _TestPageState extends State<TestPage> {
   }
 
   _saveDeviceToken() async {
-
     String fcmToken = await _firebaseMessaging.getToken();
 
     if (fcmToken != null) {
-      var huertoapp = _db
-          .collection('DeviceTokens')
-          .document(fcmToken);
+      var huertoapp = _db.collection('DeviceTokens').document(fcmToken);
 
       await huertoapp.setData({
         'device_token': fcmToken,
@@ -236,7 +233,7 @@ class _TestPageState extends State<TestPage> {
           _buildTab(Icons.shopping_basket),
           _buildTab(Icons.local_grocery_store),
           _buildTab(Icons.account_circle),
-          _buildTab(Icons.book),
+          _buildTab(Icons.notifications_active),
         ],
         onTap: (value) {
           setState(() {
@@ -279,7 +276,6 @@ class _TestPageState extends State<TestPage> {
       child: Icon(icon, size: 40.0),
     );
   }
-
 
   // Advanced using of alerts
   _onAlertWithStylePressedContact(context) {
@@ -420,7 +416,9 @@ class _TestPageState extends State<TestPage> {
                       textColor: const Color(0xFF6200EE),
                       onPressed: () {
                         // Perform some action
-                        FlutterOpenWhatsapp.sendSingleMessage("+593"+messagesList[index].numberphone,"Estoy Intereaso En Tu Publicacion");
+                        FlutterOpenWhatsapp.sendSingleMessage(
+                            "+593" + messagesList[index].numberphone,
+                            "Estoy Intereaso En Tu Publicacion");
                         _onAlertWithStylePressedMessage(context);
                       },
                       child: Row(
