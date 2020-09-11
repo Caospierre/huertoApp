@@ -197,7 +197,7 @@ class _OnPhaseScreenState extends State<OnPhaseScreen> {
                       content: Container(
                           child: Column(
                         children: <Widget>[
-                          Text('TESX.'),
+                          Text('Ingresa tu telefono'),
                           _textphone(),
                         ],
                       )),
@@ -215,17 +215,13 @@ class _OnPhaseScreenState extends State<OnPhaseScreen> {
                                     .authService
                                     .userLogin
                                     .id);
-
-                            Navigator.of(context).pop();
-
-                            Navigator.pop(context);
+                            notificationFinish();
                           },
                         ),
                       ],
                       close: Container(),
                       barrierDismissible: true,
                     );
-                    notificationFinish();
                   } else {
                     print('No se puede Publicar ' +
                         widget.listPhase.length.toString());
@@ -344,12 +340,15 @@ class _OnPhaseScreenState extends State<OnPhaseScreen> {
       content: 'Tu cultivo se ha publicado con exito ',
       actions: [
         popup.button(
-          label: 'Close',
-          onPressed: Navigator.of(context).pop,
-        ),
+            label: 'Close',
+            onPressed: () {
+              Navigator.of(context).pop();
+
+              Navigator.pop(context);
+            }),
       ],
-      // bool barrierDismissible = false,
-      // Widget close,
+      close: Container(),
+      barrierDismissible: true,
     );
   }
 }

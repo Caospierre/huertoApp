@@ -7,6 +7,7 @@ import 'package:huerto_app/src/routes/router.dart';
 import 'package:huerto_app/src/services/init_services.dart';
 import 'package:huerto_app/src/widgets/home/rating_bar.dart';
 import 'package:huerto_app/utils/colors.dart';
+import 'package:toast/toast.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class ReviewCard extends StatefulWidget {
@@ -150,8 +151,11 @@ class _ReviewCardState extends State<ReviewCard> {
                     .hasuraService
                     .cultivationPhaseRepository
                     .updateCheckedPub(widget.review.publication.id);
-                notificationConfirm(
-                    "Transaccion Exitosa", "Gracias por confiar en nosotros");
+                Toast.show(
+                    "Transaccion Exitosa, Gracias por confiar en nosotros ",
+                    context,
+                    duration: Toast.LENGTH_SHORT,
+                    gravity: Toast.BOTTOM);
               },
             ),
           )
@@ -192,12 +196,15 @@ class _ReviewCardState extends State<ReviewCard> {
       content: content,
       actions: [
         popup.button(
-          label: 'Cerrar',
-          onPressed: Navigator.of(context).pop,
-        ),
+            label: 'Cerrar',
+            onPressed: () {
+              Navigator.of(context).pop();
+
+              Navigator.pop(context);
+            }),
       ],
-      // bool barrierDismissible = false,
-      // Widget close,
+      close: Container(),
+      barrierDismissible: true,
     );
   }
 }
