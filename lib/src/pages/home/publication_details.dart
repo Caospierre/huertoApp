@@ -38,7 +38,7 @@ class _PublicationDetailsPageState extends State<PublicationDetailsPage> {
         ),
         child: IconButton(
           icon: Icon(LineIcons.close, color: Colors.white),
-          onPressed: () => Navigator.pop(context),
+          onPressed: () => Navigator.pop(context, NavigatorToPath.Home),
           iconSize: 20.0,
         ),
       ),
@@ -212,8 +212,7 @@ class _PublicationDetailsPageState extends State<PublicationDetailsPage> {
 
     final _footerBtns = Container(
       padding: EdgeInsets.only(top: 10.0),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
+      child: Stack(
         children: <Widget>[
           buildList(context, this.widget.publication.phases),
         ],
@@ -266,16 +265,6 @@ class _PublicationDetailsPageState extends State<PublicationDetailsPage> {
   }
 
   Widget buildList(BuildContext context, List<UserCultivationPhaseModel> list) {
-    List<UserCultivationPhaseModel> leftSide = [];
-    List<UserCultivationPhaseModel> rightSide = [];
-    list.forEach((phase) {
-      if (phase.statePhase) {
-        this.actualPhase = phase.name;
-      }
-      int index = list.indexOf(phase);
-      bool isOddNum = isOddNumber(index);
-      isOddNum ? rightSide.add(phase) : leftSide.add(phase);
-    });
     return widget.publication.isActive
         ? Row(
             children: <Widget>[
@@ -284,18 +273,11 @@ class _PublicationDetailsPageState extends State<PublicationDetailsPage> {
               )
             ],
           )
-        : Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        : Stack(
             children: <Widget>[
               Column(
-                children: rightSide
-                    .map((res) => _buildIconCard(context, res))
-                    .toList(),
-              ),
-              Column(
-                children: leftSide
-                    .map((res) => _buildIconCard(context, res))
-                    .toList(),
+                children:
+                    list.map((res) => _buildIconCard(context, res)).toList(),
               ),
             ],
           );
@@ -308,7 +290,6 @@ class _PublicationDetailsPageState extends State<PublicationDetailsPage> {
   Widget _buildIconCard(BuildContext context, UserCultivationPhaseModel phase) {
     return GestureDetector(
         onTap: () {
-          print("Container was tapped");
           if (phase.statePhase) {
             Navigator.pushNamed(
               context,
@@ -336,7 +317,7 @@ class _PublicationDetailsPageState extends State<PublicationDetailsPage> {
                 height: 3.0,
               ),
               Text(
-                phase.name,
+                phase.level.toString() + " " + phase.name,
                 style: TextStyle(color: Theme.of(context).primaryColor),
               )
             ],
